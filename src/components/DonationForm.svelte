@@ -1,16 +1,15 @@
 <script lang="ts">
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
+  import { donorSettings } from '../lib/settings/storage';
 
   let type: DonationType = 'blood';
   let date = new Date().toISOString().slice(0, 10);
+  let error: string | null = null;
 
   function handleSubmit() {
-    addDonation({
-      id: crypto.randomUUID(),
-      type,
-      date
-    });
+    const result = addDonation({ type, date }, $donorSettings);
+    error = result.allowed ? null : (result.reason ?? null);
   }
 </script>
 
@@ -32,6 +31,10 @@
   </label>
 
   <button type="submit">Ajouter</button>
+
+  {#if error}
+    <p class="error">{error}</p>
+  {/if}
 </form>
 
 <style>
@@ -69,5 +72,12 @@
     padding: 0.5rem 1rem;
     font-size: 1rem;
     cursor: pointer;
+  }
+
+  .error {
+    flex-basis: 100%;
+    margin: 0;
+    color: #c00;
+    font-size: 0.9rem;
   }
 </style>
