@@ -5,6 +5,7 @@
   import DonationList from './components/DonationList.svelte';
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
+  import { donorSettings } from './lib/settings/storage';
 
   let showSettings = false;
 </script>
@@ -16,7 +17,9 @@
   </div>
 
   <NextDonationSummary />
-  <DonationForm />
+  {#if $donorSettings.debugMode}
+    <DonationForm />
+  {/if}
   <DonationList />
 </main>
 
