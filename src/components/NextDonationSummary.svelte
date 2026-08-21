@@ -5,7 +5,7 @@
   import { getRuleSet } from '../lib/rules/registry';
 
   $: ruleSet = getRuleSet($donorSettings.countryCode);
-  $: today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
+  $: today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z');
   $: nextDates = DONATION_TYPES.map((type) => ({
     type,
     date: ruleSet.computeNextEligibleDate(type, $donations, $donorSettings)

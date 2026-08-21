@@ -25,4 +25,17 @@ export interface DonationRuleSet {
     allDonations: Donation[],
     donorSettings: DonorSettings
   ): Date;
+  /**
+   * Whether a donation of `type` on `date` (ISO YYYY-MM-DD) would be
+   * allowed given the donations that happened strictly before `date` in
+   * `allDonations`. Unlike `computeNextEligibleDate`, this is not floored
+   * to today — it is used to validate a donation being recorded for any
+   * date, past or present.
+   */
+  isDonationAllowed(
+    type: DonationType,
+    date: string,
+    allDonations: Donation[],
+    donorSettings: DonorSettings
+  ): boolean;
 }

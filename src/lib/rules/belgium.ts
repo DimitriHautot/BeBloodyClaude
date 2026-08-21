@@ -31,8 +31,12 @@ const RULES: Record<DonationType, TypeRule> = {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+// Parsed as UTC (not local time) so date math is identical regardless of
+// the machine's timezone — otherwise `toISOString()`-derived "today"
+// strings (UTC) and locally-parsed dates could disagree by a day near
+// midnight, shifting interval/quota boundaries.
 function parseDate(iso: string): Date {
-  return new Date(`${iso}T00:00:00`);
+  return new Date(`${iso}T00:00:00Z`);
 }
 
 function addDays(date: Date, days: number): Date {
@@ -79,20 +83,34 @@ function quotaConstraintDate(donationsOfType: Donation[], rule: TypeRule, candid
   return result;
 }
 
+/** Earliest date `type` would be allowed given `allDonations`, with no floor on today. */
+function earliestEligibleDate(type: DonationType, allDonations: Donation[]): Date {
+  const rule = RULES[type];
+  const donationsOfType = allDonations.filter((d) => d.type === type);
+
+  // No floor: if there's no blocking history, any date (even far in the
+  // past) is a valid candidate to start the quota computation from.
+  const afterRecovery = recoveryConstraintDate(allDonations) ?? new Date(0);
+
+  return quotaConstraintDate(donationsOfType, rule, afterRecovery);
+}
+
 export const belgiumRules: DonationRuleSet = {
   countryCode: 'BE',
   countryName: 'Belgique',
   computeNextEligibleDate(type: DonationType, allDonations: Donation[]): Date {
-    const today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
-    const rule = RULES[type];
-    const donationsOfType = allDonations.filter((d) => d.type === type);
-
-    const afterRecovery = recoveryConstraintDate(allDonations) ?? today;
-    const candidate = afterRecovery > today ? afterRecovery : today;
-
-    const afterQuota = quotaConstraintDate(donationsOfType, rule, candidate);
-
-    return afterQuota > candidate ? afterQuota : candidate;
+    const today = parseDate(new Date().toISOString().slice(0, 10));
+    const earliest = earliestEligibleDate(type, allDonations);
+    return earliest > today ? earliest : today;
+  },
+  isDonationAllowed(type: DonationType, date: string, allDonations: Donation[]): boolean {
+    const candidate = parseDate(date);
+    // Donations on or before the candidate date have already happened by
+    // then and must be considered; only donations strictly after it (e.g.
+    // entered out of order) are excluded, since they hadn't happened yet.
+    const priorDonations = allDonations.filter((d) => parseDate(d.date) <= candidate);
+    const earliest = earliestEligibleDate(type, priorDonations);
+    return candidate.getTime() >= earliest.getTime();
   }
 };
 

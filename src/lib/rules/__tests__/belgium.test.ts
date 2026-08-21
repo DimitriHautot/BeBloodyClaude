@@ -63,3 +63,54 @@ describe('belgiumRules.computeNextEligibleDate', () => {
     expect(toISO(next)).toBe(daysFromNow(66));
   });
 });
+
+describe('belgiumRules.isDonationAllowed', () => {
+  const settings = { countryCode: 'BE', sex: 'male' as const };
+
+  it('allows any date when there is no donation history', () => {
+    expect(belgiumRules.isDonationAllowed('blood', daysAgo(1000), [], settings)).toBe(true);
+    expect(belgiumRules.isDonationAllowed('blood', daysFromNow(0), [], settings)).toBe(true);
+  });
+
+  it('rejects a whole blood donation less than 60 days after the previous one', () => {
+    const history = [donation('1', 'blood', daysAgo(30))];
+    expect(belgiumRules.isDonationAllowed('blood', daysAgo(0), history, settings)).toBe(false);
+  });
+
+  it('allows a whole blood donation exactly 60 days after the previous one', () => {
+    const history = [donation('1', 'blood', daysAgo(60))];
+    expect(belgiumRules.isDonationAllowed('blood', daysAgo(0), history, settings)).toBe(true);
+  });
+
+  it('rejects a plasma donation less than 14 days after the previous plasma donation', () => {
+    const history = [donation('1', 'plasma', daysAgo(10))];
+    expect(belgiumRules.isDonationAllowed('plasma', daysAgo(0), history, settings)).toBe(false);
+  });
+
+  it('rejects a plasma donation less than 60 days after a whole blood donation (cross-type)', () => {
+    const history = [donation('1', 'blood', daysAgo(20))];
+    expect(belgiumRules.isDonationAllowed('plasma', daysAgo(0), history, settings)).toBe(false);
+  });
+
+  it('rejects a 5th whole blood donation within a rolling 365-day window', () => {
+    const history: Donation[] = [
+      donation('1', 'blood', daysAgo(300)),
+      donation('2', 'blood', daysAgo(220)),
+      donation('3', 'blood', daysAgo(140)),
+      donation('4', 'blood', daysAgo(65))
+    ];
+    expect(belgiumRules.isDonationAllowed('blood', daysAgo(0), history, settings)).toBe(false);
+  });
+
+  it('rejects two whole blood donations recorded on the same day', () => {
+    const history = [donation('1', 'blood', daysAgo(0))];
+    expect(belgiumRules.isDonationAllowed('blood', daysAgo(0), history, settings)).toBe(false);
+  });
+
+  it('ignores donations recorded after the candidate date (back-dated entries)', () => {
+    // A donation recorded 5 days ago should be validated against history as
+    // it stood at that time, ignoring a later donation entered afterwards.
+    const history = [donation('1', 'blood', daysAgo(3))];
+    expect(belgiumRules.isDonationAllowed('blood', daysAgo(5), history, settings)).toBe(true);
+  });
+});

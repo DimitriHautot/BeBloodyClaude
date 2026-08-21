@@ -61,6 +61,17 @@ respecter cette même signature même si elle n'utilise pas les deux :
   fenêtre glissante de 365 jours, pas sur l'année calendaire, ce qui demande
   de regarder tout l'historique du type concerné.
 
+**Validation à l'ajout d'un don** : `DonationRuleSet` expose aussi
+`isDonationAllowed(type, date, allDonations, donorSettings)`, utilisé par
+`src/lib/donations/validation.ts` (`validateNewDonation`) et appelé par
+`addDonation` (`src/lib/donations/storage.ts`) avant tout ajout au store.
+Contrairement à `computeNextEligibleDate` (qui est plafonné à aujourd'hui,
+pour l'affichage de la prochaine date possible), `isDonationAllowed` n'a
+pas ce plancher : il sert à valider une date de don passée ou présente en
+ne tenant compte que des dons antérieurs ou du même jour (`date <=
+candidat`) dans l'historique. Toute nouvelle implémentation de pays doit
+aussi fournir cette méthode.
+
 ### Règles belges implémentées (`belgium.ts`) — à vérifier
 
 Basées sur les informations publiques de la Croix-Rouge de Belgique
