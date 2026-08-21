@@ -50,12 +50,6 @@ describe('validateNewDonation', () => {
     expect(result.allowed).toBe(false);
   });
 
-  it('rejects a second donation of the same type recorded on the same day', () => {
-    const history = [donation('1', 'blood', daysAgo(0))];
-    const result = validateNewDonation('blood', daysAgo(0), history, belgianSettings);
-    expect(result.allowed).toBe(false);
-  });
-
   const sameDayCombinations = DONATION_TYPES.flatMap((existingType) =>
     DONATION_TYPES.map((newType) => [newType, existingType] as const)
   );
