@@ -1,0 +1,13 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const context = await browser.newContext();
+const page = await context.newPage();
+await page.goto('http://127.0.0.1:5173/');
+await page.waitForTimeout(300);
+await page.selectOption('select', { label: 'Plasma' });
+await page.click('button[type=submit]');
+await page.waitForTimeout(200);
+await page.reload();
+await page.waitForTimeout(300);
+console.log(await page.locator('main').innerText());
+await browser.close();
