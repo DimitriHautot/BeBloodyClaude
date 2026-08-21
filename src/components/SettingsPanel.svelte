@@ -32,7 +32,8 @@
 <style>
   section {
     display: flex;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   label {
@@ -51,6 +52,5 @@
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
-    justify-content: flex-end;
   }
 </style>
