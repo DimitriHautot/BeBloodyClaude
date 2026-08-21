@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { belgiumRules } from './belgium';
-import type { Donation } from '../donations/types';
+import { belgiumRules } from '../belgium';
+import type { Donation } from '../../donations/types';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
