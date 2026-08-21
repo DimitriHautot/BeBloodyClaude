@@ -2,6 +2,7 @@
   import { DONATION_TYPE_LABELS } from '../lib/donations/types';
   import { donations, removeDonation } from '../lib/donations/storage';
   import { formatDateLabel, parseISODate } from '../lib/dates';
+  import { donorSettings } from '../lib/settings/storage';
 
   $: sortedDonations = [...$donations].sort((a, b) => b.date.localeCompare(a.date));
 </script>
@@ -17,7 +18,9 @@
         <li>
           <span class="date">{formatDateLabel(parseISODate(donation.date))}</span>
           <span class="type">{DONATION_TYPE_LABELS[donation.type]}</span>
-          <button on:click={() => removeDonation(donation.id)} aria-label="Supprimer">✕</button>
+          {#if $donorSettings.debugMode}
+            <button on:click={() => removeDonation(donation.id)} aria-label="Supprimer">✕</button>
+          {/if}
         </li>
       {/each}
     </ul>
