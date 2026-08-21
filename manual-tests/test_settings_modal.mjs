@@ -19,7 +19,7 @@ assert.equal(
 assert.equal(await page.locator('.dialog').count(), 0, 'expected no modal to be open initially');
 
 // Open the menu, click "Paramètres".
-await page.click('button:has-text("Menu")');
+await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 
@@ -36,7 +36,7 @@ await page.waitForTimeout(150);
 assert.equal(await page.locator('.dialog').count(), 0, 'expected Escape to close the modal');
 
 // Re-open, close via backdrop click.
-await page.click('button:has-text("Menu")');
+await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 await page.click('.overlay', { position: { x: 5, y: 5 } });

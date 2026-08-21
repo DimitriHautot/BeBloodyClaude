@@ -25,8 +25,8 @@
 <svelte:window on:click={handleWindowClick} />
 
 <nav bind:this={navEl}>
-  <button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open}>
-    ☰ Menu
+  <button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
+    ☰
   </button>
 
   {#if open}
