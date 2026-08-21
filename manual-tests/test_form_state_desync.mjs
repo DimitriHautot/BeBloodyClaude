@@ -1,9 +1,11 @@
 // Requires a dev server already running at http://127.0.0.1:5176 (npx vite --port 5176).
-// Reproduces the reported Firefox bug: a browser can restore a <select>'s
-// displayed value (e.g. after a page reload restores previous form state)
-// WITHOUT firing a `change` event, leaving Svelte's bound state stale while
-// the DOM shows something different. Simulated here by setting the select's
-// value directly via the native DOM setter, bypassing Svelte's binding.
+// Reproduces the reported bug: a browser can leave a form field's visual
+// state out of sync with what Svelte's bound variable thinks is selected
+// (e.g. Firefox restoring previous form state after a full page reload, or
+// the Firefox/Linux native <select> popup bug that motivated switching the
+// donation type picker to radio buttons). Simulated here by checking a
+// radio button directly via the native DOM setter, bypassing Svelte's
+// binding — no change/input event fired.
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -22,21 +24,22 @@ await page.locator('.dialog input[type=checkbox]').check();
 await page.keyboard.press('Escape');
 await page.waitForTimeout(150);
 
-// Set the select's DOM value to "plasma" using the native property setter
-// directly (no 'change'/'input' event dispatched), simulating a browser
-// silently restoring form state without going through user interaction.
+// Check the "plasma" radio directly via the native property setter (no
+// 'change'/'input' event dispatched), simulating the DOM ending up in a
+// state Svelte's bound variable never learned about.
 await page.evaluate(() => {
-  const select = document.querySelector('form select');
-  const nativeSetter = Object.getOwnPropertyDescriptor(
-    window.HTMLSelectElement.prototype,
-    'value'
-  ).set;
-  nativeSetter.call(select, 'plasma');
+  const radios = document.querySelectorAll('input[name="donation-type"]');
+  const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked').set;
+  for (const radio of radios) {
+    nativeSetter.call(radio, radio.value === 'plasma');
+  }
   // Deliberately NOT dispatching a change/input event here.
 });
 
-const displayedValue = await page.locator('form select').inputValue();
-assert.equal(displayedValue, 'plasma', 'expected the select to visually show "plasma"');
+const checkedValue = await page.evaluate(
+  () => document.querySelector('input[name="donation-type"]:checked')?.value
+);
+assert.equal(checkedValue, 'plasma', 'expected the "plasma" radio to visually show as checked');
 
 await page.click('button[type=submit]');
 await page.waitForTimeout(200);
