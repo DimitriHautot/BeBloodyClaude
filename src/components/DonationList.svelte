@@ -57,6 +57,7 @@
 
   .type {
     flex: 1;
+    text-align: right;
     color: #333;
   }
 
