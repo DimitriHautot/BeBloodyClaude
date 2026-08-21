@@ -7,9 +7,19 @@
   let type: DonationType = 'blood';
   let date = toISODate(new Date());
   let error: string | null = null;
+  let typeSelectEl: HTMLSelectElement;
+  let dateInputEl: HTMLInputElement;
 
   function handleSubmit() {
-    const result = addDonation({ type, date }, $donorSettings);
+    // Read the live DOM values rather than trusting the bound variables:
+    // a browser can restore a <select>/<input> value (e.g. after a full
+    // page reload restores previous form state) without firing a change
+    // event, which would leave Svelte's bound state stale and silently
+    // out of sync with what's actually displayed on screen.
+    const currentType = typeSelectEl.value as DonationType;
+    const currentDate = dateInputEl.value;
+
+    const result = addDonation({ type: currentType, date: currentDate }, $donorSettings);
     error = result.allowed ? null : (result.reason ?? null);
   }
 </script>
@@ -19,7 +29,7 @@
 
   <label>
     Type de don
-    <select bind:value={type}>
+    <select bind:value={type} bind:this={typeSelectEl} autocomplete="off">
       {#each DONATION_TYPES as t}
         <option value={t}>{DONATION_TYPE_LABELS[t]}</option>
       {/each}
@@ -28,7 +38,7 @@
 
   <label>
     Date
-    <input type="date" bind:value={date} required />
+    <input type="date" bind:value={date} bind:this={dateInputEl} autocomplete="off" required />
   </label>
 
   <button type="submit">Ajouter</button>
