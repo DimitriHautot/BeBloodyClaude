@@ -25,5 +25,9 @@ export function today(): Date {
 
 /** Formats a date for display, e.g. "21 août 2026". */
 export function formatDateLabel(date: Date): string {
-  return date.toLocaleDateString('fr-BE', { year: 'numeric', month: 'long', day: 'numeric' });
+  // timeZone: 'UTC' is required — without it, toLocaleDateString renders in
+  // the machine's local timezone, which can shift the displayed calendar
+  // day by one for a UTC-midnight Date (e.g. showing "20 août" instead of
+  // "21 août" on a machine west of UTC).
+  return date.toLocaleDateString('fr-BE', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 }
