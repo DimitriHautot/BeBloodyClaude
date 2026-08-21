@@ -56,7 +56,7 @@
   .menu {
     position: absolute;
     top: calc(100% + 0.25rem);
-    left: 0;
+    right: 0;
     list-style: none;
     margin: 0;
     padding: 0.25rem;
