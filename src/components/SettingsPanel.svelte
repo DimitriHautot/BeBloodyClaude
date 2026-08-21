@@ -6,8 +6,6 @@
 </script>
 
 <section>
-  <h2>Paramètres</h2>
-
   <label>
     Pays (règles applicables)
     <select bind:value={$donorSettings.countryCode}>
@@ -30,14 +28,6 @@
   section {
     display: flex;
     gap: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-  }
-
-  h2 {
-    flex-basis: 100%;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
   }
 
   label {
