@@ -31,8 +31,12 @@ const RULES: Record<DonationType, TypeRule> = {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+// Parsed as UTC (not local time) so date math is identical regardless of
+// the machine's timezone — otherwise `toISOString()`-derived "today"
+// strings (UTC) and locally-parsed dates could disagree by a day near
+// midnight, shifting interval/quota boundaries.
 function parseDate(iso: string): Date {
-  return new Date(`${iso}T00:00:00`);
+  return new Date(`${iso}T00:00:00Z`);
 }
 
 function addDays(date: Date, days: number): Date {
@@ -95,7 +99,7 @@ export const belgiumRules: DonationRuleSet = {
   countryCode: 'BE',
   countryName: 'Belgique',
   computeNextEligibleDate(type: DonationType, allDonations: Donation[]): Date {
-    const today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
+    const today = parseDate(new Date().toISOString().slice(0, 10));
     const earliest = earliestEligibleDate(type, allDonations);
     return earliest > today ? earliest : today;
   },
