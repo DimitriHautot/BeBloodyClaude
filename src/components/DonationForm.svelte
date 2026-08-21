@@ -7,28 +7,44 @@
   let type: DonationType = 'blood';
   let date = toISODate(new Date());
   let error: string | null = null;
+  let formEl: HTMLFormElement;
+  let dateInputEl: HTMLInputElement;
 
   function handleSubmit() {
-    const result = addDonation({ type, date }, $donorSettings);
+    // Read the live DOM values rather than trusting the bound variables:
+    // a browser can restore a form field's value (e.g. after a full page
+    // reload restores previous form state) without firing a change event,
+    // which would leave Svelte's bound state stale and silently out of
+    // sync with what's actually displayed on screen. The donation type
+    // uses radio buttons rather than a <select> — a native <select>'s
+    // dropdown popup was found to be unreliable on Firefox/Linux (WSL),
+    // where the element's own value could fail to update to match what
+    // was visually selected.
+    const checkedRadio = formEl.querySelector<HTMLInputElement>('input[name="donation-type"]:checked');
+    const currentType = (checkedRadio?.value ?? type) as DonationType;
+    const currentDate = dateInputEl.value;
+
+    const result = addDonation({ type: currentType, date: currentDate }, $donorSettings);
     error = result.allowed ? null : (result.reason ?? null);
   }
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
+<form on:submit|preventDefault={handleSubmit} bind:this={formEl}>
   <h2>Ajouter un don</h2>
 
-  <label>
-    Type de don
-    <select bind:value={type}>
-      {#each DONATION_TYPES as t}
-        <option value={t}>{DONATION_TYPE_LABELS[t]}</option>
-      {/each}
-    </select>
-  </label>
+  <fieldset>
+    <legend>Type de don</legend>
+    {#each DONATION_TYPES as t}
+      <label class="radio">
+        <input type="radio" name="donation-type" value={t} bind:group={type} />
+        {DONATION_TYPE_LABELS[t]}
+      </label>
+    {/each}
+  </fieldset>
 
   <label>
     Date
-    <input type="date" bind:value={date} required />
+    <input type="date" bind:value={date} bind:this={dateInputEl} autocomplete="off" required />
   </label>
 
   <button type="submit">Ajouter</button>
@@ -63,8 +79,29 @@
     font-size: 0.9rem;
   }
 
-  select,
-  input {
+  fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  legend {
+    padding: 0;
+    margin-bottom: 0.25rem;
+  }
+
+  .radio {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: normal;
+  }
+
+  input[type='date'] {
     padding: 0.4rem;
     font-size: 1rem;
   }
