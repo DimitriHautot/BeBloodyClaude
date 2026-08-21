@@ -22,6 +22,11 @@
       <option value="female">Femme</option>
     </select>
   </label>
+
+  <label class="checkbox">
+    <input type="checkbox" bind:checked={$donorSettings.debugMode} />
+    Mode debug
+  </label>
 </section>
 
 <style>
@@ -40,5 +45,12 @@
   select {
     padding: 0.4rem;
     font-size: 1rem;
+  }
+
+  .checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
   }
 </style>
