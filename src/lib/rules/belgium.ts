@@ -1,6 +1,7 @@
 import type { Donation, DonationType } from '../donations/types';
 import { DONATION_TYPES } from '../donations/types';
 import type { DonationRuleSet } from './types';
+import { addDays, parseISODate, today as todayDate } from '../dates';
 
 interface TypeRule {
   minIntervalDays: number;
@@ -29,20 +30,6 @@ const RULES: Record<DonationType, TypeRule> = {
   platelets: { minIntervalDays: 14, maxPerRollingYear: 24 }
 };
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-// Parsed as UTC (not local time) so date math is identical regardless of
-// the machine's timezone — otherwise `toISOString()`-derived "today"
-// strings (UTC) and locally-parsed dates could disagree by a day near
-// midnight, shifting interval/quota boundaries.
-function parseDate(iso: string): Date {
-  return new Date(`${iso}T00:00:00Z`);
-}
-
-function addDays(date: Date, days: number): Date {
-  return new Date(date.getTime() + days * DAY_MS);
-}
-
 /**
  * Recovery constraint: the earliest date any new donation could happen,
  * based on ALL past donations (any type). Each donation blocks new
@@ -51,7 +38,7 @@ function addDays(date: Date, days: number): Date {
 function recoveryConstraintDate(allDonations: Donation[]): Date | null {
   let latest: Date | null = null;
   for (const donation of allDonations) {
-    const blockedUntil = addDays(parseDate(donation.date), RULES[donation.type].minIntervalDays);
+    const blockedUntil = addDays(parseISODate(donation.date), RULES[donation.type].minIntervalDays);
     if (latest === null || blockedUntil > latest) {
       latest = blockedUntil;
     }
@@ -66,7 +53,7 @@ function recoveryConstraintDate(allDonations: Donation[]): Date | null {
  * candidate date.
  */
 function quotaConstraintDate(donationsOfType: Donation[], rule: TypeRule, candidate: Date): Date {
-  const sortedDates = donationsOfType.map((d) => parseDate(d.date)).sort((a, b) => a.getTime() - b.getTime());
+  const sortedDates = donationsOfType.map((d) => parseISODate(d.date)).sort((a, b) => a.getTime() - b.getTime());
 
   let result = candidate;
   for (let i = 0; i < sortedDates.length + 1; i++) {
@@ -99,16 +86,16 @@ export const belgiumRules: DonationRuleSet = {
   countryCode: 'BE',
   countryName: 'Belgique',
   computeNextEligibleDate(type: DonationType, allDonations: Donation[]): Date {
-    const today = parseDate(new Date().toISOString().slice(0, 10));
+    const today = todayDate();
     const earliest = earliestEligibleDate(type, allDonations);
     return earliest > today ? earliest : today;
   },
   isDonationAllowed(type: DonationType, date: string, allDonations: Donation[]): boolean {
-    const candidate = parseDate(date);
+    const candidate = parseISODate(date);
     // Donations on or before the candidate date have already happened by
     // then and must be considered; only donations strictly after it (e.g.
     // entered out of order) are excluded, since they hadn't happened yet.
-    const priorDonations = allDonations.filter((d) => parseDate(d.date) <= candidate);
+    const priorDonations = allDonations.filter((d) => parseISODate(d.date) <= candidate);
     const earliest = earliestEligibleDate(type, priorDonations);
     return candidate.getTime() >= earliest.getTime();
   }

@@ -6,8 +6,6 @@
 </script>
 
 <section>
-  <h2>Paramètres</h2>
-
   <label>
     Pays (règles applicables)
     <select bind:value={$donorSettings.countryCode}>
@@ -24,20 +22,18 @@
       <option value="female">Femme</option>
     </select>
   </label>
+
+  <label class="checkbox">
+    <input type="checkbox" bind:checked={$donorSettings.debugMode} />
+    Mode debug
+  </label>
 </section>
 
 <style>
   section {
     display: flex;
-    gap: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-  }
-
-  h2 {
-    flex-basis: 100%;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   label {
@@ -50,5 +46,11 @@
   select {
     padding: 0.4rem;
     font-size: 1rem;
+  }
+
+  .checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
   }
 </style>

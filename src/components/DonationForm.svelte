@@ -2,9 +2,10 @@
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
+  import { toISODate } from '../lib/dates';
 
   let type: DonationType = 'blood';
-  let date = new Date().toISOString().slice(0, 10);
+  let date = toISODate(new Date());
   let error: string | null = null;
 
   function handleSubmit() {
