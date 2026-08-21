@@ -2,16 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { validateNewDonation } from '../validation';
 import { DONATION_TYPES, type Donation } from '../types';
 import type { DonorSettings } from '../../settings/storage';
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-function toISO(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-function daysAgo(days: number): string {
-  return toISO(new Date(Date.now() - days * DAY_MS));
-}
+import { daysAgo } from '../../../test-support/dateFixtures';
 
 function donation(id: string, type: Donation['type'], date: string): Donation {
   return { id, type, date };

@@ -3,17 +3,14 @@
   import { donations } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
+  import { today as todayDate, formatDateLabel } from '../lib/dates';
 
   $: ruleSet = getRuleSet($donorSettings.countryCode);
-  $: today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z');
+  $: today = todayDate();
   $: nextDates = DONATION_TYPES.map((type) => ({
     type,
     date: ruleSet.computeNextEligibleDate(type, $donations, $donorSettings)
   }));
-
-  function formatDate(date: Date): string {
-    return date.toLocaleDateString('fr-BE', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
 
   function isEligibleNow(date: Date): boolean {
     return date.getTime() <= today.getTime();
@@ -30,7 +27,7 @@
           {#if isEligibleNow(date)}
             Dès maintenant
           {:else}
-            {formatDate(date)}
+            {formatDateLabel(date)}
           {/if}
         </span>
       </li>
