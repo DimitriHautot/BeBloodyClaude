@@ -30,11 +30,14 @@
 {/if}
 
 <style>
+  :global(body) {
+    font-family: system-ui, sans-serif;
+  }
+
   main {
     max-width: 640px;
     margin: 0 auto;
     padding: 1.5rem 1rem 4rem;
-    font-family: system-ui, sans-serif;
   }
 
   .top-bar {
