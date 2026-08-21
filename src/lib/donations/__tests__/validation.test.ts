@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { validateNewDonation } from '../validation';
-import type { Donation } from '../types';
+import { DONATION_TYPES, type Donation } from '../types';
 import type { DonorSettings } from '../../settings/storage';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -55,6 +55,19 @@ describe('validateNewDonation', () => {
     const result = validateNewDonation('blood', daysAgo(0), history, belgianSettings);
     expect(result.allowed).toBe(false);
   });
+
+  const sameDayCombinations = DONATION_TYPES.flatMap((existingType) =>
+    DONATION_TYPES.map((newType) => [newType, existingType] as const)
+  );
+
+  it.each(sameDayCombinations)(
+    'rejects a new %s donation on the same day as an existing %s donation',
+    (newType, existingType) => {
+      const history = [donation('1', existingType, daysAgo(0))];
+      const result = validateNewDonation(newType, daysAgo(0), history, belgianSettings);
+      expect(result.allowed).toBe(false);
+    }
+  );
 
   it('throws for a country code with no registered rule set', () => {
     expect(() => validateNewDonation('blood', daysAgo(0), [], { countryCode: 'XX', sex: 'male' })).toThrow();
