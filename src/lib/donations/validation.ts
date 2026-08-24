@@ -2,6 +2,7 @@ import type { Donation, DonationType } from './types';
 import { DONATION_TYPE_LABELS } from './types';
 import type { DonorSettings } from '../settings/storage';
 import { getRuleSet } from '../rules/registry';
+import { parseISODate, today } from '../dates';
 
 export interface DonationValidation {
   allowed: boolean;
@@ -12,6 +13,8 @@ export interface DonationValidation {
  * Validates a candidate donation (type + date) against the donation rule
  * set for the donor's currently selected country (see
  * `src/lib/rules/registry.ts`), given their existing donation history.
+ * A donation date in the future is always rejected, regardless of country
+ * — a donation can only be recorded for today or a past date.
  */
 export function validateNewDonation(
   type: DonationType,
@@ -19,6 +22,10 @@ export function validateNewDonation(
   existingDonations: Donation[],
   donorSettings: DonorSettings
 ): DonationValidation {
+  if (parseISODate(date).getTime() > today().getTime()) {
+    return { allowed: false, reason: 'La date d\'un don ne peut pas être dans le futur.' };
+  }
+
   const ruleSet = getRuleSet(donorSettings.countryCode);
   const allowed = ruleSet.isDonationAllowed(type, date, existingDonations, donorSettings);
 

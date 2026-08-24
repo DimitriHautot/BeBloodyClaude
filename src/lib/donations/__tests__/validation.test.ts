@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { validateNewDonation } from '../validation';
 import { DONATION_TYPES, type Donation } from '../types';
 import type { DonorSettings } from '../../settings/storage';
-import { dateDaysAgo } from '../../../test-support/dateFixtures';
+import { dateDaysAgo, dateDaysFromNow } from '../../../test-support/dateFixtures';
 
 function donation(id: string, type: Donation['type'], date: string): Donation {
   return { id, type, date };
@@ -53,6 +53,22 @@ describe('validateNewDonation', () => {
       expect(result.allowed).toBe(false);
     }
   );
+
+  it('rejects a donation dated in the future, regardless of country rules', () => {
+    const result = validateNewDonation('plasma', dateDaysFromNow(1), [], belgianSettings);
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toMatch(/futur/);
+  });
+
+  it('allows a donation dated today', () => {
+    const result = validateNewDonation('plasma', dateDaysAgo(0), [], belgianSettings);
+    expect(result.allowed).toBe(true);
+  });
+
+  it('allows a donation dated in the past', () => {
+    const result = validateNewDonation('plasma', dateDaysAgo(100), [], belgianSettings);
+    expect(result.allowed).toBe(true);
+  });
 
   it('throws for a country code with no registered rule set', () => {
     expect(() => validateNewDonation('blood', dateDaysAgo(0), [], { countryCode: 'XX', sex: 'male' })).toThrow();
