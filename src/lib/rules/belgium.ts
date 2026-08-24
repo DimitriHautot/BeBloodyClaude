@@ -3,42 +3,54 @@ import { DONATION_TYPES } from '../donations/types';
 import type { DonationRuleSet } from './types';
 import { addDays, parseISODate, today as todayDate } from '../dates';
 
-interface TypeRule {
-  minIntervalDays: number;
+/**
+ * Belgian Red Cross (Croix-Rouge de Belgique) rules, as published on
+ * donneurdesang.be/fr/qui-peut-donner/delai-entre-deux-dons:
+ *
+ * Minimum delay (in days) before a donation of `to` is allowed, given a
+ * previous donation of `from` — CROSS_DELAY_DAYS[from][to]. Values taken
+ * directly from the site's "dernier don / prochain don" matrix (in weeks,
+ * converted to days: 2 sem = 14j, 4 sem = 28j, 12 sem = 84j). Note the
+ * whole-blood-to-whole-blood delay (12 weeks) is the Red Cross's stricter
+ * recommendation, not the 2-month legal minimum also mentioned on the page.
+ */
+const CROSS_DELAY_DAYS: Record<DonationType, Record<DonationType, number>> = {
+  blood: { blood: 84, plasma: 14, platelets: 28 },
+  plasma: { blood: 14, plasma: 14, platelets: 14 },
+  platelets: { blood: 28, plasma: 14, platelets: 28 }
+};
+
+interface QuotaRule {
   maxPerRollingYear: number;
+  /** Donation types that count against this quota (see platelets below). */
+  countedTypes: DonationType[];
 }
 
 /**
- * Belgian Red Cross (Croix-Rouge de Belgique) rules, as published on
- * donneurdesang.be / donneurdeplasma.be:
- * - Whole blood: 2 months (60 days) minimum interval, max 4 donations/year.
- * - Plasma: 2 weeks (14 days) minimum interval, max 23 donations/year.
- * - Platelets: 2 weeks (14 days) minimum interval, max 24 donations/year.
+ * Rolling 365-day annual quotas. Whole blood and plasma each have their own
+ * independent quota. Platelets are a special case: the page states the
+ * platelet quota (24/year) counts whole blood donations too ("incluant les
+ * éventuels dons de sang") — a shared budget, not a platelets-only cap.
  *
- * NOTE: the official sources do not publish an explicit cross-type delay
- * (e.g. how long to wait after a whole blood donation before donating
- * plasma). As a conservative assumption, this implementation treats every
- * past donation — regardless of type — as imposing its own type's minimum
- * interval before ANY subsequent donation. This is deliberately
- * conservative (a whole blood donation blocks other types for 60 days,
- * not just 0) and should be verified against the Red Cross before being
- * relied on for real medical decisions.
+ * Plasma also has a 15 litres/year cap mentioned on the page that isn't
+ * implemented here — we have no donation volume data to check it against.
  */
-const RULES: Record<DonationType, TypeRule> = {
-  blood: { minIntervalDays: 60, maxPerRollingYear: 4 },
-  plasma: { minIntervalDays: 14, maxPerRollingYear: 23 },
-  platelets: { minIntervalDays: 14, maxPerRollingYear: 24 }
+const QUOTA: Record<DonationType, QuotaRule> = {
+  blood: { maxPerRollingYear: 4, countedTypes: ['blood'] },
+  plasma: { maxPerRollingYear: 19, countedTypes: ['plasma'] },
+  platelets: { maxPerRollingYear: 24, countedTypes: ['platelets', 'blood'] }
 };
 
 /**
- * Recovery constraint: the earliest date any new donation could happen,
- * based on ALL past donations (any type). Each donation blocks new
- * donations until `donationDate + minIntervalDays(that donation's type)`.
+ * Recovery constraint: the earliest date a donation of `targetType` would
+ * be allowed, based on ALL past donations (any type). Each past donation
+ * blocks `targetType` until `donationDate + CROSS_DELAY_DAYS[thatType][targetType]`.
  */
-function recoveryConstraintDate(allDonations: Donation[]): Date | null {
+function recoveryConstraintDate(allDonations: Donation[], targetType: DonationType): Date | null {
   let latest: Date | null = null;
   for (const donation of allDonations) {
-    const blockedUntil = addDays(parseISODate(donation.date), RULES[donation.type].minIntervalDays);
+    const delayDays = CROSS_DELAY_DAYS[donation.type][targetType];
+    const blockedUntil = addDays(parseISODate(donation.date), delayDays);
     if (latest === null || blockedUntil > latest) {
       latest = blockedUntil;
     }
@@ -47,19 +59,19 @@ function recoveryConstraintDate(allDonations: Donation[]): Date | null {
 }
 
 /**
- * Rolling 365-day quota constraint for a single donation type: pushes the
- * candidate date forward until fewer than `maxPerRollingYear` donations of
- * that type fall within the trailing 365-day window ending on the
- * candidate date.
+ * Rolling 365-day quota constraint: pushes the candidate date forward until
+ * fewer than `maxPerRollingYear` donations counted for this quota (see
+ * `QuotaRule.countedTypes`) fall within the trailing 365-day window ending
+ * on the candidate date.
  */
-function quotaConstraintDate(donationsOfType: Donation[], rule: TypeRule, candidate: Date): Date {
-  const sortedDates = donationsOfType.map((d) => parseISODate(d.date)).sort((a, b) => a.getTime() - b.getTime());
+function quotaConstraintDate(donationsForQuota: Donation[], maxPerRollingYear: number, candidate: Date): Date {
+  const sortedDates = donationsForQuota.map((d) => parseISODate(d.date)).sort((a, b) => a.getTime() - b.getTime());
 
   let result = candidate;
   for (let i = 0; i < sortedDates.length + 1; i++) {
     const windowStart = addDays(result, -365);
     const inWindow = sortedDates.filter((d) => d > windowStart && d <= result);
-    if (inWindow.length < rule.maxPerRollingYear) {
+    if (inWindow.length < maxPerRollingYear) {
       return result;
     }
     // Push past the oldest donation in the window so it falls outside the
@@ -72,14 +84,14 @@ function quotaConstraintDate(donationsOfType: Donation[], rule: TypeRule, candid
 
 /** Earliest date `type` would be allowed given `allDonations`, with no floor on today. */
 function earliestEligibleDate(type: DonationType, allDonations: Donation[]): Date {
-  const rule = RULES[type];
-  const donationsOfType = allDonations.filter((d) => d.type === type);
+  const quota = QUOTA[type];
+  const donationsForQuota = allDonations.filter((d) => quota.countedTypes.includes(d.type));
 
   // No floor: if there's no blocking history, any date (even far in the
   // past) is a valid candidate to start the quota computation from.
-  const afterRecovery = recoveryConstraintDate(allDonations) ?? new Date(0);
+  const afterRecovery = recoveryConstraintDate(allDonations, type) ?? new Date(0);
 
-  return quotaConstraintDate(donationsOfType, rule, afterRecovery);
+  return quotaConstraintDate(donationsForQuota, quota.maxPerRollingYear, afterRecovery);
 }
 
 export const belgiumRules: DonationRuleSet = {
@@ -102,5 +114,6 @@ export const belgiumRules: DonationRuleSet = {
 };
 
 // Re-exported for tests / other rule sets that want the same shape of data.
-export const belgiumTypeRules = RULES;
+export const belgiumCrossDelayDays = CROSS_DELAY_DAYS;
+export const belgiumQuota = QUOTA;
 export { DONATION_TYPES };
