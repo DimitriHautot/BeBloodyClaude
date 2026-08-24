@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { addDays, formatDateLabel, parseISODate, toISODate, today } from '../dates';
+import { addDays, daysBetween, formatDateLabel, parseISODate, toISODate, today } from '../dates';
 
 const ORIGINAL_TZ = process.env.TZ;
 
@@ -151,6 +151,25 @@ describe('today', () => {
       });
     }
   );
+});
+
+describe('daysBetween', () => {
+  it('returns 0 for the same date', () => {
+    expect(daysBetween(parseISODate('2026-08-21'), parseISODate('2026-08-21'))).toBe(0);
+  });
+
+  it('returns a positive count when `to` is after `from`', () => {
+    expect(daysBetween(parseISODate('2026-08-21'), parseISODate('2026-09-04'))).toBe(14);
+  });
+
+  it('returns a negative count when `to` is before `from`', () => {
+    expect(daysBetween(parseISODate('2026-08-21'), parseISODate('2026-08-11'))).toBe(-10);
+  });
+
+  it('is consistent with addDays', () => {
+    const from = parseISODate('2026-08-21');
+    expect(daysBetween(from, addDays(from, 30))).toBe(30);
+  });
 });
 
 describe('formatDateLabel', () => {

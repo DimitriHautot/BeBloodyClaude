@@ -18,6 +18,11 @@ export function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * DAY_MS);
 }
 
+/** Number of whole days from `from` to `to` (negative if `to` is earlier). */
+export function daysBetween(from: Date, to: Date): number {
+  return Math.round((to.getTime() - from.getTime()) / DAY_MS);
+}
+
 /** Today's date at UTC midnight. */
 export function today(): Date {
   return parseISODate(toISODate(new Date()));

@@ -14,7 +14,7 @@ await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 
-const checkbox = page.locator('.dialog input[type=checkbox]');
+const checkbox = page.locator('.dialog label:has-text("Mode debug") input[type=checkbox]');
 assert.equal(await checkbox.count(), 1, 'expected a "Mode debug" checkbox inside the settings modal');
 assert.equal(await checkbox.isChecked(), false, 'expected debug mode to be off by default');
 
@@ -29,7 +29,7 @@ await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 assert.equal(
-  await page.locator('.dialog input[type=checkbox]').isChecked(),
+  await page.locator('.dialog label:has-text("Mode debug") input[type=checkbox]').isChecked(),
   true,
   'expected debug mode to persist across a reload'
 );
