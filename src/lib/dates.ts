@@ -23,9 +23,20 @@ export function daysBetween(from: Date, to: Date): number {
   return Math.round((to.getTime() - from.getTime()) / DAY_MS);
 }
 
-/** Today's date at UTC midnight. */
+/**
+ * Today's *local* calendar date (represented at UTC midnight, like every
+ * other date in this module, for consistent date math). Unlike every other
+ * date here, this one is deliberately timezone-sensitive: it must reflect
+ * the donor's own calendar day, not a fixed UTC day. A donor east of UTC
+ * (e.g. Belgium, UTC+1/+2) reaches their local midnight — and can become
+ * eligible for a new donation — hours before UTC midnight; using the UTC
+ * calendar day here made the app think "today" hadn't arrived yet for up
+ * to a couple of hours after it locally had, showing a same-day-eligible
+ * donation as still a day away.
+ */
 export function today(): Date {
-  return parseISODate(toISODate(new Date()));
+  const now = new Date();
+  return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 }
 
 /** Formats a date for display, e.g. "21 août 2026". */
