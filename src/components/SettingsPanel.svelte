@@ -27,6 +27,20 @@
     <input type="checkbox" bind:checked={$donorSettings.debugMode} />
     Mode debug
   </label>
+
+  <div class="highlight-upcoming">
+    <label class="checkbox">
+      <input type="checkbox" bind:checked={$donorSettings.highlightUpcoming} />
+      Mise en évidence des dons bientôt possibles
+    </label>
+
+    {#if $donorSettings.highlightUpcoming}
+      <label>
+        Nombre de jours avant le don possible
+        <input type="number" min="1" step="1" bind:value={$donorSettings.highlightUpcomingDays} />
+      </label>
+    {/if}
+  </div>
 </section>
 
 <style>
@@ -43,14 +57,27 @@
     font-size: 0.9rem;
   }
 
-  select {
+  select,
+  input[type='number'] {
     padding: 0.4rem;
     font-size: 1rem;
+  }
+
+  input[type='number'] {
+    width: 5rem;
   }
 
   .checkbox {
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .highlight-upcoming {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
   }
 </style>

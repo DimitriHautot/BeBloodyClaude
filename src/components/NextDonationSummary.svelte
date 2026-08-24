@@ -4,7 +4,7 @@
   import { donations } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
-  import { today as todayDate, formatDateLabel, toISODate } from '../lib/dates';
+  import { today as todayDate, formatDateLabel, toISODate, daysBetween } from '../lib/dates';
 
   interface QuickAddDetail {
     type: DonationType;
@@ -16,13 +16,26 @@
 
   $: ruleSet = getRuleSet($donorSettings.countryCode);
   $: today = todayDate();
-  $: nextDates = DONATION_TYPES.map((type) => ({
-    type,
-    date: ruleSet.computeNextEligibleDate(type, $donations, $donorSettings)
-  }));
+  $: nextDates = DONATION_TYPES.map((type) => {
+    const date = ruleSet.computeNextEligibleDate(type, $donations, $donorSettings);
+    return { type, date, status: status(date) };
+  });
 
   function isEligibleNow(date: Date): boolean {
     return date.getTime() <= today.getTime();
+  }
+
+  /** 'eligible' (green, possible today), 'upcoming' (orange, possible within
+   * the configured window), or 'later' (gray, beyond that window or
+   * highlighting is off). */
+  function status(date: Date): 'eligible' | 'upcoming' | 'later' {
+    if (isEligibleNow(date)) return 'eligible';
+    if ($donorSettings.highlightUpcoming) {
+      const windowDays = $donorSettings.highlightUpcomingDays ?? 14;
+      const daysUntil = daysBetween(today, date);
+      if (daysUntil >= 1 && daysUntil <= windowDays) return 'upcoming';
+    }
+    return 'later';
   }
 
   function handleQuickAdd(type: DonationType) {
@@ -34,17 +47,17 @@
 <section>
   <h2>Prochain don possible</h2>
   <ul>
-    {#each nextDates as { type, date }}
-      <li class:eligible={isEligibleNow(date)}>
+    {#each nextDates as { type, date, status }}
+      <li class:eligible={status === 'eligible'} class:upcoming={status === 'upcoming'}>
         <span class="type">{DONATION_TYPE_LABELS[type]}</span>
         <span class="date">
-          {#if isEligibleNow(date)}
+          {#if status === 'eligible'}
             Dès maintenant
           {:else}
             {formatDateLabel(date)}
           {/if}
         </span>
-        {#if isEligibleNow(date)}
+        {#if status === 'eligible'}
           <button
             class="quick-add"
             on:click={() => handleQuickAdd(type)}
@@ -82,6 +95,10 @@
 
   li.eligible {
     background: #e6f6ea;
+  }
+
+  li.upcoming {
+    background: #fbe6cf;
   }
 
   .type {
