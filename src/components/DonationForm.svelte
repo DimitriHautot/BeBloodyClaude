@@ -88,8 +88,8 @@
 <style>
   form {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
     margin-bottom: 2rem;
     padding: 1rem;
@@ -98,7 +98,6 @@
   }
 
   h2 {
-    flex-basis: 100%;
     font-size: 1.1rem;
     margin: 0 0 0.5rem;
   }
@@ -159,7 +158,6 @@
   }
 
   .error {
-    flex-basis: 100%;
     margin: 0;
     color: #c00;
     font-size: 0.9rem;
