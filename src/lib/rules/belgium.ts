@@ -102,6 +102,9 @@ export const belgiumRules: DonationRuleSet = {
     const earliest = earliestEligibleDate(type, allDonations);
     return earliest > today ? earliest : today;
   },
+  earliestPossibleDate(type: DonationType, allDonations: Donation[]): Date {
+    return earliestEligibleDate(type, allDonations);
+  },
   isDonationAllowed(type: DonationType, date: string, allDonations: Donation[]): boolean {
     const candidate = parseISODate(date);
     // Donations on or before the candidate date have already happened by

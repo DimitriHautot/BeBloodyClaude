@@ -29,11 +29,21 @@ await bloodRow.locator('button.quick-add').click();
 await page.waitForTimeout(150);
 
 // Now pick a date only 10 days after the existing donation — well short of
-// the 84-day blood interval — which the backend validation must still reject.
+// the 84-day blood interval — which the backend validation must still
+// reject. The date field's own `min` (derived from the same rules) would
+// normally block this natively before it even reaches JS; bypass it here
+// (form.noValidate) to confirm the app-level validation is independently
+// correct too, not just relying on the native constraint.
 const tenDaysAfterPreviousDonation = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
   .toISOString()
   .slice(0, 10);
-await page.fill('.dialog input[type=date]', tenDaysAfterPreviousDonation);
+await page.evaluate((value) => {
+  const form = document.querySelector('.dialog form');
+  const input = document.querySelector('.dialog input[type=date]');
+  form.noValidate = true;
+  const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+  nativeSetter.call(input, value);
+}, tenDaysAfterPreviousDonation);
 await page.click('.dialog button[type=submit]');
 await page.waitForTimeout(200);
 

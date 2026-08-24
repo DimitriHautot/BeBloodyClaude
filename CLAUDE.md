@@ -91,6 +91,17 @@ ne tenant compte que des dons antérieurs ou du même jour (`date <=
 candidat`) dans l'historique. Toute nouvelle implémentation de pays doit
 aussi fournir cette méthode.
 
+**Borne minimale pour un sélecteur de date** : `DonationRuleSet` expose
+aussi `earliestPossibleDate(type, allDonations, donorSettings)`, utilisé
+par le bouton « + » (`NextDonationSummary.svelte` → `App.svelte` →
+`DonationForm.svelte`, prop `minDate`) pour donner à l'input de date une
+borne `min` en plus de la borne `max` (aujourd'hui). C'est la même logique
+que `computeNextEligibleDate` mais **sans le plancher à aujourd'hui** : si
+le délai est déjà écoulé, elle peut renvoyer une date passée (ex. « il y a
+16 jours ») plutôt qu'aujourd'hui, ce qui permet de restreindre le picker
+aux seules dates passées valides. Toute nouvelle implémentation de pays
+doit aussi fournir cette méthode.
+
 ### Règles belges implémentées (`belgium.ts`)
 
 Basées sur la page officielle de la Croix-Rouge de Belgique

@@ -10,6 +10,12 @@
 
   let showSettings = false;
   let quickAddType: DonationType | null = null;
+  let quickAddMinDate: string | null = null;
+
+  function closeQuickAdd() {
+    quickAddType = null;
+    quickAddMinDate = null;
+  }
 </script>
 
 <main>
@@ -18,7 +24,12 @@
     <AppMenu on:open-settings={() => (showSettings = true)} />
   </div>
 
-  <NextDonationSummary on:quick-add={(event) => (quickAddType = event.detail)} />
+  <NextDonationSummary
+    on:quick-add={(event) => {
+      quickAddType = event.detail.type;
+      quickAddMinDate = event.detail.minDate;
+    }}
+  />
   {#if $donorSettings.debugMode}
     <DonationForm />
   {/if}
@@ -31,9 +42,9 @@
   </Modal>
 {/if}
 
-{#if quickAddType}
-  <Modal title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType]}`} on:close={() => (quickAddType = null)}>
-    <DonationForm fixedType={quickAddType} on:added={() => (quickAddType = null)} />
+{#if quickAddType && quickAddMinDate}
+  <Modal title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType]}`} on:close={closeQuickAdd}>
+    <DonationForm fixedType={quickAddType} minDate={quickAddMinDate} on:added={closeQuickAdd} />
   </Modal>
 {/if}
 

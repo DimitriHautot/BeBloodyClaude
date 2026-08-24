@@ -4,9 +4,15 @@
   import { donations } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
-  import { today as todayDate, formatDateLabel } from '../lib/dates';
+  import { today as todayDate, formatDateLabel, toISODate } from '../lib/dates';
 
-  const dispatch = createEventDispatcher<{ 'quick-add': DonationType }>();
+  interface QuickAddDetail {
+    type: DonationType;
+    /** Earliest date (ISO YYYY-MM-DD) this type could be backdated to. */
+    minDate: string;
+  }
+
+  const dispatch = createEventDispatcher<{ 'quick-add': QuickAddDetail }>();
 
   $: ruleSet = getRuleSet($donorSettings.countryCode);
   $: today = todayDate();
@@ -17,6 +23,11 @@
 
   function isEligibleNow(date: Date): boolean {
     return date.getTime() <= today.getTime();
+  }
+
+  function handleQuickAdd(type: DonationType) {
+    const minDate = toISODate(ruleSet.earliestPossibleDate(type, $donations, $donorSettings));
+    dispatch('quick-add', { type, minDate });
   }
 </script>
 
@@ -36,7 +47,7 @@
         {#if isEligibleNow(date)}
           <button
             class="quick-add"
-            on:click={() => dispatch('quick-add', type)}
+            on:click={() => handleQuickAdd(type)}
             aria-label={`Ajouter un don de ${DONATION_TYPE_LABELS[type]}`}
           >
             +

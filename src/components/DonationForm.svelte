@@ -8,6 +8,10 @@
   /** When set, the donation type is fixed to this value and not user-editable
    * (used by the "+" quick-add shortcut from NextDonationSummary). */
   export let fixedType: DonationType | null = null;
+  /** Earliest date (ISO YYYY-MM-DD) selectable in the date field, i.e. the
+   * lower bound complementing the upper bound (today — a donation can't be
+   * in the future). Optional so the form still works without it. */
+  export let minDate: string | null = null;
 
   const dispatch = createEventDispatcher<{ added: void }>();
 
@@ -69,6 +73,7 @@
       bind:this={dateInputEl}
       autocomplete="off"
       max={toISODate(new Date())}
+      min={minDate}
       required
     />
   </label>
