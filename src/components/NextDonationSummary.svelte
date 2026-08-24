@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onDestroy } from 'svelte';
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { donations } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
@@ -14,22 +14,55 @@
 
   const dispatch = createEventDispatcher<{ 'quick-add': QuickAddDetail }>();
 
+  // `todayDate()` has no reactive dependency of its own, so without this
+  // tick it would only ever be evaluated once, at mount — if the app stays
+  // open across a UTC midnight, `today` (and everything derived from it)
+  // would silently go stale. Bumping this counter at each UTC midnight
+  // forces a re-evaluation.
+  let midnightTick = 0;
+  let midnightTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function scheduleMidnightRefresh() {
+    const now = new Date();
+    const nextUTCMidnight = Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() + 1,
+      0,
+      0,
+      0
+    );
+    midnightTimer = setTimeout(() => {
+      midnightTick += 1;
+      scheduleMidnightRefresh();
+    }, nextUTCMidnight - now.getTime());
+  }
+  scheduleMidnightRefresh();
+  onDestroy(() => clearTimeout(midnightTimer));
+
+  /** Ignores `tick`; taking it as a parameter makes it a reactive
+   * dependency so `today` (below) is re-evaluated when it changes. */
+  function currentDate(tick: number): Date {
+    void tick;
+    return todayDate();
+  }
+
+  $: today = currentDate(midnightTick);
   $: ruleSet = getRuleSet($donorSettings.countryCode);
-  $: today = todayDate();
   $: nextDates = DONATION_TYPES.map((type) => {
     const date = ruleSet.computeNextEligibleDate(type, $donations, $donorSettings);
-    return { type, date, status: status(date) };
+    return { type, date, status: status(date, today) };
   });
 
-  function isEligibleNow(date: Date): boolean {
+  function isEligibleNow(date: Date, today: Date): boolean {
     return date.getTime() <= today.getTime();
   }
 
   /** 'eligible' (green, possible today), 'upcoming' (orange, possible within
    * the configured window), or 'later' (gray, beyond that window or
    * highlighting is off). */
-  function status(date: Date): 'eligible' | 'upcoming' | 'later' {
-    if (isEligibleNow(date)) return 'eligible';
+  function status(date: Date, today: Date): 'eligible' | 'upcoming' | 'later' {
+    if (isEligibleNow(date, today)) return 'eligible';
     if ($donorSettings.highlightUpcoming) {
       const windowDays = $donorSettings.highlightUpcomingDays ?? 14;
       const daysUntil = daysBetween(today, date);
