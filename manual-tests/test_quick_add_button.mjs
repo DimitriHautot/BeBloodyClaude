@@ -1,4 +1,5 @@
-// Requires a dev server already running at http://127.0.0.1:5176 (npx vite --port 5176).
+// Requires a dev server already running at http://127.0.0.1:$PORT (defaults
+// to 5176; run via manual-tests/run.sh, or set the PORT env var yourself).
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -7,7 +8,7 @@ const page = await browser.newPage();
 page.on('pageerror', (err) => {
   throw new Error(`Page error: ${err.message}`);
 });
-await page.goto('http://127.0.0.1:5176/');
+await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
 await page.waitForTimeout(400);
 
 // With an empty history all 3 types are eligible now, so all 3 "+" buttons show.

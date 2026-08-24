@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Runs the full manual-tests suite against a local dev server.
 #
-#   1. Start the dev server (127.0.0.1:5176, matching what every script expects).
+#   1. Start the dev server (127.0.0.1:$PORT, default 5176 — override by
+#      setting PORT in the environment).
 #   2. Run every manual-tests/*.mjs script with Node.
 #   3. Stop the dev server.
 set -uo pipefail
@@ -9,7 +10,8 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 HOST=127.0.0.1
-PORT=5176
+PORT="${PORT:-5176}"
+export PORT
 
 setsid npx vite --host "$HOST" --port "$PORT" &
 SERVER_PID=$!
