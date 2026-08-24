@@ -3,7 +3,7 @@
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
-  import { toISODate } from '../lib/dates';
+  import { toISODate, today } from '../lib/dates';
 
   /** When set, the donation type is fixed to this value and not user-editable
    * (used by the "+" quick-add shortcut from NextDonationSummary). */
@@ -16,7 +16,7 @@
   const dispatch = createEventDispatcher<{ added: void }>();
 
   let type: DonationType = fixedType ?? 'blood';
-  let date = toISODate(new Date());
+  let date = toISODate(today());
   let error: string | null = null;
   let formEl: HTMLFormElement;
   let dateInputEl: HTMLInputElement;
@@ -72,7 +72,7 @@
       bind:value={date}
       bind:this={dateInputEl}
       autocomplete="off"
-      max={toISODate(new Date())}
+      max={toISODate(today())}
       min={minDate}
       required
     />

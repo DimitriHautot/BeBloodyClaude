@@ -126,31 +126,36 @@ describe('today', () => {
     vi.useRealTimers();
   });
 
-  it('returns UTC midnight of the current UTC calendar day', () => {
+  it('returns UTC midnight of the current local calendar day', () => {
     vi.setSystemTime(new Date('2026-08-21T14:32:00Z'));
-    expect(toISODate(today())).toBe('2026-08-21');
-    expect(today().getUTCHours()).toBe(0);
+    withTZ('UTC', () => {
+      expect(toISODate(today())).toBe('2026-08-21');
+      expect(today().getUTCHours()).toBe(0);
+    });
   });
 
-  it.each(TIMEZONES)(
-    'returns the same UTC calendar day regardless of the machine timezone, just after UTC midnight (%s)',
-    (tz) => {
-      vi.setSystemTime(new Date('2026-08-21T00:15:00Z'));
-      withTZ(tz, () => {
-        expect(toISODate(today())).toBe('2026-08-21');
-      });
-    }
-  );
-
-  it.each(TIMEZONES)(
-    'returns the same UTC calendar day regardless of the machine timezone, just before UTC midnight (%s)',
-    (tz) => {
-      vi.setSystemTime(new Date('2026-08-21T23:45:00Z'));
-      withTZ(tz, () => {
-        expect(toISODate(today())).toBe('2026-08-21');
-      });
-    }
-  );
+  // Regression test: today() used to return the UTC calendar day, which is
+  // wrong for a donor east of UTC — they reach local midnight (and can
+  // become eligible for a new donation) hours before UTC midnight, so the
+  // app kept showing "tomorrow" for something that was already possible
+  // today. today() must track the LOCAL calendar day instead, which means
+  // it now legitimately differs across timezones for the same instant.
+  it.each([
+    ['UTC', '2026-08-21T23:45:00Z', '2026-08-21'],
+    ['Pacific/Kiritimati', '2026-08-21T09:45:00Z', '2026-08-21'], // 23:45 local (UTC+14)
+    ['Pacific/Kiritimati', '2026-08-21T10:15:00Z', '2026-08-22'], // 00:15 local (UTC+14): local day already advanced
+    ['Etc/GMT+12', '2026-08-21T11:45:00Z', '2026-08-20'], // 23:45 local (UTC-12): local day still lags
+    ['Etc/GMT+12', '2026-08-21T12:15:00Z', '2026-08-21'], // 00:15 local (UTC-12)
+    ['Asia/Tokyo', '2026-08-21T14:45:00Z', '2026-08-21'], // 23:45 local (UTC+9)
+    ['Asia/Tokyo', '2026-08-21T15:15:00Z', '2026-08-22'], // 00:15 local (UTC+9): local day already advanced
+    ['America/New_York', '2026-08-22T03:45:00Z', '2026-08-21'], // 23:45 local (UTC-4, EDT): local day still lags
+    ['America/New_York', '2026-08-22T04:15:00Z', '2026-08-22'] // 00:15 local (UTC-4, EDT)
+  ])('reflects the local calendar day, not the UTC one, in %s at %s', (tz, instant, expected) => {
+    vi.setSystemTime(new Date(instant));
+    withTZ(tz, () => {
+      expect(toISODate(today())).toBe(expected);
+    });
+  });
 });
 
 describe('daysBetween', () => {
