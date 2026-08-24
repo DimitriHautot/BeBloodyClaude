@@ -1,10 +1,21 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
   import { toISODate } from '../lib/dates';
 
-  let type: DonationType = 'blood';
+  /** When set, the donation type is fixed to this value and not user-editable
+   * (used by the "+" quick-add shortcut from NextDonationSummary). */
+  export let fixedType: DonationType | null = null;
+  /** Earliest date (ISO YYYY-MM-DD) selectable in the date field, i.e. the
+   * lower bound complementing the upper bound (today — a donation can't be
+   * in the future). Optional so the form still works without it. */
+  export let minDate: string | null = null;
+
+  const dispatch = createEventDispatcher<{ added: void }>();
+
+  let type: DonationType = fixedType ?? 'blood';
   let date = toISODate(new Date());
   let error: string | null = null;
   let formEl: HTMLFormElement;
@@ -21,26 +32,38 @@
     // where the element's own value could fail to update to match what
     // was visually selected.
     const checkedRadio = formEl.querySelector<HTMLInputElement>('input[name="donation-type"]:checked');
-    const currentType = (checkedRadio?.value ?? type) as DonationType;
+    const currentType = fixedType ?? ((checkedRadio?.value ?? type) as DonationType);
     const currentDate = dateInputEl.value;
 
     const result = addDonation({ type: currentType, date: currentDate }, $donorSettings);
     error = result.allowed ? null : (result.reason ?? null);
+    if (result.allowed) {
+      dispatch('added');
+    }
   }
 </script>
 
 <form on:submit|preventDefault={handleSubmit} bind:this={formEl}>
-  <h2>Ajouter un don</h2>
+  {#if !fixedType}
+    <h2>Ajouter un don</h2>
+  {/if}
 
-  <fieldset>
-    <legend>Type de don</legend>
-    {#each DONATION_TYPES as t}
-      <label class="radio">
-        <input type="radio" name="donation-type" value={t} bind:group={type} />
-        {DONATION_TYPE_LABELS[t]}
-      </label>
-    {/each}
-  </fieldset>
+  {#if fixedType}
+    <div class="fixed-type">
+      <span class="fixed-type-label">Type de don</span>
+      <span class="fixed-type-value">{DONATION_TYPE_LABELS[fixedType]}</span>
+    </div>
+  {:else}
+    <fieldset>
+      <legend>Type de don</legend>
+      {#each DONATION_TYPES as t}
+        <label class="radio">
+          <input type="radio" name="donation-type" value={t} bind:group={type} />
+          {DONATION_TYPE_LABELS[t]}
+        </label>
+      {/each}
+    </fieldset>
+  {/if}
 
   <label>
     Date
@@ -50,6 +73,7 @@
       bind:this={dateInputEl}
       autocomplete="off"
       max={toISODate(new Date())}
+      min={minDate}
       required
     />
   </label>
@@ -106,6 +130,21 @@
     align-items: center;
     gap: 0.4rem;
     font-weight: normal;
+  }
+
+  .fixed-type {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+  }
+
+  .fixed-type-label {
+    color: #666;
+  }
+
+  .fixed-type-value {
+    font-weight: 600;
   }
 
   input[type='date'] {

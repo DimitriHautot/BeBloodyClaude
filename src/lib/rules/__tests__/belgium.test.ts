@@ -82,6 +82,33 @@ describe('belgiumRules.computeNextEligibleDate', () => {
   });
 });
 
+describe('belgiumRules.earliestPossibleDate', () => {
+  it('is not floored to today — with no history, it can be arbitrarily far in the past', () => {
+    const earliest = belgiumRules.earliestPossibleDate('blood', [], settings);
+    // No constraint at all: the epoch is used internally as "no floor".
+    expect(earliest.getTime()).toBeLessThan(new Date('2000-01-01').getTime());
+  });
+
+  it('returns a date in the past once the minimum interval has already elapsed, unlike computeNextEligibleDate', () => {
+    const history = [donation('1', 'blood', dateDaysAgo(100))];
+    const earliest = belgiumRules.earliestPossibleDate('blood', history, settings);
+    // 100 days ago + 84-day interval = 16 days ago, still in the past.
+    expect(toISODate(earliest)).toBe(dateDaysAgo(16));
+
+    // computeNextEligibleDate floors the very same computation to today.
+    const next = belgiumRules.computeNextEligibleDate('blood', history, settings);
+    expect(toISODate(next)).toBe(dateDaysFromNow(0));
+  });
+
+  it('matches computeNextEligibleDate when the earliest date is still in the future', () => {
+    const history = [donation('1', 'blood', dateDaysAgo(10))];
+    const earliest = belgiumRules.earliestPossibleDate('blood', history, settings);
+    const next = belgiumRules.computeNextEligibleDate('blood', history, settings);
+    expect(toISODate(earliest)).toBe(toISODate(next));
+    expect(toISODate(earliest)).toBe(dateDaysFromNow(74));
+  });
+});
+
 describe('belgiumRules.isDonationAllowed — cross-type delay matrix', () => {
   // [fromType, toType, delayDays] — see donneurdesang.be/fr/qui-peut-donner/delai-entre-deux-dons
   const matrix: [DonationType, DonationType, number][] = [

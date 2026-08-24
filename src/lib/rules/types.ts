@@ -26,6 +26,19 @@ export interface DonationRuleSet {
     donorSettings: DonorSettings
   ): Date;
   /**
+   * Earliest date a donation of `type` would be allowed given
+   * `allDonations`, with NO floor on today — unlike
+   * `computeNextEligibleDate`, this can return a date in the past. Used to
+   * set the lower bound (`min`) on a date picker for recording a donation,
+   * alongside the upper bound (today, since a donation can't be in the
+   * future).
+   */
+  earliestPossibleDate(
+    type: DonationType,
+    allDonations: Donation[],
+    donorSettings: DonorSettings
+  ): Date;
+  /**
    * Whether a donation of `type` on `date` (ISO YYYY-MM-DD) would be
    * allowed given the donations that happened strictly before `date` in
    * `allDonations`. Unlike `computeNextEligibleDate`, this is not floored

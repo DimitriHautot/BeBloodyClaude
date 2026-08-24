@@ -6,8 +6,16 @@
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
   import { donorSettings } from './lib/settings/storage';
+  import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
 
   let showSettings = false;
+  let quickAddType: DonationType | null = null;
+  let quickAddMinDate: string | null = null;
+
+  function closeQuickAdd() {
+    quickAddType = null;
+    quickAddMinDate = null;
+  }
 </script>
 
 <main>
@@ -16,7 +24,12 @@
     <AppMenu on:open-settings={() => (showSettings = true)} />
   </div>
 
-  <NextDonationSummary />
+  <NextDonationSummary
+    on:quick-add={(event) => {
+      quickAddType = event.detail.type;
+      quickAddMinDate = event.detail.minDate;
+    }}
+  />
   {#if $donorSettings.debugMode}
     <DonationForm />
   {/if}
@@ -26,6 +39,12 @@
 {#if showSettings}
   <Modal title="Paramètres" on:close={() => (showSettings = false)}>
     <SettingsPanel />
+  </Modal>
+{/if}
+
+{#if quickAddType && quickAddMinDate}
+  <Modal title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType]}`} on:close={closeQuickAdd}>
+    <DonationForm fixedType={quickAddType} minDate={quickAddMinDate} on:added={closeQuickAdd} />
   </Modal>
 {/if}
 
