@@ -6,8 +6,10 @@
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
   import { donorSettings } from './lib/settings/storage';
+  import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
 
   let showSettings = false;
+  let quickAddType: DonationType | null = null;
 </script>
 
 <main>
@@ -16,7 +18,7 @@
     <AppMenu on:open-settings={() => (showSettings = true)} />
   </div>
 
-  <NextDonationSummary />
+  <NextDonationSummary on:quick-add={(event) => (quickAddType = event.detail)} />
   {#if $donorSettings.debugMode}
     <DonationForm />
   {/if}
@@ -26,6 +28,12 @@
 {#if showSettings}
   <Modal title="Paramètres" on:close={() => (showSettings = false)}>
     <SettingsPanel />
+  </Modal>
+{/if}
+
+{#if quickAddType}
+  <Modal title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType]}`} on:close={() => (quickAddType = null)}>
+    <DonationForm fixedType={quickAddType} on:added={() => (quickAddType = null)} />
   </Modal>
 {/if}
 
