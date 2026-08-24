@@ -20,4 +20,8 @@ export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
   highlightUpcomingDays: 14
 };
 
-export const donorSettings = persisted<DonorSettings>('donorSettings', DEFAULT_DONOR_SETTINGS);
+export const donorSettings = persisted<DonorSettings>(
+  'donorSettings',
+  DEFAULT_DONOR_SETTINGS,
+  (stored) => ({ ...DEFAULT_DONOR_SETTINGS, ...stored })
+);
