@@ -44,7 +44,14 @@
 
   <label>
     Date
-    <input type="date" bind:value={date} bind:this={dateInputEl} autocomplete="off" required />
+    <input
+      type="date"
+      bind:value={date}
+      bind:this={dateInputEl}
+      autocomplete="off"
+      max={toISODate(new Date())}
+      required
+    />
   </label>
 
   <button type="submit">Ajouter</button>
