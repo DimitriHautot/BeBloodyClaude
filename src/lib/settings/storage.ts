@@ -23,6 +23,8 @@ export interface DonorSettings {
   highlightUpcomingDays?: number;
   /** Which donation types this donor can give. All true by default. */
   allowedDonationTypes?: Record<DonationType, boolean>;
+  /** Whether the donor opted into daily donation-status notifications on this device. */
+  notificationsEnabled?: boolean;
 }
 
 export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
@@ -31,7 +33,8 @@ export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
   debugMode: false,
   highlightUpcoming: false,
   highlightUpcomingDays: 14,
-  allowedDonationTypes: { blood: true, plasma: true, platelets: true }
+  allowedDonationTypes: { blood: true, plasma: true, platelets: true },
+  notificationsEnabled: false
 };
 
 export const donorSettings = persisted<DonorSettings>(

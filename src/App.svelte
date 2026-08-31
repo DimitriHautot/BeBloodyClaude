@@ -1,12 +1,21 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import AppMenu from './components/AppMenu.svelte';
   import Modal from './components/Modal.svelte';
   import DonationForm from './components/DonationForm.svelte';
   import DonationList from './components/DonationList.svelte';
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
+  import Toast from './components/Toast.svelte';
   import { donorSettings, getAllowedTypes } from './lib/settings/storage';
   import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
+  import {
+    hasNotificationPermission,
+    notificationsSupported,
+    registerNotificationsServiceWorker,
+    runDailyCheckIfDue
+  } from './lib/notifications/runner';
+  import { scheduleDailyChecks, isPast8amLocal } from './lib/notifications/scheduler';
 
   let showSettings = false;
   let quickAddType: DonationType | null = null;
@@ -22,6 +31,41 @@
   // free selection.
   $: allowedTypes = getAllowedTypes($donorSettings);
   $: soleAllowedType = allowedTypes.length === 1 ? allowedTypes[0] : null;
+
+  // Runs the daily 8am notification check for as long as the app stays open
+  // (see scheduler.ts for why this can't reliably run while the app is
+  // closed, absent a backend to push a wake-up) — active only once the
+  // donor has opted in AND the browser actually granted permission (it can
+  // be revoked externally after the donor enabled it, e.g. via browser
+  // site settings).
+  let cancelScheduler: (() => void) | null = null;
+
+  $: notificationsActive = notificationsSupported() && $donorSettings.notificationsEnabled && hasNotificationPermission();
+
+  $: if (notificationsActive) {
+    startNotifications();
+  } else {
+    stopNotifications();
+  }
+
+  function startNotifications() {
+    if (cancelScheduler) return;
+    registerNotificationsServiceWorker();
+    if (isPast8amLocal(new Date())) {
+      // Catches a check that was still due for today but missed because the
+      // app wasn't open at 8am — scheduleDailyChecks below only fires while
+      // the app stays open across that moment.
+      runDailyCheckIfDue();
+    }
+    cancelScheduler = scheduleDailyChecks(runDailyCheckIfDue);
+  }
+
+  function stopNotifications() {
+    cancelScheduler?.();
+    cancelScheduler = null;
+  }
+
+  onDestroy(stopNotifications);
 </script>
 
 <main>
@@ -53,6 +97,8 @@
     <DonationForm fixedType={quickAddType} minDate={quickAddMinDate} on:added={closeQuickAdd} />
   </Modal>
 {/if}
+
+<Toast />
 
 <style>
   :global(body) {

@@ -4,7 +4,8 @@
   import { donations } from '../lib/donations/storage';
   import { donorSettings, getAllowedTypes } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
-  import { today as todayDate, formatDateLabel, toISODate, daysBetween } from '../lib/dates';
+  import { computeDonationStatus } from '../lib/donations/status';
+  import { today as todayDate, formatDateLabel, toISODate } from '../lib/dates';
 
   interface QuickAddDetail {
     type: DonationType;
@@ -51,25 +52,9 @@
   $: ruleSet = getRuleSet($donorSettings.countryCode);
   $: nextDates = getAllowedTypes($donorSettings).map((type) => {
     const date = ruleSet.computeNextEligibleDate(type, $donations, $donorSettings);
-    return { type, date, status: status(date, today) };
+    const status = computeDonationStatus(type, $donations, $donorSettings, today);
+    return { type, date, status };
   });
-
-  function isEligibleNow(date: Date, today: Date): boolean {
-    return date.getTime() <= today.getTime();
-  }
-
-  /** 'eligible' (green, possible today), 'upcoming' (orange, possible within
-   * the configured window), or 'later' (gray, beyond that window or
-   * highlighting is off). */
-  function status(date: Date, today: Date): 'eligible' | 'upcoming' | 'later' {
-    if (isEligibleNow(date, today)) return 'eligible';
-    if ($donorSettings.highlightUpcoming) {
-      const windowDays = $donorSettings.highlightUpcomingDays ?? 14;
-      const daysUntil = daysBetween(today, date);
-      if (daysUntil >= 1 && daysUntil <= windowDays) return 'upcoming';
-    }
-    return 'later';
-  }
 
   function handleQuickAdd(type: DonationType) {
     const minDate = toISODate(ruleSet.earliestPossibleDate(type, $donations, $donorSettings));
