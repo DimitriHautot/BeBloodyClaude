@@ -5,7 +5,7 @@ import { dateDaysAgo, dateDaysFromNow } from '../../../test-support/dateFixtures
 import { toISODate } from '../../dates';
 
 function donation(id: string, type: Donation['type'], date: string): Donation {
-  return { id, type, date };
+  return { id, type, date, countryCode: 'BE' };
 }
 
 const settings = { countryCode: 'BE', sex: 'male' as const };

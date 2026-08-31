@@ -3,7 +3,12 @@ import type { Donation, DonationType } from './types';
 import type { DonorSettings } from '../settings/storage';
 import { validateNewDonation, type DonationValidation } from './validation';
 
-export const donations = persisted<Donation[]>('donations', []);
+export const donations = persisted<Donation[]>('donations', [], (stored) =>
+  // Donations recorded before countryCode was tracked per-donation predate
+  // support for any country but Belgium, so that's the only value they
+  // could have applied under.
+  stored.map((donation) => (donation.countryCode ? donation : { ...donation, countryCode: 'BE' }))
+);
 
 /**
  * Validates the candidate donation against the rules of the donor's
@@ -20,7 +25,12 @@ export function addDonation(
     result = validateNewDonation(input.type, input.date, list, donorSettings);
     if (!result.allowed) return list;
 
-    const donation: Donation = { id: crypto.randomUUID(), type: input.type, date: input.date };
+    const donation: Donation = {
+      id: crypto.randomUUID(),
+      type: input.type,
+      date: input.date,
+      countryCode: donorSettings.countryCode
+    };
     return [...list, donation].sort((a, b) => a.date.localeCompare(b.date));
   });
 

@@ -5,7 +5,7 @@ import type { DonorSettings } from '../../settings/storage';
 import { dateDaysAgo, dateDaysFromNow } from '../../../test-support/dateFixtures';
 
 function donation(id: string, type: Donation['type'], date: string): Donation {
-  return { id, type, date };
+  return { id, type, date, countryCode: 'BE' };
 }
 
 const belgianSettings: DonorSettings = { countryCode: 'BE', sex: 'male' };
