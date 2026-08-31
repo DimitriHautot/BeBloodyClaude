@@ -39,6 +39,8 @@
     </select>
   </label>
 
+  <hr />
+
   <div class="allowed-types">
     <span class="allowed-types-legend">Types de dons possibles</span>
     {#each DONATION_TYPES as type}
@@ -55,11 +57,6 @@
     {/each}
   </div>
 
-  <label class="checkbox">
-    <input type="checkbox" bind:checked={$donorSettings.debugMode} />
-    Mode debug
-  </label>
-
   <div class="highlight-upcoming">
     <label class="checkbox">
       <input type="checkbox" bind:checked={$donorSettings.highlightUpcoming} />
@@ -73,6 +70,13 @@
       </label>
     {/if}
   </div>
+
+  <hr />
+
+  <label class="checkbox">
+    <input type="checkbox" bind:checked={$donorSettings.debugMode} />
+    Mode debug
+  </label>
 </section>
 
 <style>
@@ -121,5 +125,12 @@
 
   .allowed-types-legend {
     font-size: 0.9rem;
+  }
+
+  hr {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 0;
   }
 </style>
