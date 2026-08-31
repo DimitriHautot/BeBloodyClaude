@@ -2,6 +2,8 @@
   import { donorSettings, getAllowedTypes, getAllowedTypesRecord } from '../lib/settings/storage';
   import { ruleSetRegistry } from '../lib/rules/registry';
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
+  import { notificationsSupported } from '../lib/notifications/runner';
+  import { showToast } from '../lib/toast';
 
   const countries = Object.values(ruleSetRegistry);
 
@@ -18,6 +20,34 @@
       ...settings,
       allowedDonationTypes: { ...getAllowedTypesRecord(settings), [type]: checked }
     }));
+  }
+
+  let notificationsCheckboxEl: HTMLInputElement;
+
+  async function toggleNotifications(checked: boolean) {
+    if (!checked) {
+      donorSettings.update((settings) => ({ ...settings, notificationsEnabled: false }));
+      return;
+    }
+
+    if (!notificationsSupported()) {
+      showToast('Les notifications ne sont pas prises en charge sur cet appareil.');
+      notificationsCheckboxEl.checked = false;
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      donorSettings.update((settings) => ({ ...settings, notificationsEnabled: true }));
+    } else {
+      showToast("Refus de l'utilisateur");
+      // The checkbox was already flipped to checked by the browser as part
+      // of the user's click, before this async permission prompt resolved.
+      // $donorSettings.notificationsEnabled never became true, so Svelte's
+      // `checked={...}` binding below has no value change to react to and
+      // won't undo that — reset the DOM element directly instead.
+      notificationsCheckboxEl.checked = false;
+    }
   }
 </script>
 
@@ -69,6 +99,22 @@
         <input type="number" min="1" step="1" bind:value={$donorSettings.highlightUpcomingDays} />
       </label>
     {/if}
+  </div>
+
+  <div class="notifications">
+    <label class="checkbox">
+      <input
+        type="checkbox"
+        checked={$donorSettings.notificationsEnabled ?? false}
+        bind:this={notificationsCheckboxEl}
+        on:change={(event) => toggleNotifications(event.currentTarget.checked)}
+      />
+      Autoriser les notifications sur cet appareil
+    </label>
+    <p class="notifications-explanation">
+      En cas d'accord, l'application émettra une notification lorsqu'un don sera bientôt possible ou possible dès
+      maintenant.
+    </p>
   </div>
 
   <hr />
@@ -132,5 +178,17 @@
     border: none;
     border-top: 1px solid #eee;
     margin: 0;
+  }
+
+  .notifications {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .notifications-explanation {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
   }
 </style>
