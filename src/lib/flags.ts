@@ -6,7 +6,7 @@ function getFlag(countryCode: string): string {
     const codeMaj = countryCode.toUpperCase();
 
     if (codeMaj.length !== 2) {
-        throw new Error("Le code pays doit contenir exactement 2 lettres.");
+        throw new Error("The country code must contain exactly 2 letters.");
     }
 
     // U+1F1E6 (A) is the offset 0x1F1E6 since character 'A' (65)
