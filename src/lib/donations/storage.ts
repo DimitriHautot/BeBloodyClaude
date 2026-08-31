@@ -20,7 +20,12 @@ export function addDonation(
     result = validateNewDonation(input.type, input.date, list, donorSettings);
     if (!result.allowed) return list;
 
-    const donation: Donation = { id: crypto.randomUUID(), type: input.type, date: input.date };
+    const donation: Donation = {
+      id: crypto.randomUUID(),
+      type: input.type,
+      date: input.date,
+      countryCode: donorSettings.countryCode
+    };
     return [...list, donation].sort((a, b) => a.date.localeCompare(b.date));
   });
 
