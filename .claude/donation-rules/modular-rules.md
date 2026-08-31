@@ -48,4 +48,4 @@ aux seules dates passées valides. Toute nouvelle implémentation de pays
 doit aussi fournir cette méthode.
 
 ## Règles par pays
-@.claude/donation-rules/belgium.md
+@./belgium.md
