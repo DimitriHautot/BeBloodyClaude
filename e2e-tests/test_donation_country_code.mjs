@@ -1,5 +1,5 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
-// to 5176; run via manual-tests/run.sh, or set the PORT env var yourself).
+// to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 //
 // Each donation is stamped with the ISO country code of the rule set that
 // was active when it was recorded (the donor's current DonorSettings.countryCode),
