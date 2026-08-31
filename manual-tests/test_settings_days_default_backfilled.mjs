@@ -1,5 +1,5 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
-// to 5176; run via manual-tests/run.sh, or set the PORT env var yourself).
+// to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 //
 // Regression test: donorSettings stored before highlightUpcomingDays existed
 // (e.g. from a pre-feature session) lacked that field entirely. persisted()

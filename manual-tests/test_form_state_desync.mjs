@@ -1,5 +1,5 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
-// to 5176; run via manual-tests/run.sh, or set the PORT env var yourself).
+// to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 // Reproduces the reported bug: a browser can leave a form field's visual
 // state out of sync with what Svelte's bound variable thinks is selected
 // (e.g. Firefox restoring previous form state after a full page reload, or

@@ -1,5 +1,5 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
-// to 5176; run via manual-tests/run.sh, or set the PORT env var yourself).
+// to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 

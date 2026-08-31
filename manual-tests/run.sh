@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Runs the full manual-tests suite against a local dev server.
+# Runs the full e2e-tests suite against a local dev server.
 #
 #   1. Start the dev server (127.0.0.1:$PORT, default 5176 — override by
 #      setting PORT in the environment).
-#   2. Run every manual-tests/*.mjs script with Node.
+#   2. Run every e2e-tests/*.mjs script with Node.
 #   3. Stop the dev server.
 set -uo pipefail
 
@@ -30,7 +30,7 @@ for i in $(seq 1 50); do
 done
 
 status=0
-for f in manual-tests/*.mjs; do
+for f in e2e-tests/*.mjs; do
   echo "=== $f ==="
   if ! node "$f"; then
     status=1

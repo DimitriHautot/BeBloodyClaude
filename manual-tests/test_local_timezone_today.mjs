@@ -1,5 +1,5 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
-// to 5176; run via manual-tests/run.sh, or set the PORT env var yourself).
+// to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 //
 // Regression test for the reported bug: a donor in Belgium at 00:12 local
 // time on 2026-08-25 (CEST, UTC+2 — so still 2026-08-24T22:12:00Z) saw a
