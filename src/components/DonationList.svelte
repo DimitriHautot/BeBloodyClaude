@@ -3,6 +3,7 @@
   import { donations, removeDonation } from '../lib/donations/storage';
   import { formatDateLabel, parseISODate } from '../lib/dates';
   import { donorSettings } from '../lib/settings/storage';
+  import { getFlag } from '../lib/flags';
 
   $: sortedDonations = [...$donations].sort((a, b) => b.date.localeCompare(a.date));
 </script>
@@ -16,6 +17,7 @@
     <ul>
       {#each sortedDonations as donation (donation.id)}
         <li>
+          <span class="flag" aria-hidden="true">{getFlag(donation.countryCode)}</span>
           <span class="date">{formatDateLabel(parseISODate(donation.date))}</span>
           <span class="type">{DONATION_TYPE_LABELS[donation.type]}</span>
           {#if $donorSettings.debugMode}
@@ -49,6 +51,10 @@
     gap: 0.75rem;
     padding: 0.5rem 0;
     border-bottom: 1px solid #eee;
+  }
+
+  .flag {
+    font-size: 1.1rem;
   }
 
   .date {

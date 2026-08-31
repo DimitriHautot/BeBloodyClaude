@@ -4,6 +4,7 @@
   import { addDonation } from '../lib/donations/storage';
   import { donorSettings } from '../lib/settings/storage';
   import { toISODate, today } from '../lib/dates';
+  import { getFlag } from '../lib/flags';
 
   /** When set, the donation type is fixed to this value and not user-editable
    * (used by the "+" quick-add shortcut from NextDonationSummary). */
@@ -44,6 +45,8 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit} bind:this={formEl}>
+  <span class="country-flag" aria-hidden="true">{getFlag($donorSettings.countryCode)}</span>
+
   {#if !fixedType}
     <h2>Ajouter un don</h2>
   {/if}
@@ -87,6 +90,7 @@
 
 <style>
   form {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -95,6 +99,13 @@
     padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 8px;
+  }
+
+  .country-flag {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    font-size: 1.3rem;
   }
 
   h2 {
