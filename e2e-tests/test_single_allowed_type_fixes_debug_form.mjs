@@ -1,8 +1,10 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
 // to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 //
-// When only one donation type remains allowed, DonationForm must always be
-// shown in the main window — fixed to that type — even with debug mode off.
+// DonationForm stays gated behind debug mode regardless of how many donation
+// types are allowed. But once debug mode is on, if only one type remains
+// allowed, the form must be fixed to it instead of offering a free-selection
+// radio group.
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -14,8 +16,6 @@ page.on('pageerror', (err) => {
 await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
 await page.waitForTimeout(300);
 
-assert.equal(await page.locator('main form').count(), 0, 'expected no DonationForm with debug mode off and all types allowed');
-
 await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
@@ -26,8 +26,21 @@ await page.waitForTimeout(150);
 
 assert.equal(
   await page.locator('main form').count(),
+  0,
+  'expected DonationForm to stay hidden with debug mode off, even with a single allowed type'
+);
+
+await page.click('button[aria-label="Menu"]');
+await page.click('button:has-text("Paramètres")');
+await page.waitForTimeout(150);
+await page.locator('.dialog label:has-text("Mode debug") input[type=checkbox]').check();
+await page.keyboard.press('Escape');
+await page.waitForTimeout(150);
+
+assert.equal(
+  await page.locator('main form').count(),
   1,
-  'expected DonationForm to appear automatically once only one donation type is allowed'
+  'expected DonationForm to appear once debug mode is on'
 );
 assert.equal(
   await page.locator('main form .fixed-type-value').textContent(),
@@ -41,4 +54,4 @@ assert.equal(
 );
 
 await browser.close();
-console.log('OK: DonationForm shows automatically, fixed to the sole allowed type, without debug mode.');
+console.log('OK: with debug mode on and a single allowed type, DonationForm is fixed to it.');

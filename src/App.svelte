@@ -17,8 +17,9 @@
     quickAddMinDate = null;
   }
 
-  // With a single donation type allowed, there's no useful "choice" left to
-  // gate behind debug mode — always show the form, fixed to that one type.
+  // With a single donation type allowed, there's no useful "choice" left, so
+  // the debug-mode form (when shown) is fixed to it instead of offering a
+  // free selection.
   $: allowedTypes = getAllowedTypes($donorSettings);
   $: soleAllowedType = allowedTypes.length === 1 ? allowedTypes[0] : null;
 </script>
@@ -35,10 +36,8 @@
       quickAddMinDate = event.detail.minDate;
     }}
   />
-  {#if soleAllowedType}
+  {#if $donorSettings.debugMode}
     <DonationForm fixedType={soleAllowedType} />
-  {:else if $donorSettings.debugMode}
-    <DonationForm />
   {/if}
   <DonationList />
 </main>
