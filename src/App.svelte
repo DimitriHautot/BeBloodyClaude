@@ -5,7 +5,7 @@
   import DonationList from './components/DonationList.svelte';
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
-  import { donorSettings } from './lib/settings/storage';
+  import { donorSettings, getAllowedTypes } from './lib/settings/storage';
   import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
 
   let showSettings = false;
@@ -16,6 +16,11 @@
     quickAddType = null;
     quickAddMinDate = null;
   }
+
+  // With a single donation type allowed, there's no useful "choice" left to
+  // gate behind debug mode — always show the form, fixed to that one type.
+  $: allowedTypes = getAllowedTypes($donorSettings);
+  $: soleAllowedType = allowedTypes.length === 1 ? allowedTypes[0] : null;
 </script>
 
 <main>
@@ -30,7 +35,9 @@
       quickAddMinDate = event.detail.minDate;
     }}
   />
-  {#if $donorSettings.debugMode}
+  {#if soleAllowedType}
+    <DonationForm fixedType={soleAllowedType} />
+  {:else if $donorSettings.debugMode}
     <DonationForm />
   {/if}
   <DonationList />

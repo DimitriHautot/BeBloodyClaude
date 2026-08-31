@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte';
-  import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
+  import { DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { donations } from '../lib/donations/storage';
-  import { donorSettings } from '../lib/settings/storage';
+  import { donorSettings, getAllowedTypes } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
   import { today as todayDate, formatDateLabel, toISODate, daysBetween } from '../lib/dates';
 
@@ -49,7 +49,7 @@
 
   $: today = currentDate(midnightTick);
   $: ruleSet = getRuleSet($donorSettings.countryCode);
-  $: nextDates = DONATION_TYPES.map((type) => {
+  $: nextDates = getAllowedTypes($donorSettings).map((type) => {
     const date = ruleSet.computeNextEligibleDate(type, $donations, $donorSettings);
     return { type, date, status: status(date, today) };
   });

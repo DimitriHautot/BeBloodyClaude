@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
+  import { DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
-  import { donorSettings } from '../lib/settings/storage';
+  import { donorSettings, getAllowedTypes } from '../lib/settings/storage';
   import { toISODate, today } from '../lib/dates';
   import { getFlag } from '../lib/flags';
 
@@ -16,7 +16,9 @@
 
   const dispatch = createEventDispatcher<{ added: void }>();
 
-  let type: DonationType = fixedType ?? 'blood';
+  $: allowedTypes = getAllowedTypes($donorSettings);
+
+  let type: DonationType = fixedType ?? getAllowedTypes($donorSettings)[0];
   let date = toISODate(today());
   let error: string | null = null;
   let formEl: HTMLFormElement;
@@ -59,7 +61,7 @@
   {:else}
     <fieldset>
       <legend>Type de don</legend>
-      {#each DONATION_TYPES as t}
+      {#each allowedTypes as t}
         <label class="radio">
           <input type="radio" name="donation-type" value={t} bind:group={type} />
           {DONATION_TYPE_LABELS[t]}

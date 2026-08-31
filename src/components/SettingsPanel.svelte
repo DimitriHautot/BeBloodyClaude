@@ -1,8 +1,24 @@
 <script lang="ts">
-  import { donorSettings } from '../lib/settings/storage';
+  import { donorSettings, getAllowedTypes, getAllowedTypesRecord } from '../lib/settings/storage';
   import { ruleSetRegistry } from '../lib/rules/registry';
+  import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
 
   const countries = Object.values(ruleSetRegistry);
+
+  $: allowedCount = getAllowedTypes($donorSettings).length;
+
+  function toggleAllowedType(type: DonationType, checked: boolean) {
+    // Refuse to uncheck the last remaining type: with none allowed, nothing
+    // could ever be shown in NextDonationSummary or added via DonationForm,
+    // and there'd be no way back to a working state short of clearing
+    // localStorage.
+    if (!checked && allowedCount <= 1) return;
+
+    donorSettings.update((settings) => ({
+      ...settings,
+      allowedDonationTypes: { ...getAllowedTypesRecord(settings), [type]: checked }
+    }));
+  }
 </script>
 
 <section>
@@ -22,6 +38,22 @@
       <option value="female">Femme</option>
     </select>
   </label>
+
+  <div class="allowed-types">
+    <span class="allowed-types-legend">Types de dons possibles</span>
+    {#each DONATION_TYPES as type}
+      {@const checked = $donorSettings.allowedDonationTypes?.[type] ?? true}
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          {checked}
+          disabled={checked && allowedCount <= 1}
+          on:change={(event) => toggleAllowedType(type, event.currentTarget.checked)}
+        />
+        {DONATION_TYPE_LABELS[type]}
+      </label>
+    {/each}
+  </div>
 
   <label class="checkbox">
     <input type="checkbox" bind:checked={$donorSettings.debugMode} />
@@ -79,5 +111,15 @@
     gap: 0.75rem;
     padding-top: 0.75rem;
     border-top: 1px solid #eee;
+  }
+
+  .allowed-types {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .allowed-types-legend {
+    font-size: 0.9rem;
   }
 </style>
