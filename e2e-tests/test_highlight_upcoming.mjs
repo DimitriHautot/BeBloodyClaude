@@ -16,7 +16,7 @@ await page.waitForTimeout(200);
 // but outside e.g. a 5-day window (gray).
 const seventyFourDaysAgo = new Date(Date.now() - 74 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 await page.evaluate((date) => {
-  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date }]));
+  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date, countryCode: 'BE' }]));
 }, seventyFourDaysAgo);
 await page.reload();
 await page.waitForTimeout(400);

@@ -24,7 +24,7 @@ await page.clock.install({ time: new Date('2026-08-24T22:12:00.000Z') });
 // donor's local "today" (2026-08-25) makes plasma eligible exactly today.
 await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
 await page.evaluate(() => {
-  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'plasma', date: '2026-08-11' }]));
+  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'plasma', date: '2026-08-11', countryCode: 'BE' }]));
 });
 await page.reload();
 await page.waitForTimeout(300);

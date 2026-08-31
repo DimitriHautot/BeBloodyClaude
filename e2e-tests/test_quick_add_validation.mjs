@@ -17,7 +17,7 @@ await page.waitForTimeout(200);
 // rules (only 10 days after that donation, far short of 84).
 const hundredDaysAgo = new Date(Date.now() - 100 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 await page.evaluate((date) => {
-  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date }]));
+  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date, countryCode: 'BE' }]));
 }, hundredDaysAgo);
 await page.reload();
 await page.waitForTimeout(400);
