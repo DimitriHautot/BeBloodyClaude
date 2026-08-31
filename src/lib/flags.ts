@@ -2,7 +2,7 @@
  * Generate the emoji flag of a country from its ISO code 3166-1 alpha-2.
  * @param countryCode 2 letters country code (ex: "be", "FR")
  */
-function getFlag(countryCode: string): string {
+export function getFlag(countryCode: string): string {
     const codeMaj = countryCode.toUpperCase();
 
     if (codeMaj.length !== 2) {
