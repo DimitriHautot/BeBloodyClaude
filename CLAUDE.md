@@ -12,6 +12,7 @@ base de données.
 - CSS natif/scoped par composant Svelte, pas de librairie CSS.
 - Vitest pour les tests unitaires (essentiellement la logique de calcul des
   dates, dans `src/lib/rules/`).
+- Playwright pour les tests end-to-end, dans `e2e-tests`.
 
 ## Commandes
 
