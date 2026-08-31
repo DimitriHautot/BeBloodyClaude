@@ -22,7 +22,7 @@ const eightyThreeDaysAgo = new Date(pinnedTime.getTime() - 83 * 24 * 60 * 60 * 1
 
 await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
 await page.evaluate((date) => {
-  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date }]));
+  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date, countryCode: 'BE' }]));
 }, eightyThreeDaysAgo);
 await page.reload();
 await page.waitForTimeout(300);

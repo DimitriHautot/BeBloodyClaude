@@ -16,7 +16,7 @@ await page.waitForTimeout(200);
 // eligible today too).
 const hundredDaysAgo = new Date(Date.now() - 100 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 await page.evaluate((date) => {
-  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date }]));
+  localStorage.setItem('donations', JSON.stringify([{ id: '1', type: 'blood', date, countryCode: 'BE' }]));
 }, hundredDaysAgo);
 await page.reload();
 await page.waitForTimeout(400);
