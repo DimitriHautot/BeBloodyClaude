@@ -3,12 +3,7 @@ import type { Donation, DonationType } from './types';
 import type { DonorSettings } from '../settings/storage';
 import { validateNewDonation, type DonationValidation } from './validation';
 
-export const donations = persisted<Donation[]>('donations', [], (stored) =>
-  // Donations recorded before countryCode was tracked per-donation predate
-  // support for any country but Belgium, so that's the only value they
-  // could have applied under.
-  stored.map((donation) => (donation.countryCode ? donation : { ...donation, countryCode: 'BE' }))
-);
+export const donations = persisted<Donation[]>('donations', []);
 
 /**
  * Validates the candidate donation against the rules of the donor's
