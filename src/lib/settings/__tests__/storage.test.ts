@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getAllowedTypes, getAllowedTypesRecord, type DonorSettings } from '../storage';
+import { getAllowedTypes, getAllowedTypesRecord, getSexSymbol, type DonorSettings } from '../storage';
 
 function settings(allowedDonationTypes?: DonorSettings['allowedDonationTypes']): DonorSettings {
   return { countryCode: 'BE', sex: 'male', allowedDonationTypes };
@@ -37,5 +37,15 @@ describe('getAllowedTypes', () => {
 
   it('can return a single type when only one is allowed', () => {
     expect(getAllowedTypes(settings({ blood: false, plasma: true, platelets: false }))).toEqual(['plasma']);
+  });
+});
+
+describe('getSexSymbol', () => {
+  it('returns ♂ for male', () => {
+    expect(getSexSymbol('male')).toBe('♂');
+  });
+
+  it('returns ♀ for female', () => {
+    expect(getSexSymbol('female')).toBe('♀');
   });
 });

@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
-  import { donorSettings, getAllowedTypes } from '../lib/settings/storage';
+  import { donorSettings, getAllowedTypes, getSexSymbol } from '../lib/settings/storage';
   import { toISODate, today } from '../lib/dates';
   import { getFlag } from '../lib/flags';
 
@@ -47,7 +47,10 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit} bind:this={formEl}>
-  <span class="country-flag" aria-hidden="true">{getFlag($donorSettings.countryCode)}</span>
+  <span class="donor-info" aria-hidden="true">
+    <span class="country-flag">{getFlag($donorSettings.countryCode)}</span>
+    <span class="sex-symbol">{getSexSymbol($donorSettings.sex)}</span>
+  </span>
 
   {#if !fixedType}
     <h2>Ajouter un don</h2>
@@ -103,11 +106,22 @@
     border-radius: 8px;
   }
 
-  .country-flag {
+  .donor-info {
     position: absolute;
     top: 0.75rem;
     right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .country-flag {
     font-size: 1.3rem;
+  }
+
+  .sex-symbol {
+    font-size: 1.1rem;
+    color: #666;
   }
 
   h2 {

@@ -3,6 +3,16 @@ import { DONATION_TYPES, type DonationType } from '../donations/types';
 
 export type Sex = 'male' | 'female';
 
+const SEX_SYMBOLS: Record<Sex, string> = {
+  male: '♂',
+  female: '♀'
+};
+
+/** The male (♂) or female (♀) sex symbol for `sex`. */
+export function getSexSymbol(sex: Sex): string {
+  return SEX_SYMBOLS[sex];
+}
+
 export interface DonorSettings {
   countryCode: string;
   sex: Sex;
