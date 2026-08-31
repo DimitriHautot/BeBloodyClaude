@@ -1,4 +1,4 @@
-# BeBloodyClaude
+# BeBloody
 
 PWA sans backend pour suivre les dons de sang total, plasma et plaquettes,
 et calculer la prochaine date de don possible pour chaque type. Tout l'état
