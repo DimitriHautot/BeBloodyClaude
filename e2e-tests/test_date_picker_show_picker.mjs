@@ -1,28 +1,24 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
 // to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 //
-// Since Firefox 109, clicking inside a native <input type="date">'s text
-// area no longer opens the calendar popup on its own
-// (https://bugzilla.mozilla.org/show_bug.cgi?id=1804879) — only clicking the
-// calendar-icon affordance does, and that icon click already works fine on
-// every browser without any help. DonationForm.svelte works around the text-
-// area case by calling showPicker() explicitly on click, but only on
-// Firefox and only when the click isn't on the icon — calling it more
-// broadly was found (via real Firefox/Edge testing) to fight the browser's
-// own native open/close toggle, causing the popup to flicker or fail to
-// open depending on click parity.
+// On real Firefox (confirmed by the user on both Ubuntu and Windows 11),
+// clicking the date field — text portion or calendar icon alike — never
+// opens the native calendar popup on its own; it must be forced open via
+// showPicker(). Edge/Chrome already handle every click correctly without
+// help. DonationForm.svelte therefore calls showPicker() on every click,
+// gated to Firefox only (detected via user agent, since there's no
+// feature-detectable way to know this).
 //
 // Chromium (used here) doesn't have the underlying bug, and the native
 // popup itself isn't something Playwright can observe, so this test spoofs
-// a Firefox user agent, stubs showPicker(), and asserts our code calls it
-// only for a click on the text portion — not the icon area, and not at all
-// under a non-Firefox user agent.
+// a Firefox vs. Chrome user agent and asserts our code calls showPicker()
+// for every click under Firefox, and never under another browser.
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 
-async function countShowPickerCalls(userAgent, clickX) {
+async function countShowPickerCalls(userAgent) {
   const context = await browser.newContext({ userAgent });
   const page = await context.newPage();
   page.on('pageerror', (err) => {
@@ -44,7 +40,7 @@ async function countShowPickerCalls(userAgent, clickX) {
   await page.waitForTimeout(150);
 
   const dateInput = page.locator('.dialog input[type=date]');
-  await dateInput.click({ position: { x: clickX, y: 10 } });
+  await dateInput.click();
   await page.waitForTimeout(50);
 
   const calls = await page.evaluate(() => window.__showPickerCalls);
@@ -57,24 +53,15 @@ const FIREFOX_UA =
 const CHROME_UA =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
-const firefoxTextClick = await countShowPickerCalls(FIREFOX_UA, 5);
-assert.equal(firefoxTextClick, 1, 'expected a Firefox click on the text portion to call showPicker()');
+const firefoxClick = await countShowPickerCalls(FIREFOX_UA);
+assert.equal(firefoxClick, 1, 'expected a Firefox click on the date field to call showPicker()');
 
-const firefoxIconClick = await countShowPickerCalls(FIREFOX_UA, 130);
+const chromeClick = await countShowPickerCalls(CHROME_UA);
 assert.equal(
-  firefoxIconClick,
+  chromeClick,
   0,
-  'expected a Firefox click on the icon area to NOT call showPicker() (the icon already toggles natively)'
-);
-
-const chromeTextClick = await countShowPickerCalls(CHROME_UA, 5);
-assert.equal(
-  chromeTextClick,
-  0,
-  'expected a non-Firefox click to never call showPicker() (Chrome/Edge already toggle correctly on their own)'
+  'expected a non-Firefox click to never call showPicker() (Chrome/Edge already handle it on their own)'
 );
 
 await browser.close();
-console.log(
-  'OK: showPicker() is called only for a Firefox click on the date field\'s text portion, never on the icon or on other browsers.'
-);
+console.log('OK: showPicker() is called on every click under Firefox, and never under another browser.');
