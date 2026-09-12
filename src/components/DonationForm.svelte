@@ -45,45 +45,29 @@
     }
   }
 
-  // On real Firefox (both Ubuntu and Windows 11), clicking the date field —
-  // neither the text portion nor the calendar icon — opens the native
-  // calendar popup at all; it must be forced open via showPicker(). This
-  // contradicts the assumption of an earlier version of this fix (that the
-  // icon already worked natively per Mozilla bug 1804879), which turned out
-  // to be wrong when actually tested by the user, so that assumption
-  // (and the click-position heuristic built on it) has been dropped: call
-  // showPicker() unconditionally on every click, on Firefox only (Edge and
-  // Chrome already handle every click correctly on their own).
+  // On Firefox, clicking the date field — text portion or calendar icon
+  // alike — doesn't reliably open the native calendar popup on its own; it
+  // must be forced open via showPicker(). Confirmed fixed on the app's
+  // actual target (Firefox on a real iPhone) — desktop DevTools' device
+  // emulation ("Responsive Design Mode") does not faithfully reproduce a
+  // native <input type="date"> widget's real behavior, so earlier testing
+  // through it (rather than an actual desktop browser) had been misleading.
   //
-  // Firefox detection via navigator.userAgent turned out unreliable in
-  // practice (a privacy setting or extension in the user's real profile
-  // reported a non-Firefox user agent on genuine Firefox). CSS.supports()
-  // for a vendor-prefixed property queries the actual rendering engine
-  // instead of a spoofable string: only Gecko (Firefox) recognizes
-  // "-moz-appearance", so this can't be fooled by a UA override.
-  //
-  // TEMPORARY: logging every call/outcome to the console to diagnose,
-  // directly from real-world testing, exactly what's failing — remove once
-  // confirmed fixed.
+  // Firefox detection via navigator.userAgent is unreliable — some privacy
+  // settings/extensions override it — so this instead checks CSS.supports()
+  // for a vendor-prefixed property, which queries the actual rendering
+  // engine rather than a spoofable string: only Gecko (Firefox) recognizes
+  // "-moz-appearance".
   const isFirefox = typeof CSS !== 'undefined' && CSS.supports('-moz-appearance', 'none');
 
   function openDatePicker(event: MouseEvent) {
-    console.log('[date-picker-debug] click', {
-      isFirefox,
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-      offsetX: event.offsetX,
-    });
     if (!isFirefox) return;
     const input = event.currentTarget as HTMLInputElement;
-    if (typeof input.showPicker !== 'function') {
-      console.log('[date-picker-debug] showPicker is not a function on this input');
-      return;
-    }
     try {
-      input.showPicker();
-      console.log('[date-picker-debug] showPicker() succeeded');
-    } catch (err) {
-      console.log('[date-picker-debug] showPicker() threw', err);
+      input.showPicker?.();
+    } catch {
+      // showPicker() can throw (e.g. lack of user activation); nothing
+      // more to do if it does.
     }
   }
 </script>

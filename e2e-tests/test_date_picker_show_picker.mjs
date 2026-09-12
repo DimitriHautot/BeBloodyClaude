@@ -1,16 +1,17 @@
 // Requires a dev server already running at http://127.0.0.1:$PORT (defaults
 // to 5176; run via e2e-tests/run.sh, or set the PORT env var yourself).
 //
-// On real Firefox (confirmed by the user on both Ubuntu and Windows 11),
-// clicking the date field — text portion or calendar icon alike — never
-// opens the native calendar popup on its own; it must be forced open via
-// showPicker(). Edge/Chrome already handle every click correctly without
-// help. DonationForm.svelte therefore calls showPicker() on every click,
-// gated to Firefox only, detected via CSS.supports('-moz-appearance',
-// 'none') rather than navigator.userAgent — a UA string proved unreliable
-// in the user's real profile (some privacy setting/extension reported a
-// non-Firefox user agent on genuine Firefox), whereas CSS.supports queries
-// the actual rendering engine and can't be spoofed the same way.
+// On Firefox, clicking the date field — text portion or calendar icon
+// alike — doesn't reliably open the native calendar popup on its own; it
+// must be forced open via showPicker(). Edge/Chrome already handle every
+// click correctly without help. DonationForm.svelte therefore calls
+// showPicker() on every click, gated to Firefox only, detected via
+// CSS.supports('-moz-appearance', 'none') rather than navigator.userAgent —
+// a UA string is unreliable (some privacy settings/extensions override it),
+// whereas CSS.supports queries the actual rendering engine and can't be
+// spoofed the same way. Confirmed fixed on the app's actual target
+// (Firefox on a real iPhone) — desktop DevTools device emulation doesn't
+// faithfully reproduce a native date input's real behavior.
 //
 // Chromium (used here) doesn't support -moz-appearance and doesn't have the
 // underlying bug, and the native popup itself isn't something Playwright
