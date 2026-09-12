@@ -49,7 +49,11 @@
 {/if}
 
 {#if quickAddType && quickAddMinDate}
-  <Modal title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType]}`} on:close={closeQuickAdd}>
+  <Modal
+    title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType]}`}
+    scrollable={false}
+    on:close={closeQuickAdd}
+  >
     <DonationForm fixedType={quickAddType} minDate={quickAddMinDate} on:added={closeQuickAdd} />
   </Modal>
 {/if}
