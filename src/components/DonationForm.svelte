@@ -55,13 +55,24 @@
   // showPicker() unconditionally on every click, on Firefox only (Edge and
   // Chrome already handle every click correctly on their own).
   //
+  // Firefox detection via navigator.userAgent turned out unreliable in
+  // practice (a privacy setting or extension in the user's real profile
+  // reported a non-Firefox user agent on genuine Firefox). CSS.supports()
+  // for a vendor-prefixed property queries the actual rendering engine
+  // instead of a spoofable string: only Gecko (Firefox) recognizes
+  // "-moz-appearance", so this can't be fooled by a UA override.
+  //
   // TEMPORARY: logging every call/outcome to the console to diagnose,
   // directly from real-world testing, exactly what's failing — remove once
   // confirmed fixed.
-  const isFirefox = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent);
+  const isFirefox = typeof CSS !== 'undefined' && CSS.supports('-moz-appearance', 'none');
 
   function openDatePicker(event: MouseEvent) {
-    console.log('[date-picker-debug] click', { isFirefox, offsetX: event.offsetX });
+    console.log('[date-picker-debug] click', {
+      isFirefox,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      offsetX: event.offsetX,
+    });
     if (!isFirefox) return;
     const input = event.currentTarget as HTMLInputElement;
     if (typeof input.showPicker !== 'function') {

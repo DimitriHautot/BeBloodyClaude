@@ -6,31 +6,40 @@
 // opens the native calendar popup on its own; it must be forced open via
 // showPicker(). Edge/Chrome already handle every click correctly without
 // help. DonationForm.svelte therefore calls showPicker() on every click,
-// gated to Firefox only (detected via user agent, since there's no
-// feature-detectable way to know this).
+// gated to Firefox only, detected via CSS.supports('-moz-appearance',
+// 'none') rather than navigator.userAgent — a UA string proved unreliable
+// in the user's real profile (some privacy setting/extension reported a
+// non-Firefox user agent on genuine Firefox), whereas CSS.supports queries
+// the actual rendering engine and can't be spoofed the same way.
 //
-// Chromium (used here) doesn't have the underlying bug, and the native
-// popup itself isn't something Playwright can observe, so this test spoofs
-// a Firefox vs. Chrome user agent and asserts our code calls showPicker()
-// for every click under Firefox, and never under another browser.
+// Chromium (used here) doesn't support -moz-appearance and doesn't have the
+// underlying bug, and the native popup itself isn't something Playwright
+// can observe, so this test stubs CSS.supports() to simulate Firefox vs.
+// Chrome and asserts our code calls showPicker() for every click only in
+// the simulated-Firefox case.
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 
-async function countShowPickerCalls(userAgent) {
-  const context = await browser.newContext({ userAgent });
+async function countShowPickerCalls(simulateFirefox) {
+  const context = await browser.newContext();
   const page = await context.newPage();
   page.on('pageerror', (err) => {
     throw new Error(`Page error: ${err.message}`);
   });
 
-  await page.addInitScript(() => {
+  await page.addInitScript((simulateFirefox) => {
     window.__showPickerCalls = 0;
     HTMLInputElement.prototype.showPicker = function () {
       window.__showPickerCalls += 1;
     };
-  });
+    const realSupports = CSS.supports.bind(CSS);
+    CSS.supports = (...args) => {
+      if (args[0] === '-moz-appearance') return simulateFirefox;
+      return realSupports(...args);
+    };
+  }, simulateFirefox);
 
   await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
   await page.waitForTimeout(400);
@@ -48,15 +57,10 @@ async function countShowPickerCalls(userAgent) {
   return calls;
 }
 
-const FIREFOX_UA =
-  'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0';
-const CHROME_UA =
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
+const firefoxClick = await countShowPickerCalls(true);
+assert.equal(firefoxClick, 1, 'expected a simulated-Firefox click on the date field to call showPicker()');
 
-const firefoxClick = await countShowPickerCalls(FIREFOX_UA);
-assert.equal(firefoxClick, 1, 'expected a Firefox click on the date field to call showPicker()');
-
-const chromeClick = await countShowPickerCalls(CHROME_UA);
+const chromeClick = await countShowPickerCalls(false);
 assert.equal(
   chromeClick,
   0,
@@ -64,4 +68,4 @@ assert.equal(
 );
 
 await browser.close();
-console.log('OK: showPicker() is called on every click under Firefox, and never under another browser.');
+console.log('OK: showPicker() is called on every click when the engine is detected as Firefox, and never otherwise.');
