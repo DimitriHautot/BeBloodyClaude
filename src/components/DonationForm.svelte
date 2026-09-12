@@ -44,6 +44,17 @@
       dispatch('added');
     }
   }
+
+  // Since Firefox 109, clicking inside a native <input type="date">'s text
+  // area no longer opens the calendar popup — only clicking the small
+  // calendar-icon affordance (or pressing Space while focused) does
+  // (https://bugzilla.mozilla.org/show_bug.cgi?id=1804879). This made the
+  // picker appear entirely non-functional to users clicking anywhere else
+  // in the field. showPicker() (supported since Firefox 101) reopens it
+  // explicitly on any click.
+  function openDatePicker() {
+    dateInputEl.showPicker?.();
+  }
 </script>
 
 <form on:submit|preventDefault={handleSubmit} bind:this={formEl}>
@@ -83,6 +94,7 @@
       max={toISODate(today())}
       min={minDate}
       required
+      on:click={openDatePicker}
     />
   </label>
 
