@@ -48,20 +48,39 @@
   // Since Firefox 109, clicking inside a native <input type="date">'s text
   // area no longer opens the calendar popup — only clicking the small
   // calendar-icon affordance (or pressing Space while focused) does
-  // (https://bugzilla.mozilla.org/show_bug.cgi?id=1804879). showPicker()
-  // (supported since Firefox 101) reopens it explicitly on click. It can
-  // throw (e.g. "lack of user activation" when the click that mounted this
-  // form is also the one reaching this handler, such as the quick-add
-  // button's click cascading synchronously into this newly-mounted field)
-  // — an uncaught exception there must not be allowed to interfere with
-  // the browser's own native handling of the click (in particular, the
-  // icon's default action, which already works on its own), hence the
-  // try/catch recommended by MDN for this API.
-  function openDatePicker() {
+  // (https://bugzilla.mozilla.org/show_bug.cgi?id=1804879). The icon itself
+  // was never broken: on every browser (including Firefox), clicking it
+  // already toggles the popup open/closed on its own, with no JS needed.
+  //
+  // An earlier version of this fix called showPicker() unconditionally on
+  // every click, including on the icon. That fought the browser's own
+  // toggle: the click event's JS listeners run *before* its native default
+  // action, so forcing the picker open right before the browser's own
+  // open/closed toggle ran caused the two to cancel each other out —
+  // observed as the popup flickering open-then-closed on Edge, opening on
+  // only every other click on Firefox/Windows, and barely opening at all
+  // on Firefox/Linux.
+  //
+  // The fix now only steps in for the one thing actually broken: a click
+  // on the text portion specifically, and only on Firefox (every other
+  // browser already toggles correctly there too, so calling showPicker()
+  // for them would only reintroduce the same fight). The icon's approximate
+  // width is a rough cross-platform estimate, not a pixel-perfect
+  // detection — Firefox doesn't expose a way to query it precisely.
+  const FIREFOX_ICON_WIDTH_PX = 24;
+  const isFirefox = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent);
+
+  function openDatePicker(event: MouseEvent) {
+    if (!isFirefox) return;
+    const input = event.currentTarget as HTMLInputElement;
+    const clickedIcon = event.offsetX >= input.clientWidth - FIREFOX_ICON_WIDTH_PX;
+    if (clickedIcon) return;
     try {
-      dateInputEl.showPicker?.();
+      input.showPicker?.();
     } catch {
-      // Ignored — see comment above.
+      // showPicker() can throw (e.g. lack of user activation); the click
+      // already did nothing on its own in that case, so there's nothing
+      // more to do.
     }
   }
 </script>
