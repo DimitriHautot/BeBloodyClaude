@@ -2,9 +2,9 @@
 
 Le calcul de la prochaine date éligible est isolé dans un module par pays
 implémentant l'interface `DonationRuleSet` (`src/lib/rules/types.ts`). C'est
-volontairement conçu pour supporter plusieurs pays : aujourd'hui seule la
-Belgique (`belgium.ts`) est implémentée, mais l'utilisateur doit à terme
-pouvoir choisir son pays et obtenir des règles différentes.
+volontairement conçu pour supporter plusieurs pays : la Belgique
+(`belgium.ts`) et la France (`france.ts`) sont implémentées, et l'utilisateur
+peut choisir son pays dans les réglages pour obtenir des règles différentes.
 
 **Pour ajouter un nouveau pays** :
 1. Créer `src/lib/rules/<pays>.ts` qui exporte un objet respectant
@@ -49,3 +49,4 @@ doit aussi fournir cette méthode.
 
 ## Règles par pays
 @./belgium.md
+@./france.md

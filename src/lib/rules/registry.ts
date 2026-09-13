@@ -1,5 +1,6 @@
 import type { DonationRuleSet } from './types';
 import { belgiumRules } from './belgium';
+import { franceRules } from './france';
 
 /**
  * All available rule sets, keyed by ISO 3166-1 alpha-2 country code.
@@ -7,7 +8,8 @@ import { belgiumRules } from './belgium';
  * file (see belgium.ts for the expected shape) and register it here.
  */
 export const ruleSetRegistry: Record<string, DonationRuleSet> = {
-  BE: belgiumRules
+  BE: belgiumRules,
+  FR: franceRules
 };
 
 export function getRuleSet(countryCode: string): DonationRuleSet {
