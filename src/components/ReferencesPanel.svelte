@@ -1,13 +1,14 @@
 <script lang="ts">
   import { ruleSetRegistry } from '../lib/rules/registry';
   import { getLanguageName } from '../lib/languages';
+  import { getFlag } from '../lib/flags';
 
   const countries = Object.values(ruleSetRegistry).map((ruleSet) => {
     const references = ruleSet.officialReferences();
     const languages = Array.from(references.entries())
       .map(([code, urls]) => ({ code, name: getLanguageName(code), urls }))
       .sort((a, b) => a.name.localeCompare(b.name));
-    return { countryName: ruleSet.countryName, languages };
+    return { countryName: ruleSet.countryName, flag: getFlag(ruleSet.countryCode), languages };
   });
 </script>
 
@@ -19,7 +20,7 @@
 
 {#each countries as country (country.countryName)}
   <section class="country">
-    <h3>{country.countryName}</h3>
+    <h3>{country.flag} {country.countryName}</h3>
     {#if country.languages.length === 1}
       <ul class="urls">
         {#each country.languages[0].urls as url (url)}
@@ -62,7 +63,7 @@
   .urls {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 1.25rem;
   }
 
   .languages > li {
