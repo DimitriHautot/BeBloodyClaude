@@ -5,10 +5,12 @@
   import DonationList from './components/DonationList.svelte';
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
+  import ReferencesPanel from './components/ReferencesPanel.svelte';
   import { donorSettings, getAllowedTypes } from './lib/settings/storage';
   import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
 
   let showSettings = false;
+  let showReferences = false;
   let quickAddType: DonationType | null = null;
   let quickAddMinDate: string | null = null;
 
@@ -27,7 +29,10 @@
 <main>
   <div class="top-bar">
     <h1>Suivi des dons</h1>
-    <AppMenu on:open-settings={() => (showSettings = true)} />
+    <AppMenu
+      on:open-settings={() => (showSettings = true)}
+      on:open-references={() => (showReferences = true)}
+    />
   </div>
 
   <NextDonationSummary
@@ -45,6 +50,12 @@
 {#if showSettings}
   <Modal title="Paramètres" on:close={() => (showSettings = false)}>
     <SettingsPanel />
+  </Modal>
+{/if}
+
+{#if showReferences}
+  <Modal title="Références" on:close={() => (showReferences = false)}>
+    <ReferencesPanel />
   </Modal>
 {/if}
 
