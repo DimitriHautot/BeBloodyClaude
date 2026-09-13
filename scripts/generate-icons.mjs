@@ -58,8 +58,12 @@ for (const { file, size, dropScale } of targets) {
   console.log(`wrote ${file}`);
 }
 
-// Plain favicon (browser tab), same mark at a small size.
-await renderPNG(iconSVG(48, 0.62), 48, path.join(__dirname, '..', 'public', 'favicon.png'));
+// Plain favicon (browser tab), same mark. Kept at 192px rather than a small
+// tab-icon size (e.g. 48px): some mobile browsers (notably Firefox on iOS)
+// use this favicon — not apple-touch-icon or the web manifest — for their
+// "Add to Home Screen" icon, and fall back to a generated letter icon if it's
+// too small to use there.
+await renderPNG(iconSVG(192, 0.62), 192, path.join(__dirname, '..', 'public', 'favicon.png'));
 console.log('wrote favicon.png');
 
 await browser.close();

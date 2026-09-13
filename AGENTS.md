@@ -87,4 +87,24 @@ Android/Chrome). Deux règles à respecter pour que ça reste vrai :
   contenir `user-scalable=no` ni `maximum-scale`, pour laisser le
   pinch-to-zoom disponible comme second levier d'accessibilité.
 
+## Icônes PWA : qui lit quoi
+
+Les navigateurs mobiles n'utilisent pas tous la même source pour l'icône
+d'écran d'accueil, d'où trois déclarations différentes dans `index.html`/le
+manifest, chacune nécessaire :
+- Safari iOS lit `<link rel="apple-touch-icon">` (ignore le manifest, voir
+  commentaire dans `index.html`).
+- Firefox iOS, lui, ignore `apple-touch-icon` **et** le manifest pour son
+  « Ajouter à l'écran d'accueil » : il se base sur `<link rel="icon">` (le
+  favicon). S'il le juge trop petit pour cet usage, il retombe sur une
+  icône générée (lettre blanche sur fond uni) plutôt que d'agrandir un
+  favicon basse résolution — d'où `public/favicon.png` volontairement
+  généré en 192×192 (voir `scripts/generate-icons.mjs`) et non en petite
+  taille classique de favicon d'onglet.
+- Chrome/Edge (Android et desktop) lisent les `icons` du manifest.
+
+Tous les fichiers dans `public/icons/` et `public/favicon.png` sont générés
+depuis le même tracé SVG par `node scripts/generate-icons.mjs` — ne pas les
+éditer à la main, modifier le script puis le relancer.
+
 @.claude/donation-rules/modular-rules.md
