@@ -6,6 +6,12 @@ import { chromium } from 'playwright';
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 const page = await browser.newPage();
 await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
+// Simulate a returning user (settings already chosen) so the first-launch
+// settings modal does not pop up and intercept clicks meant for this test.
+await page.evaluate(() => {
+  localStorage.setItem('donorSettings', JSON.stringify({ countryCode: 'BE', sex: 'male' }));
+});
+await page.reload();
 await page.waitForTimeout(400);
 await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
