@@ -78,7 +78,11 @@
   main {
     max-width: 640px;
     margin: 0 auto;
-    padding: 1.5rem 1rem 4rem;
+    /* Keep content clear of notches/home indicators when installed as a
+       standalone iOS/Android PWA (viewport-fit=cover in index.html makes
+       these env() vars non-zero on devices with safe-area insets). */
+    padding: calc(1.5rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right))
+      calc(4rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
   }
 
   .top-bar {

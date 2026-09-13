@@ -54,4 +54,23 @@ Les tests Vitest qui ont besoin de dates relatives (ex. « il y a 10 jours »)
 utilisent `daysAgo`/`daysFromNow` depuis `src/test-support/dateFixtures.ts`
 plutôt que de redéfinir leurs propres helpers.
 
+## PWA installée ("standalone") et cache
+
+Une fois ajoutée à l'écran d'accueil (iOS/Android), l'app tourne dans une
+WebView "standalone" qui n'a pas de bouton de rechargement manuel visible
+par l'utilisateur : contrairement à un onglet de navigateur classique, un
+donneur ne peut pas facilement forcer un rafraîchissement s'il reste sur
+une version en cache après un déploiement. iOS en particulier a tendance à
+garder longtemps la version HTML/JS/CSS déjà chargée pour une PWA
+standalone tant qu'elle n'est pas explicitement invalidée.
+
+**Recommandation** : côté hébergement du build statique (`dist/`),
+vérifier que les en-têtes `Cache-Control` sont adaptés à ce mode d'usage —
+typiquement pas de cache long (`no-cache` ou une durée courte) sur
+`index.html` et sur `manifest.webmanifest`, puisque ce sont eux qui
+référencent les assets hashés (`assets/index-*.js/css`, qui eux peuvent
+être mis en cache long terme sans risque grâce au hash dans leur nom).
+Sans ça, un utilisateur ayant déjà installé l'app peut rester bloqué sur
+une ancienne version après un déploiement.
+
 @.claude/donation-rules/modular-rules.md
