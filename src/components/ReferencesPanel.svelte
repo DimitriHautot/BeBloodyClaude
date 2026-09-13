@@ -13,9 +13,10 @@
 </script>
 
 <p class="intro">
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-  labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-  laboris nisi ut aliquip ex ea commodo consequat.
+  Cette application a été développée par un particulier belge pour répondre à un besoin qu'il rencontrait
+  depuis plusieurs années.<br><br>
+  Elle n'est <b>en aucun cas</b> sponsorisée ou même revue par une quelconque instance officielle étatique.<br><br>
+  Cependant, elle a été développée en utilisant des règles officielles pour chaque pays, listées ci-dessous.<br>
 </p>
 
 {#each countries as country (country.countryName)}
