@@ -1,6 +1,6 @@
 {
-  "name": "Suivi des dons",
-  "short_name": "Dons",
+  "name": "BeBloody",
+  "short_name": "BeBloody",
   "description": "Suivi des dons de sang total, plasma et plaquettes, avec calcul de la prochaine date de don possible.",
   "id": "/",
   "start_url": "/",

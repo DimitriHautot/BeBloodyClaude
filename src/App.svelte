@@ -30,7 +30,7 @@
 
 <main>
   <div class="top-bar">
-    <h1>Suivi des dons</h1>
+    <h1>BeBloody</h1>
     <AppMenu
       on:open-settings={() => (showSettings = true)}
       on:open-references={() => (showReferences = true)}
