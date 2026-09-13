@@ -71,6 +71,14 @@
 {/if}
 
 <style>
+  /* No px font-size here on purpose: leaving the root at the browser's
+     default (100%) is what lets `rem` sizes throughout the app follow the
+     device's own text-size/accessibility setting instead of a fixed size
+     we'd be imposing. Never override this with a px value. */
+  :global(html) {
+    font-size: 100%;
+  }
+
   :global(body) {
     font-family: system-ui, sans-serif;
   }

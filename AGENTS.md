@@ -73,4 +73,18 @@ référencent les assets hashés (`assets/index-*.js/css`, qui eux peuvent
 Sans ça, un utilisateur ayant déjà installé l'app peut rester bloqué sur
 une ancienne version après un déploiement.
 
+## Taille de police : suivre les réglages du téléphone
+
+Aucune taille de police fixe n'est imposée par l'app — elle doit suivre le
+réglage d'accessibilité du système (ex. « Taille de police » sur
+Android/Chrome). Deux règles à respecter pour que ça reste vrai :
+- Toutes les `font-size` sont en `rem` (jamais en `px`) partout dans les
+  composants, pour rester relatives à la taille par défaut du navigateur.
+- `html` ne doit jamais fixer `font-size` en `px` (voir le
+  `:global(html) { font-size: 100%; }` dans `App.svelte`) : c'est cette
+  taille par défaut du navigateur, pilotée par l'OS, qui sert de base aux
+  `rem`. La balise `viewport` dans `index.html` ne doit pas non plus
+  contenir `user-scalable=no` ni `maximum-scale`, pour laisser le
+  pinch-to-zoom disponible comme second levier d'accessibilité.
+
 @.claude/donation-rules/modular-rules.md
