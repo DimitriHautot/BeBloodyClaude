@@ -6,10 +6,12 @@
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
   import ReferencesPanel from './components/ReferencesPanel.svelte';
-  import { donorSettings, getAllowedTypes } from './lib/settings/storage';
+  import { donorSettings, getAllowedTypes, isFirstLaunch } from './lib/settings/storage';
   import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
 
-  let showSettings = false;
+  // First time the app is opened, show the settings modal right away so the
+  // donor can set their country/sex before using the app.
+  let showSettings = isFirstLaunch;
   let showReferences = false;
   let quickAddType: DonationType | null = null;
   let quickAddMinDate: string | null = null;

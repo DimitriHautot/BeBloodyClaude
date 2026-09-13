@@ -34,6 +34,19 @@ export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
   allowedDonationTypes: { blood: true, plasma: true, platelets: true }
 };
 
+// Captured before `persisted` below writes its initial value to localStorage,
+// so it reflects whether the app has ever been opened on this device/browser.
+const hadStoredSettings = (() => {
+  try {
+    return localStorage.getItem('donorSettings') !== null;
+  } catch {
+    return true;
+  }
+})();
+
+/** Whether this is the first time the app is opened (no settings persisted yet). */
+export const isFirstLaunch = !hadStoredSettings;
+
 export const donorSettings = persisted<DonorSettings>(
   'donorSettings',
   DEFAULT_DONOR_SETTINGS,
