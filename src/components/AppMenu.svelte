@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
-  const dispatch = createEventDispatcher<{ 'open-settings': void }>();
+  const dispatch = createEventDispatcher<{ 'open-settings': void; 'open-references': void }>();
 
   let open = false;
   let navEl: HTMLElement;
@@ -13,6 +13,11 @@
   function openSettings() {
     open = false;
     dispatch('open-settings');
+  }
+
+  function openReferences() {
+    open = false;
+    dispatch('open-references');
   }
 
   function handleWindowClick(event: MouseEvent) {
@@ -33,6 +38,9 @@
     <ul class="menu">
       <li>
         <button on:click={openSettings}>Paramètres</button>
+      </li>
+      <li>
+        <button on:click={openReferences}>Références</button>
       </li>
     </ul>
   {/if}
