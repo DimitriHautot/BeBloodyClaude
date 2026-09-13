@@ -90,15 +90,17 @@
             {formatDateLabel(date)}
           {/if}
         </span>
-        {#if status === 'eligible'}
-          <button
-            class="quick-add"
-            on:click={() => handleQuickAdd(type)}
-            aria-label={`Ajouter un don de ${DONATION_TYPE_LABELS[type]}`}
-          >
-            +
-          </button>
-        {/if}
+        <span class="quick-add-slot">
+          {#if status === 'eligible'}
+            <button
+              class="quick-add"
+              on:click={() => handleQuickAdd(type)}
+              aria-label={`Ajouter un don de ${DONATION_TYPE_LABELS[type]}`}
+            >
+              +
+            </button>
+          {/if}
+        </span>
       </li>
     {/each}
   </ul>
@@ -120,7 +122,7 @@
 
   li {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     padding: 0.6rem 0.75rem;
     border-radius: 6px;
     background: #f5f5f5;
@@ -136,13 +138,25 @@
 
   .type {
     font-weight: 600;
+    min-width: 6rem;
+    flex-shrink: 0;
+  }
+
+  .date {
+    flex: 1;
+    text-align: center;
+  }
+
+  .quick-add-slot {
+    width: 1.6rem;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
   }
 
   .quick-add {
     width: 1.6rem;
     height: 1.6rem;
     padding: 0;
-    margin-left: 0.5rem;
     border: none;
     border-radius: 50%;
     background: #2e8b57;
