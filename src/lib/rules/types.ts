@@ -7,7 +7,7 @@ import type { DonorSettings } from '../settings/storage';
  * `computeNextEligibleDate` receives the donor's FULL donation history
  * (all types combined), not just the history for `type`. This is
  * intentional: a real rule set typically needs to reason about
- * cross-type interactions (e.g. a whole blood donation delaying
+ * cross-type interactions (e.g., a whole blood donation delaying
  * eligibility for plasma) and rolling-window annual quotas that require
  * looking at all past donations of a type over the last 365 days — not
  * just the single most recent donation of that type.
@@ -26,7 +26,7 @@ export interface DonationRuleSet {
     donorSettings: DonorSettings
   ): Date;
   /**
-   * Earliest date a donation of `type` would be allowed given
+   * The earliest date a donation of `type` would be allowed given
    * `allDonations`, with NO floor on today — unlike
    * `computeNextEligibleDate`, this can return a date in the past. Used to
    * set the lower bound (`min`) on a date picker for recording a donation,
@@ -42,7 +42,7 @@ export interface DonationRuleSet {
    * Whether a donation of `type` on `date` (ISO YYYY-MM-DD) would be
    * allowed given the donations that happened strictly before `date` in
    * `allDonations`. Unlike `computeNextEligibleDate`, this is not floored
-   * to today — it is used to validate a donation being recorded for any
+   * today — it is used to validate a donation being recorded for any
    * date, past or present.
    */
   isDonationAllowed(
@@ -51,4 +51,9 @@ export interface DonationRuleSet {
     allDonations: Donation[],
     donorSettings: DonorSettings
   ): boolean;
+  /**
+   * Return a map of official references for the country.
+   * The key is a 2-letter language code, and the value is an array of URLs.
+   */
+  officialReferences():Map<string, string[]>;
 }

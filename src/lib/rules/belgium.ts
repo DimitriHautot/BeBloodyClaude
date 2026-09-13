@@ -32,7 +32,7 @@ interface QuotaRule {
  * platelet quota (24/year) counts whole blood donations too ("incluant les
  * éventuels dons de sang") — a shared budget, not a platelets-only cap.
  *
- * Plasma also has a 15 litres/year cap mentioned on the page that isn't
+ * Plasma also has a 15 liters / year cap mentioned on the page that isn't
  * implemented here — we have no donation volume data to check it against.
  */
 const QUOTA: Record<DonationType, QuotaRule> = {
@@ -82,7 +82,7 @@ function quotaConstraintDate(donationsForQuota: Donation[], maxPerRollingYear: n
   return result;
 }
 
-/** Earliest date `type` would be allowed given `allDonations`, with no floor on today. */
+/** The earliest date `type` would be allowed given `allDonations`, with no floor on today. */
 function earliestEligibleDate(type: DonationType, allDonations: Donation[]): Date {
   const quota = QUOTA[type];
   const donationsForQuota = allDonations.filter((d) => quota.countedTypes.includes(d.type));
@@ -113,6 +113,14 @@ export const belgiumRules: DonationRuleSet = {
     const priorDonations = allDonations.filter((d) => parseISODate(d.date) <= candidate);
     const earliest = earliestEligibleDate(type, priorDonations);
     return candidate.getTime() >= earliest.getTime();
+  },
+  officialReferences():Map<string, string[]> {
+    const officialReferences = new Map<string, string[]>();
+    officialReferences.set("de", ["https://www.donneurdesang.be/de/wer-kann-spenden/zeitspanne-zwischen-zwei-spenden"]);
+    officialReferences.set("en", ["https://www.donneurdesang.be/en/who-can-donate/wait-between-two-donations"]);
+    officialReferences.set("fr", ["https://www.donneurdesang.be/fr/qui-peut-donner/delai-entre-deux-dons"]);
+    officialReferences.set("nl", ["https://www.donneurdesang.be/nl/wie-mag-doneren/termijn-tussen-twee-donaties"]);
+    return officialReferences;
   }
 };
 
