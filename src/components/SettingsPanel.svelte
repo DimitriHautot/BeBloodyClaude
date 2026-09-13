@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { donorSettings, getAllowedTypes, getAllowedTypesRecord } from '../lib/settings/storage';
+  import { donorSettings, getAllowedTypes, getAllowedTypesRecord, getSexSymbol } from '../lib/settings/storage';
   import { ruleSetRegistry } from '../lib/rules/registry';
+  import { getFlag } from '../lib/flags';
   import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
 
   const countries = Object.values(ruleSetRegistry);
@@ -26,7 +27,7 @@
     Pays (règles applicables)
     <select bind:value={$donorSettings.countryCode}>
       {#each countries as country}
-        <option value={country.countryCode}>{country.countryName}</option>
+        <option value={country.countryCode}>{getFlag(country.countryCode)} {country.countryName}</option>
       {/each}
     </select>
   </label>
@@ -34,8 +35,8 @@
   <label>
     Sexe
     <select bind:value={$donorSettings.sex}>
-      <option value="male">Homme</option>
-      <option value="female">Femme</option>
+      <option value="male">{getSexSymbol('male')} Homme</option>
+      <option value="female">{getSexSymbol('female')} Femme</option>
     </select>
   </label>
 
