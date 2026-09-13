@@ -54,4 +54,37 @@ Les tests Vitest qui ont besoin de dates relatives (ex. « il y a 10 jours »)
 utilisent `daysAgo`/`daysFromNow` depuis `src/test-support/dateFixtures.ts`
 plutôt que de redéfinir leurs propres helpers.
 
+## PWA installée ("standalone") et cache
+
+Une fois ajoutée à l'écran d'accueil (iOS/Android), l'app tourne dans une
+WebView "standalone" qui n'a pas de bouton de rechargement manuel visible
+par l'utilisateur : contrairement à un onglet de navigateur classique, un
+donneur ne peut pas facilement forcer un rafraîchissement s'il reste sur
+une version en cache après un déploiement. iOS en particulier a tendance à
+garder longtemps la version HTML/JS/CSS déjà chargée pour une PWA
+standalone tant qu'elle n'est pas explicitement invalidée.
+
+**Recommandation** : côté hébergement du build statique (`dist/`),
+vérifier que les en-têtes `Cache-Control` sont adaptés à ce mode d'usage —
+typiquement pas de cache long (`no-cache` ou une durée courte) sur
+`index.html` et sur `manifest.webmanifest`, puisque ce sont eux qui
+référencent les assets hashés (`assets/index-*.js/css`, qui eux peuvent
+être mis en cache long terme sans risque grâce au hash dans leur nom).
+Sans ça, un utilisateur ayant déjà installé l'app peut rester bloqué sur
+une ancienne version après un déploiement.
+
+## Taille de police : suivre les réglages du téléphone
+
+Aucune taille de police fixe n'est imposée par l'app — elle doit suivre le
+réglage d'accessibilité du système (ex. « Taille de police » sur
+Android/Chrome). Deux règles à respecter pour que ça reste vrai :
+- Toutes les `font-size` sont en `rem` (jamais en `px`) partout dans les
+  composants, pour rester relatives à la taille par défaut du navigateur.
+- `html` ne doit jamais fixer `font-size` en `px` (voir le
+  `:global(html) { font-size: 100%; }` dans `App.svelte`) : c'est cette
+  taille par défaut du navigateur, pilotée par l'OS, qui sert de base aux
+  `rem`. La balise `viewport` dans `index.html` ne doit pas non plus
+  contenir `user-scalable=no` ni `maximum-scale`, pour laisser le
+  pinch-to-zoom disponible comme second levier d'accessibilité.
+
 @.claude/donation-rules/modular-rules.md

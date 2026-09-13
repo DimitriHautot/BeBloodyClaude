@@ -30,7 +30,7 @@
 
 <main>
   <div class="top-bar">
-    <h1>Suivi des dons</h1>
+    <h1>BeBloody</h1>
     <AppMenu
       on:open-settings={() => (showSettings = true)}
       on:open-references={() => (showReferences = true)}
@@ -71,6 +71,14 @@
 {/if}
 
 <style>
+  /* No px font-size here on purpose: leaving the root at the browser's
+     default (100%) is what lets `rem` sizes throughout the app follow the
+     device's own text-size/accessibility setting instead of a fixed size
+     we'd be imposing. Never override this with a px value. */
+  :global(html) {
+    font-size: 100%;
+  }
+
   :global(body) {
     font-family: system-ui, sans-serif;
   }
@@ -78,7 +86,11 @@
   main {
     max-width: 640px;
     margin: 0 auto;
-    padding: 1.5rem 1rem 4rem;
+    /* Keep content clear of notches/home indicators when installed as a
+       standalone iOS/Android PWA (viewport-fit=cover in index.html makes
+       these env() vars non-zero on devices with safe-area insets). */
+    padding: calc(1.5rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right))
+      calc(4rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
   }
 
   .top-bar {
