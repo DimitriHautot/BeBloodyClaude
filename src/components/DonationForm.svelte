@@ -115,6 +115,16 @@
     gap: 0.35rem;
   }
 
+  .country-flag,
+  .sex-symbol {
+    /* iOS (Firefox & Safari) renders these glyphs with extra leading
+     * below the character, which pushes them down relative to text
+     * rendered with `line-height: normal` even under flex
+     * `align-items: center` — pin the line box to the glyph itself so
+     * both platforms center identically. */
+    line-height: 1;
+  }
+
   .country-flag {
     font-size: 1.3rem;
   }

@@ -41,11 +41,11 @@ describe('getAllowedTypes', () => {
 });
 
 describe('getSexSymbol', () => {
-  it('returns ♂ for male', () => {
-    expect(getSexSymbol('male')).toBe('♂');
+  it('returns ♂ (text presentation) for male', () => {
+    expect(getSexSymbol('male')).toBe('♂︎');
   });
 
-  it('returns ♀ for female', () => {
-    expect(getSexSymbol('female')).toBe('♀');
+  it('returns ♀ (text presentation) for female', () => {
+    expect(getSexSymbol('female')).toBe('♀︎');
   });
 });
