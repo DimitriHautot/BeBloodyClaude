@@ -3,9 +3,15 @@ import { DONATION_TYPES, type DonationType } from '../donations/types';
 
 export type Sex = 'male' | 'female';
 
+// The trailing U+FE0E (text variation selector) forces the plain-text glyph
+// instead of the taller emoji-style one. Without it, iOS substitutes the
+// emoji glyph for ♂/♀ in some rendering contexts (notably native <select>/
+// <option>, which CSS can't reach) but not others, causing an inconsistent
+// vertical offset between platforms — see the DonationForm/SettingsPanel
+// "symbole du sexe décalé" fix.
 const SEX_SYMBOLS: Record<Sex, string> = {
-  male: '♂',
-  female: '♀'
+  male: '♂︎',
+  female: '♀︎'
 };
 
 /** The male (♂) or female (♀) sex symbol for `sex`. */
