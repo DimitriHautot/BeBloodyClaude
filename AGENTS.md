@@ -90,22 +90,29 @@ Android/Chrome). Deux règles à respecter pour que ça reste vrai :
 ## Icônes PWA : qui lit quoi
 
 Les navigateurs mobiles n'utilisent pas tous la même source pour l'icône
-d'écran d'accueil, d'où trois déclarations différentes dans `index.html`/le
-manifest, chacune nécessaire :
-- Safari iOS lit `<link rel="apple-touch-icon">` (ignore le manifest, voir
-  commentaire dans `index.html`).
-- Firefox iOS, lui, ignore `apple-touch-icon` **et** le manifest pour son
-  « Ajouter à l'écran d'accueil » : il se base sur `<link rel="icon">` (le
-  favicon). S'il le juge trop petit pour cet usage, il retombe sur une
-  icône générée (lettre blanche sur fond uni) plutôt que d'agrandir un
-  favicon basse résolution — d'où `public/favicon.png` volontairement
-  généré en 192×192 (voir `scripts/generate-icons.mjs`) et non en petite
-  taille classique de favicon d'onglet.
+d'écran d'accueil, d'où plusieurs déclarations différentes dans
+`index.html`/le manifest :
+- Safari iOS lit `<link rel="apple-touch-icon">`, et ignore le manifest pour
+  ça (voir commentaire dans `index.html`).
 - Chrome/Edge (Android et desktop) lisent les `icons` du manifest.
+- Firefox iOS reste **non confirmé** malgré deux hypothèses déjà tentées
+  sans succès observé sur appareil (voir historique git de cette section) :
+  - Que la favicon (`<link rel="icon">`) soit utilisée à la place —
+    `public/favicon.png` a été agrandi en 192×192 par précaution (voir
+    `scripts/generate-icons.mjs`), sans confirmation que ça règle le
+    problème.
+  - Qu'il faille aussi servir `apple-touch-icon.png` à la racine du site
+    (`public/apple-touch-icon.png`, en plus/place de `public/icons/...`) :
+    iOS et les navigateurs tiers utilisant son API « Add to Home Screen »
+    (depuis iOS 16.4) sont censés sonder ce chemin par convention, comme
+    `/favicon.ico`, indépendamment de la balise `<link>` dans le head. C'est
+    la piste actuellement en place, mais elle aussi reste à confirmer sur un
+    appareil réel avant de la considérer réglée.
 
-Tous les fichiers dans `public/icons/` et `public/favicon.png` sont générés
-depuis le même tracé SVG par `node scripts/generate-icons.mjs` — ne pas les
-éditer à la main, modifier le script puis le relancer.
+Tous les fichiers dans `public/icons/`, `public/favicon.png` et
+`public/apple-touch-icon.png` sont générés depuis le même tracé SVG par
+`node scripts/generate-icons.mjs` — ne pas les éditer à la main, modifier le
+script puis le relancer.
 
 ## Vérifier la version déployée
 
