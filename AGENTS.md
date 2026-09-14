@@ -95,24 +95,39 @@ d'écran d'accueil, d'où plusieurs déclarations différentes dans
 - Safari iOS lit `<link rel="apple-touch-icon">`, et ignore le manifest pour
   ça (voir commentaire dans `index.html`).
 - Chrome/Edge (Android et desktop) lisent les `icons` du manifest.
-- Firefox iOS reste **non confirmé** malgré deux hypothèses déjà tentées
-  sans succès observé sur appareil (voir historique git de cette section) :
-  - Que la favicon (`<link rel="icon">`) soit utilisée à la place —
-    `public/favicon.png` a été agrandi en 192×192 par précaution (voir
-    `scripts/generate-icons.mjs`), sans confirmation que ça règle le
-    problème.
-  - Qu'il faille aussi servir `apple-touch-icon.png` à la racine du site
-    (`public/apple-touch-icon.png`, en plus/place de `public/icons/...`) :
-    iOS et les navigateurs tiers utilisant son API « Add to Home Screen »
-    (depuis iOS 16.4) sont censés sonder ce chemin par convention, comme
-    `/favicon.ico`, indépendamment de la balise `<link>` dans le head. C'est
-    la piste actuellement en place, mais elle aussi reste à confirmer sur un
-    appareil réel avant de la considérer réglée.
+- Firefox iOS reste **non confirmé** malgré plusieurs hypothèses déjà
+  tentées sans succès observé sur appareil (voir historique git de cette
+  section) : favicon agrandie en 192×192, `apple-touch-icon.png` aussi servi
+  à la racine du site en plus de `public/icons/...`. `public/favicon.png`,
+  `public/apple-touch-icon.png` et `public/icons/` restent générés depuis le
+  même tracé SVG par `node scripts/generate-icons.mjs` — ne pas les éditer à
+  la main, modifier le script puis le relancer.
 
-Tous les fichiers dans `public/icons/`, `public/favicon.png` et
-`public/apple-touch-icon.png` sont générés depuis le même tracé SVG par
-`node scripts/generate-icons.mjs` — ne pas les éditer à la main, modifier le
-script puis le relancer.
+  **Ce qu'on sait avec certitude** (lu dans le code source de
+  `mozilla-mobile/firefox-ios`, fichiers `ShareManager.swift` et
+  `HomePageActivity.swift`) : Firefox iOS n'implémente pas lui-même la
+  génération de l'icône. Il délègue entièrement à la fonctionnalité système
+  « Add to Home Screen » introduite par iOS 16.4 pour les navigateurs
+  tiers, en passant à `UIActivityViewController` un objet `HomePageActivity`
+  — une sous-classe de `WKWebView` **jamais chargée** (pas d'appel à
+  `.load()`), qui se contente de retourner l'URL et le titre de l'onglet
+  réel via des overrides de `url`/`title`. C'est donc le système
+  (WebKit/iOS), pas Firefox, qui va (re)fetcher la page à cette URL et en
+  extraire l'icône selon ses propres règles habituelles — les mêmes que
+  celles de Safari en principe (`apple-touch-icon` prioritaire sur le
+  manifest). Dernier ajustement tenté sur cette base : ajouter l'attribut
+  `sizes="180x180"` manquant sur la balise `<link rel="apple-touch-icon">`
+  (seule balise d'icône qui ne l'avait pas), toujours à confirmer sur
+  appareil.
+
+  **Piste à explorer si ça persiste** : iOS met en cache l'icône
+  « Add to Home Screen » par domaine à un niveau système, pas seulement au
+  niveau de l'app Firefox — un simple redéploiement peut ne pas suffire à
+  invalider ce cache. Avant de conclure qu'un correctif ne fonctionne pas,
+  tester sur un appareil/simulateur n'ayant jamais fait « Ajouter à l'écran
+  d'accueil » pour ce domaine, ou après avoir effacé les données de site
+  dans Firefox (Réglages → Firefox → Effacer les données de navigation, ou
+  équivalent).
 
 ## Vérifier la version déployée
 
