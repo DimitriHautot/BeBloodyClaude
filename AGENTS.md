@@ -107,4 +107,21 @@ Tous les fichiers dans `public/icons/` et `public/favicon.png` sont générés
 depuis le même tracé SVG par `node scripts/generate-icons.mjs` — ne pas les
 éditer à la main, modifier le script puis le relancer.
 
+## Vérifier la version déployée
+
+En bas de la page principale (`<footer>` dans `App.svelte`), l'app affiche
+son identité de build : numéro de version (`package.json`), numéro de build
+unique, date + heure de build, et type (`debug` en dev, `production` en
+build). Utile pour confirmer qu'un appareil donné (notamment une PWA
+installée, cf. section cache plus haut) affiche bien la dernière version
+déployée plutôt qu'une version en cache.
+
+Ces valeurs sont calculées une seule fois par exécution de `vite`/`vite
+build` (pas par requête) dans `vite.config.ts`, injectées via `define`
+(`__APP_VERSION__`, `__BUILD_TIME__`, `__BUILD_NUMBER__`, déclarées dans
+`src/vite-env.d.ts`) et mises en forme dans `src/lib/buildInfo.ts`. Le même
+`vite.config.ts` les affiche aussi dans le terminal au lancement de
+`npm run dev` ou `npm run build`, pour vérifier depuis les logs de
+déploiement/CI sans avoir à ouvrir l'app.
+
 @.claude/donation-rules/modular-rules.md

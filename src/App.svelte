@@ -8,6 +8,7 @@
   import ReferencesPanel from './components/ReferencesPanel.svelte';
   import { donorSettings, getAllowedTypes, isFirstLaunch } from './lib/settings/storage';
   import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
+  import { buildInfo } from './lib/buildInfo';
 
   // First time the app is opened, show the settings modal right away so the
   // donor can set their country/sex before using the app.
@@ -47,6 +48,10 @@
     <DonationForm fixedType={soleAllowedType} />
   {/if}
   <DonationList />
+
+  <footer>
+    v{buildInfo.version} · build {buildInfo.buildNumber} · {buildInfo.buildTime} · {buildInfo.buildType}
+  </footer>
 </main>
 
 {#if showSettings}
@@ -103,5 +108,14 @@
   h1 {
     font-size: 1.5rem;
     margin: 0;
+  }
+
+  footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    font-size: 0.75rem;
+    color: #999;
+    text-align: center;
   }
 </style>
