@@ -8,3 +8,5 @@ convention de mise à jour de ce fichier.
 
 - Ajout du hash de commit dans `buildInfo` (footer + console `dev`/`build`)
   et création de ce journal des changements (`e4b53b4`)
+- Ajout d'une modale "À propos" (description, contact, code source, lien
+  vers les références officielles) (`9c78e7c`)
