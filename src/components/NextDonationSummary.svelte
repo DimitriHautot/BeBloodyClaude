@@ -108,8 +108,9 @@
 
 <style>
   h2 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
   }
 
   ul {
@@ -117,23 +118,25 @@
     padding: 0;
     margin: 0 0 2rem;
     display: grid;
-    gap: 0.5rem;
+    gap: 0.6rem;
   }
 
   li {
     display: flex;
     align-items: center;
-    padding: 0.6rem 0.75rem;
-    border-radius: 6px;
-    background: #f5f5f5;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+    border-left: 0.3rem solid var(--color-border);
   }
 
   li.eligible {
-    background: #e6f6ea;
+    border-left-color: var(--color-success);
   }
 
   li.upcoming {
-    background: #fbe6cf;
+    border-left-color: var(--color-upcoming);
   }
 
   .type {
@@ -145,28 +148,41 @@
   .date {
     flex: 1;
     text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  li.eligible .date {
+    color: var(--color-success-dark);
+    font-weight: 600;
+  }
+
+  li.upcoming .date {
+    color: var(--color-upcoming);
+    font-weight: 600;
   }
 
   .quick-add-slot {
-    width: 1.6rem;
+    width: 1.9rem;
     flex-shrink: 0;
     margin-left: 0.5rem;
   }
 
   .quick-add {
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.9rem;
+    height: 1.9rem;
     padding: 0;
     border: none;
     border-radius: 50%;
-    background: #2e8b57;
+    background: var(--color-success);
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     line-height: 1;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
   }
 
-  .quick-add:hover {
-    background: #256e46;
+  .quick-add:active {
+    background: var(--color-success-dark);
+    transform: scale(0.94);
   }
 </style>

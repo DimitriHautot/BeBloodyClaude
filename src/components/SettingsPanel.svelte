@@ -84,20 +84,25 @@
   section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
   }
 
   label {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.35rem;
     font-size: 0.9rem;
+    color: var(--color-text-secondary);
   }
 
   select,
   input[type='number'] {
-    padding: 0.4rem;
+    padding: 0.65rem 0.75rem;
     font-size: 1rem;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
   }
 
   input[type='number'] {
@@ -107,31 +112,39 @@
   .checkbox {
     flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    color: var(--color-text);
+  }
+
+  .checkbox input[type='checkbox'] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--color-primary);
   }
 
   .highlight-upcoming {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #eee;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
   }
 
   .allowed-types {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   .allowed-types-legend {
     font-size: 0.9rem;
+    color: var(--color-text-secondary);
   }
 
   hr {
     width: 100%;
     border: none;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-border);
     margin: 0;
   }
 </style>

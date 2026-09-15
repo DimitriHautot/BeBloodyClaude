@@ -1,13 +1,17 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import BottomSheet from './BottomSheet.svelte';
 
   const dispatch = createEventDispatcher<{ 'open-settings': void; 'open-references': void }>();
 
   let open = false;
-  let navEl: HTMLElement;
 
   function toggle() {
     open = !open;
+  }
+
+  function close() {
+    open = false;
   }
 
   function openSettings() {
@@ -19,75 +23,71 @@
     open = false;
     dispatch('open-references');
   }
-
-  function handleWindowClick(event: MouseEvent) {
-    if (open && navEl && !navEl.contains(event.target as Node)) {
-      open = false;
-    }
-  }
 </script>
 
-<svelte:window on:click={handleWindowClick} />
+<button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
+  <span class="bar" />
+  <span class="bar" />
+  <span class="bar" />
+</button>
 
-<nav bind:this={navEl}>
-  <button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
-    ☰
-  </button>
-
-  {#if open}
-    <ul class="menu">
-      <li>
-        <button on:click={openSettings}>Paramètres</button>
-      </li>
-      <li>
-        <button on:click={openReferences}>Références</button>
-      </li>
-    </ul>
-  {/if}
-</nav>
+{#if open}
+  <BottomSheet ariaLabel="Menu" on:close={close} let:close>
+    <button class="item" on:click={openSettings}>Paramètres</button>
+    <button class="item" on:click={openReferences}>Références</button>
+    <button class="item cancel" on:click={close}>Annuler</button>
+  </BottomSheet>
+{/if}
 
 <style>
-  nav {
-    position: relative;
-    display: inline-block;
-  }
-
   .menu-button {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
     cursor: pointer;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    background: var(--color-surface);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
   }
 
-  .menu {
-    position: absolute;
-    top: calc(100% + 0.25rem);
-    right: 0;
-    list-style: none;
-    margin: 0;
-    padding: 0.25rem;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    min-width: 140px;
-    z-index: 10;
+  .bar {
+    width: 1.1rem;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-text);
   }
 
-  .menu li button {
+  .item {
     width: 100%;
     text-align: left;
-    padding: 0.5rem 0.6rem;
+    padding: 1rem 0.5rem;
     background: none;
     border: none;
+    border-top: 1px solid var(--color-border);
     cursor: pointer;
-    font-size: 0.95rem;
-    border-radius: 4px;
+    font-size: 1.05rem;
+    color: var(--color-text);
   }
 
-  .menu li button:hover {
-    background: #f0f0f0;
+  .item:first-of-type {
+    border-top: none;
+  }
+
+  .item:active {
+    background: var(--color-bg);
+  }
+
+  .cancel {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-primary);
+    border-top: none;
   }
 </style>

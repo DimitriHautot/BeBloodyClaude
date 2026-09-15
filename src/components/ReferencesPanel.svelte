@@ -47,17 +47,18 @@
 
 <style>
   .intro {
-    color: #555;
+    color: var(--color-text-secondary);
     margin-top: 0;
   }
 
   .country {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
   }
 
   .country h3 {
     margin: 0 0 0.5rem;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
   }
 
   .languages,
@@ -82,7 +83,7 @@
   }
 
   .urls a {
-    color: #b3261e;
+    color: var(--color-primary);
     word-break: break-all;
   }
 </style>
