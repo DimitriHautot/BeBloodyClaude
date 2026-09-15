@@ -21,6 +21,21 @@ base de données.
 - `npm run test` — tests Vitest.
 - `npm run check` — vérification des types (`svelte-check`).
 
+## Convention de branches Git
+
+Une branche dédiée par fonctionnalité/correctif, pas une branche unique
+réutilisée pour tout : chaque nouvelle tâche part de `main` sur une
+branche fraîche (`git checkout -b <nom-descriptif> main`), qui devient la
+tête d'une seule pull request. Une fois cette PR fusionnée, la branche est
+terminée — elle n'est pas réutilisée pour une tâche suivante, même sans
+rapport. Nommer la branche d'après ce qu'elle contient (ex.
+`mobile-native-restyle`, `firefox-ios-icon-fix`), pas d'après un
+identifiant de session.
+
+Objectif : garder une correspondance stricte 1 branche ↔ 1 PR ↔ 1 sujet,
+pour que l'historique et la revue restent lisibles — éviter qu'une branche
+partagée accumule des commits sans rapport entre eux au fil des sessions.
+
 ## Architecture
 
 ```
