@@ -19,7 +19,8 @@
   son temps libre, bien aidé par <a href="https://claude.ai/code/" target="_blank" rel="noopener noreferrer">Claude Code</a>.<br>
   <br>
   Aucune validation par un organisme officiel n'est effectuée lors du processus de développement.<br>
-  Toutefois, les calculs sont modélisés en utilisant des règles publiées sur Internet. (cf. TODO)<br>
+  Toutefois, les calculs sont modélisés en utilisant des règles publiées sur Internet
+  (<button class="link inline" on:click={() => dispatch('open-references')}>voir les références officielles</button>).<br>
   Malgré cela, il est possible que les résultats obtenus ne soient pas toujours identiques à ceux obtenus
   via un organisme officiel. Ces derniers peuvent être plus précis en raison de leur expertise et de
   leur accès à des données plus détaillées.<br>
@@ -41,14 +42,6 @@
     <dt>Code source</dt>
     <dd>
       <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer">{SOURCE_URL}</a>
-    </dd>
-  </div>
-  <div class="row">
-    <dt>Règles utilisées</dt>
-    <dd>
-      <button class="link" on:click={() => dispatch('open-references')}>
-        Voir les références officielles
-      </button>
     </dd>
   </div>
 </dl>
@@ -99,6 +92,11 @@
     font: inherit;
     text-align: left;
     cursor: pointer;
+  }
+
+  .link.inline {
+    display: inline;
+    word-break: normal;
   }
 
   .build-info {
