@@ -2,7 +2,11 @@
   import { createEventDispatcher } from 'svelte';
   import BottomSheet from './BottomSheet.svelte';
 
-  const dispatch = createEventDispatcher<{ 'open-settings': void; 'open-references': void }>();
+  const dispatch = createEventDispatcher<{
+    'open-settings': void;
+    'open-references': void;
+    'open-about': void;
+  }>();
 
   let open = false;
 
@@ -23,6 +27,11 @@
     open = false;
     dispatch('open-references');
   }
+
+  function openAbout() {
+    open = false;
+    dispatch('open-about');
+  }
 </script>
 
 <button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
@@ -35,6 +44,7 @@
   <BottomSheet ariaLabel="Menu" on:close={close} let:close>
     <button class="item" on:click={openSettings}>Paramètres</button>
     <button class="item" on:click={openReferences}>Références</button>
+    <button class="item" on:click={openAbout}>À propos</button>
     <button class="item cancel" on:click={close}>Annuler</button>
   </BottomSheet>
 {/if}
