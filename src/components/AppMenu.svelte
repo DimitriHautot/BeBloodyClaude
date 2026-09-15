@@ -75,7 +75,7 @@
 
   .item {
     width: 100%;
-    text-align: left;
+    text-align: center;
     padding: 1rem 0.5rem;
     background: none;
     border: none;
