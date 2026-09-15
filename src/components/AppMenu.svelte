@@ -4,10 +4,13 @@
   const dispatch = createEventDispatcher<{ 'open-settings': void; 'open-references': void }>();
 
   let open = false;
-  let navEl: HTMLElement;
 
   function toggle() {
     open = !open;
+  }
+
+  function close() {
+    open = false;
   }
 
   function openSettings() {
@@ -20,74 +23,135 @@
     dispatch('open-references');
   }
 
-  function handleWindowClick(event: MouseEvent) {
-    if (open && navEl && !navEl.contains(event.target as Node)) {
-      open = false;
-    }
+  function handleKeydown(event: KeyboardEvent) {
+    if (open && event.key === 'Escape') close();
   }
 </script>
 
-<svelte:window on:click={handleWindowClick} />
+<svelte:window on:keydown={handleKeydown} />
 
-<nav bind:this={navEl}>
-  <button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
-    ☰
-  </button>
+<button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
+  <span class="bar" />
+  <span class="bar" />
+  <span class="bar" />
+</button>
 
-  {#if open}
-    <ul class="menu">
-      <li>
-        <button on:click={openSettings}>Paramètres</button>
-      </li>
-      <li>
-        <button on:click={openReferences}>Références</button>
-      </li>
-    </ul>
-  {/if}
-</nav>
+{#if open}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div class="overlay" on:click={close}>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div class="sheet" on:click|stopPropagation>
+      <span class="grabber" aria-hidden="true" />
+      <button class="item" on:click={openSettings}>Paramètres</button>
+      <button class="item" on:click={openReferences}>Références</button>
+      <button class="item cancel" on:click={close}>Annuler</button>
+    </div>
+  </div>
+{/if}
 
 <style>
-  nav {
-    position: relative;
-    display: inline-block;
-  }
-
   .menu-button {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
     cursor: pointer;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    background: var(--color-surface);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
   }
 
-  .menu {
-    position: absolute;
-    top: calc(100% + 0.25rem);
-    right: 0;
-    list-style: none;
-    margin: 0;
-    padding: 0.25rem;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    min-width: 140px;
-    z-index: 10;
+  .bar {
+    width: 1.1rem;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-text);
   }
 
-  .menu li button {
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 30, 0.35);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 100;
+    animation: fade-in 0.15s ease-out;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 640px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    animation: slide-up 0.2s ease-out;
+  }
+
+  .grabber {
+    width: 2.5rem;
+    height: 0.3rem;
+    border-radius: 0.15rem;
+    background: var(--color-border);
+    align-self: center;
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .item {
     width: 100%;
     text-align: left;
-    padding: 0.5rem 0.6rem;
+    padding: 1rem 0.5rem;
     background: none;
     border: none;
+    border-top: 1px solid var(--color-border);
     cursor: pointer;
-    font-size: 0.95rem;
-    border-radius: 4px;
+    font-size: 1.05rem;
+    color: var(--color-text);
   }
 
-  .menu li button:hover {
-    background: #f0f0f0;
+  .item:first-of-type {
+    border-top: none;
+  }
+
+  .item:active {
+    background: var(--color-bg);
+  }
+
+  .cancel {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-primary);
+    border-top: none;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 </style>

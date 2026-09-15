@@ -84,8 +84,33 @@
     font-size: 100%;
   }
 
+  /* Shared design tokens, used across every component via `var(...)`. Kept
+     here rather than duplicated per-component so the whole app's look can
+     be tuned from one place. */
+  :global(:root) {
+    --color-primary: #c0392b;
+    --color-primary-dark: #a53125;
+    --color-success: #2e8b57;
+    --color-success-dark: #256e46;
+    --color-upcoming: #d97706;
+    --color-bg: #f4f3f6;
+    --color-surface: #ffffff;
+    --color-border: #eceaef;
+    --color-text: #1c1c1e;
+    --color-text-secondary: #6e6e76;
+    --radius-sm: 0.6rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.375rem;
+    --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.04), 0 1px 1px rgba(20, 20, 30, 0.03);
+    --shadow-md: 0 8px 24px rgba(20, 20, 30, 0.08);
+    --shadow-lg: 0 -8px 32px rgba(20, 20, 30, 0.16);
+  }
+
   :global(body) {
-    font-family: system-ui, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
   }
 
   main {
@@ -102,20 +127,23 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-primary);
     margin: 0;
   }
 
   footer {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     padding-top: 1rem;
-    border-top: 1px solid #eee;
     font-size: 0.75rem;
-    color: #999;
+    color: var(--color-text-secondary);
     text-align: center;
+    opacity: 0.7;
   }
 </style>

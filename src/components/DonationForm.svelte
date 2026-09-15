@@ -101,9 +101,10 @@
     align-items: flex-start;
     gap: 1rem;
     margin-bottom: 2rem;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   .donor-info {
@@ -135,25 +136,29 @@
   }
 
   h2 {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    font-weight: 700;
     margin: 0 0 0.5rem;
   }
 
   label {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.35rem;
     font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    width: 100%;
   }
 
   fieldset {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.4rem;
     border: none;
     padding: 0;
     margin: 0;
     font-size: 0.9rem;
+    color: var(--color-text-secondary);
   }
 
   legend {
@@ -164,8 +169,9 @@
   .radio {
     flex-direction: row;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     font-weight: normal;
+    color: var(--color-text);
   }
 
   .fixed-type {
@@ -176,7 +182,7 @@
   }
 
   .fixed-type-label {
-    color: #666;
+    color: var(--color-text-secondary);
   }
 
   .fixed-type-value {
@@ -184,19 +190,32 @@
   }
 
   input[type='date'] {
-    padding: 0.4rem;
+    padding: 0.65rem 0.75rem;
     font-size: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
   }
 
-  button {
-    padding: 0.5rem 1rem;
+  button[type='submit'] {
+    align-self: stretch;
+    padding: 0.75rem 1rem;
     font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+  }
+
+  button[type='submit']:active {
+    background: var(--color-primary-dark);
   }
 
   .error {
     margin: 0;
-    color: #c00;
+    color: var(--color-primary);
     font-size: 0.9rem;
   }
 </style>

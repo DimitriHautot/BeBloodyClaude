@@ -42,47 +42,57 @@
 
 <style>
   h2 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
   }
 
   .empty {
-    color: #666;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+    text-align: center;
   }
 
   .counts {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 0.75rem;
-    margin: 0 0 1rem;
+    gap: 0.35rem 0.75rem;
+    margin: 0 0 0.75rem;
     font-size: 0.9rem;
-    color: #333;
+    color: var(--color-text-secondary);
   }
 
   .counts-total {
-    font-weight: 600;
-  }
-
-  .counts-item {
-    color: #666;
+    font-weight: 700;
+    color: var(--color-text);
   }
 
   ul {
     list-style: none;
-    padding: 0;
+    padding: 0.25rem 1rem;
     margin: 0 0 2rem;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   li {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  li:last-child {
+    border-bottom: none;
   }
 
   .flag {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .date {
@@ -92,18 +102,25 @@
   .type {
     flex: 1;
     text-align: right;
-    color: #333;
+    color: var(--color-text-secondary);
   }
 
   button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
     background: none;
     border: none;
+    border-radius: 50%;
     cursor: pointer;
-    color: #999;
-    font-size: 1rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
   }
 
-  button:hover {
-    color: #c00;
+  button:active {
+    background: var(--color-bg);
+    color: var(--color-primary);
   }
 </style>
