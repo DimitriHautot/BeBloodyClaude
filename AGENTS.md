@@ -38,6 +38,10 @@ partagée accumule des commits sans rapport entre eux au fil des sessions.
 
 Squash des commits avant de fusionner une PR.
 
+**Seule exception** à « pas de commit direct sur `main` » : la mise à jour
+de `CHANGELOG.md` juste après un merge, voir « Journal des changements »
+ci-dessous.
+
 ## Journal des changements (`CHANGELOG.md`)
 
 Chaque PR fusionnée dans `main` doit avoir une entrée dans `CHANGELOG.md`,
