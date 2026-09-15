@@ -38,6 +38,30 @@ partagée accumule des commits sans rapport entre eux au fil des sessions.
 
 Squash des commits avant de fusionner une PR.
 
+## Journal des changements (`CHANGELOG.md`)
+
+Chaque PR fusionnée dans `main` doit avoir une entrée dans `CHANGELOG.md`,
+sous forme `- <résumé> (`<hash court>`)`, groupée sous une section
+`## <version>` ou `## Non publié` en haut du fichier.
+
+Point important sur le moment où cette entrée est ajoutée : les PR de ce
+dépôt sont fusionnées par squash-merge (voir plus haut), donc le hash final
+du commit sur `main` n'existe qu'**après** la fusion — il est différent du
+hash du dernier commit de la branche de la PR. L'entrée du changelog ne
+peut donc pas être ajoutée dans la PR elle-même ; elle est ajoutée dans un
+commit séparé, poussé directement sur `main` juste après chaque merge, une
+fois le hash réel connu (`git log -1 --format=%h origin/main`).
+
+## Identifier un build précisément (`buildInfo`, `CHANGELOG.md`)
+
+En complément du numéro de version/build/date décrits plus bas
+(« Vérifier la version déployée »), `buildInfo.commitHash` (aussi injecté
+via `define` dans `vite.config.ts`, à partir de `git rev-parse --short
+HEAD` au moment du build) donne le hash court exact du commit source d'un
+build donné. Affiché dans le footer et au lancement de `npm run dev`/`npm
+run build`, il permet de retrouver l'entrée correspondante dans
+`CHANGELOG.md` pour savoir précisément ce qu'un build déployé contient.
+
 ## Architecture
 
 ```

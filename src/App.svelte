@@ -50,7 +50,8 @@
   <DonationList />
 
   <footer>
-    v{buildInfo.version} · build {buildInfo.buildNumber} · {buildInfo.buildTime} · {buildInfo.buildType}
+    v{buildInfo.version} ({buildInfo.commitHash}) · build {buildInfo.buildNumber} ·
+    {buildInfo.buildTime} · {buildInfo.buildType}
   </footer>
 </main>
 

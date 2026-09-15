@@ -10,6 +10,7 @@
  */
 export interface BuildInfo {
   version: string;
+  commitHash: string;
   buildNumber: string;
   buildTime: string;
   buildType: 'debug' | 'production';
@@ -17,6 +18,7 @@ export interface BuildInfo {
 
 export const buildInfo: BuildInfo = {
   version: __APP_VERSION__,
+  commitHash: __COMMIT_HASH__,
   buildNumber: __BUILD_NUMBER__,
   buildTime: __BUILD_TIME__,
   buildType: import.meta.env.DEV ? 'debug' : 'production'
