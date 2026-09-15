@@ -6,6 +6,7 @@
   import NextDonationSummary from './components/NextDonationSummary.svelte';
   import SettingsPanel from './components/SettingsPanel.svelte';
   import ReferencesPanel from './components/ReferencesPanel.svelte';
+  import AboutPanel from './components/AboutPanel.svelte';
   import { donorSettings, getAllowedTypes, isFirstLaunch } from './lib/settings/storage';
   import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
   import { buildInfo } from './lib/buildInfo';
@@ -14,6 +15,7 @@
   // donor can set their country/sex before using the app.
   let showSettings = isFirstLaunch;
   let showReferences = false;
+  let showAbout = false;
   let quickAddType: DonationType | null = null;
   let quickAddMinDate: string | null = null;
 
@@ -35,6 +37,7 @@
     <AppMenu
       on:open-settings={() => (showSettings = true)}
       on:open-references={() => (showReferences = true)}
+      on:open-about={() => (showAbout = true)}
     />
   </div>
 
@@ -64,6 +67,12 @@
 {#if showReferences}
   <Modal title="Références" on:close={() => (showReferences = false)}>
     <ReferencesPanel />
+  </Modal>
+{/if}
+
+{#if showAbout}
+  <Modal title="À propos" on:close={() => (showAbout = false)}>
+    <AboutPanel />
   </Modal>
 {/if}
 
