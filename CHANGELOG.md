@@ -6,4 +6,5 @@ convention de mise à jour de ce fichier.
 
 ## Non publié
 
-<!-- Rien pour l'instant. -->
+- Ajout du hash de commit dans `buildInfo` (footer + console `dev`/`build`)
+  et création de ce journal des changements (`e4b53b4`)
