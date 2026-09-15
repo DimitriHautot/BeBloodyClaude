@@ -10,3 +10,4 @@ convention de mise à jour de ce fichier.
   et création de ce journal des changements (`e4b53b4`)
 - Ajout d'une modale "À propos" (description, contact, code source, lien
   vers les références officielles) (`9c78e7c`)
+- Ajout d'un `README.md` minimal pour les développeurs (`1438b4b`)
