@@ -36,7 +36,7 @@ Objectif : garder une correspondance stricte 1 branche ↔ 1 PR ↔ 1 sujet,
 pour que l'historique et la revue restent lisibles — éviter qu'une branche
 partagée accumule des commits sans rapport entre eux au fil des sessions.
 
-Squash des commits avant de fusionner une PR.
+Squash des commits avant de fusionner une PR. Suppression de la branche après fusion.
 
 **Seule exception** à « pas de commit direct sur `main` » : la mise à jour
 de `CHANGELOG.md` juste après un merge, voir « Journal des changements »
