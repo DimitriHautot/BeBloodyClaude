@@ -102,7 +102,6 @@
     --radius-md: 1rem;
     --radius-lg: 1.375rem;
     --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.04), 0 1px 1px rgba(20, 20, 30, 0.03);
-    --shadow-md: 0 8px 24px rgba(20, 20, 30, 0.08);
     --shadow-lg: 0 -8px 32px rgba(20, 20, 30, 0.16);
   }
 

@@ -44,7 +44,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="sheet" on:click|stopPropagation>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Menu" on:click|stopPropagation>
       <span class="grabber" aria-hidden="true" />
       <button class="item" on:click={openSettings}>Paramètres</button>
       <button class="item" on:click={openReferences}>Références</button>
