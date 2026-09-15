@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
   import { buildInfo } from '../lib/buildInfo';
 
   const CONTACT_EMAIL = 'bebloody@hautot.be';
   const SOURCE_URL = 'https://github.com/DimitriHautot/BeBloodyClaude';
+
+  const dispatch = createEventDispatcher<{ 'open-references': void }>();
 </script>
 
 <p class="intro">
@@ -40,6 +43,14 @@
       <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer">{SOURCE_URL}</a>
     </dd>
   </div>
+  <div class="row">
+    <dt>Règles utilisées</dt>
+    <dd>
+      <button class="link" on:click={() => dispatch('open-references')}>
+        Voir les références officielles
+      </button>
+    </dd>
+  </div>
 </dl>
 
 <p class="build-info">
@@ -75,9 +86,19 @@
     margin: 0;
   }
 
-  a {
+  a,
+  .link {
     color: var(--color-primary);
     word-break: break-all;
+  }
+
+  .link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
   }
 
   .build-info {

@@ -72,7 +72,12 @@
 
 {#if showAbout}
   <Modal title="À propos" on:close={() => (showAbout = false)}>
-    <AboutPanel />
+    <AboutPanel
+      on:open-references={() => {
+        showAbout = false;
+        showReferences = true;
+      }}
+    />
   </Modal>
 {/if}
 
