@@ -29,8 +29,8 @@
   Dimitri Hautot ne sera en aucun cas responsable des dommages directs ou indirects, y compris les
   dommages spéciaux, consécutifs, accessoires ou punitifs, résultant de l'utilisation de l'application.<br>
   <br>
-  L'installation et l'utilisation de l'application impliquent l'adhésion totale à cette clause de
-  non-responsabilité.
+  <b>L'installation et l'utilisation de l'application impliquent l'adhésion totale à cette clause de
+  non-responsabilité.</b>
 </p>
 
 <dl>
