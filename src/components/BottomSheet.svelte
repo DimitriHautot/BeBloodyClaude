@@ -68,7 +68,6 @@
     align-items: flex-end;
     justify-content: center;
     z-index: 100;
-    animation: fade-in 0.15s ease-out;
   }
 
   .sheet {
@@ -93,15 +92,6 @@
     align-self: center;
     margin: 0.5rem 0 0.75rem;
     flex-shrink: 0;
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 
   @keyframes slide-up {
