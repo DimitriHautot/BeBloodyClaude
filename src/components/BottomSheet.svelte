@@ -59,6 +59,7 @@
     width: 100%;
     max-width: 640px;
     max-height: calc(100vh - 3rem);
+    max-height: calc(100dvh - 3rem);
     background: var(--color-surface);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: var(--shadow-lg);
