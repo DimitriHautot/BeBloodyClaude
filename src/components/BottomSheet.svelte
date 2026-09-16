@@ -25,15 +25,23 @@
 
   onMount(() => {
     scrollY = window.scrollY;
+    // Pinning body removes its scrollbar, which widens the viewport and
+    // shifts centered content sideways — compensate with the scrollbar's
+    // own width so nothing visibly moves when the sheet opens/closes.
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.position = 'fixed';
     document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
     document.body.style.width = '100%';
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
   });
 
   onDestroy(() => {
     document.body.style.position = '';
     document.body.style.top = '';
+    document.body.style.left = '';
     document.body.style.width = '';
+    document.body.style.paddingRight = '';
     window.scrollTo(0, scrollY);
   });
 </script>
