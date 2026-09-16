@@ -1,5 +1,15 @@
+<script lang="ts" context="module">
+  // Shared across every instance (module scope, not per-component state) so
+  // the body scroll lock survives one sheet closing while another is
+  // already open or opens in the same tick (e.g. AboutPanel's
+  // "open-references" swaps showAbout for showReferences synchronously) —
+  // the lock only lifts once the last open sheet unmounts, instead of
+  // relying on the order Svelte happens to run onMount/onDestroy in.
+  let lockCount = 0;
+</script>
+
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 
   /** At least one of these should be set so assistive tech has a name for
    * the sheet — `ariaLabel` for a sheet with no visible heading (the app
@@ -16,6 +26,26 @@
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') close();
   }
+
+  // Prevent the page behind the sheet from scrolling/rubber-banding while
+  // it's open. A `position: fixed` body (tried previously) creates a
+  // second fixed-position context alongside .overlay's own — a known
+  // WebKit bug where Safari's standalone renderer can then fail to treat
+  // the innermost fixed element as fixed at all. `overflow: hidden` plus
+  // `overscroll-behavior` avoids that entirely.
+  onMount(() => {
+    lockCount += 1;
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+  });
+
+  onDestroy(() => {
+    lockCount -= 1;
+    if (lockCount === 0) {
+      document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
+    }
+  });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -52,13 +82,13 @@
     align-items: flex-end;
     justify-content: center;
     z-index: 100;
-    animation: fade-in 0.15s ease-out;
   }
 
   .sheet {
     width: 100%;
     max-width: 640px;
     max-height: calc(100vh - 3rem);
+    max-height: calc(100dvh - 3rem);
     background: var(--color-surface);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: var(--shadow-lg);
@@ -76,15 +106,6 @@
     align-self: center;
     margin: 0.5rem 0 0.75rem;
     flex-shrink: 0;
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 
   @keyframes slide-up {

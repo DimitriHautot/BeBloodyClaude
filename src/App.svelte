@@ -121,6 +121,7 @@
   }
 
   :global(body) {
+    margin: 0;
     font-family:
       -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--color-bg);
