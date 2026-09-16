@@ -66,6 +66,7 @@
     padding: 0.5rem 1rem calc(1rem + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     animation: slide-up 0.2s ease-out;
   }
 

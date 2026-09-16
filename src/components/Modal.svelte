@@ -32,7 +32,11 @@
   }
 
   .content {
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
     padding: 0 0.25rem;
   }
 
