@@ -32,7 +32,6 @@
   }
 
   .content {
-    flex: 1;
     min-height: 0;
     overflow-y: auto;
     padding: 0 0.25rem;
