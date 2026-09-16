@@ -17,32 +17,20 @@
     if (event.key === 'Escape') close();
   }
 
-  // iOS Safari lets touch drags inside a `position: fixed` overlay scroll
-  // the page behind it (the sheet's own scroll gets fought/reset once the
-  // finger lifts). `overflow: hidden` alone doesn't stop this on iOS —
-  // pinning the body via `position: fixed` does. Restored on close.
-  let scrollY = 0;
-
+  // Prevent the page behind the sheet from scrolling/rubber-banding while
+  // it's open. A `position: fixed` body (tried previously) creates a
+  // second fixed-position context alongside .overlay's own — a known
+  // WebKit bug where Safari's standalone renderer can then fail to treat
+  // the innermost fixed element as fixed at all. `overflow: hidden` plus
+  // `overscroll-behavior` avoids that entirely.
   onMount(() => {
-    scrollY = window.scrollY;
-    // Pinning body removes its scrollbar, which widens the viewport and
-    // shifts centered content sideways — compensate with the scrollbar's
-    // own width so nothing visibly moves when the sheet opens/closes.
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.width = '100%';
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
   });
 
   onDestroy(() => {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.width = '';
-    document.body.style.paddingRight = '';
-    window.scrollTo(0, scrollY);
+    document.body.style.overflow = '';
+    document.body.style.overscrollBehavior = '';
   });
 </script>
 
