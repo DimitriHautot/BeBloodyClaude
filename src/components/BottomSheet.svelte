@@ -1,3 +1,13 @@
+<script lang="ts" context="module">
+  // Shared across every instance (module scope, not per-component state) so
+  // the body scroll lock survives one sheet closing while another is
+  // already open or opens in the same tick (e.g. AboutPanel's
+  // "open-references" swaps showAbout for showReferences synchronously) —
+  // the lock only lifts once the last open sheet unmounts, instead of
+  // relying on the order Svelte happens to run onMount/onDestroy in.
+  let lockCount = 0;
+</script>
+
 <script lang="ts">
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 
@@ -24,13 +34,17 @@
   // the innermost fixed element as fixed at all. `overflow: hidden` plus
   // `overscroll-behavior` avoids that entirely.
   onMount(() => {
+    lockCount += 1;
     document.body.style.overflow = 'hidden';
     document.body.style.overscrollBehavior = 'none';
   });
 
   onDestroy(() => {
-    document.body.style.overflow = '';
-    document.body.style.overscrollBehavior = '';
+    lockCount -= 1;
+    if (lockCount === 0) {
+      document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
+    }
   });
 </script>
 
