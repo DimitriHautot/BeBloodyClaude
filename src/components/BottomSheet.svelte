@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 
   /** At least one of these should be set so assistive tech has a name for
    * the sheet — `ariaLabel` for a sheet with no visible heading (the app
@@ -16,6 +16,26 @@
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') close();
   }
+
+  // iOS Safari lets touch drags inside a `position: fixed` overlay scroll
+  // the page behind it (the sheet's own scroll gets fought/reset once the
+  // finger lifts). `overflow: hidden` alone doesn't stop this on iOS —
+  // pinning the body via `position: fixed` does. Restored on close.
+  let scrollY = 0;
+
+  onMount(() => {
+    scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+  });
+
+  onDestroy(() => {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollY);
+  });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />

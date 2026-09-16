@@ -34,6 +34,7 @@
   .content {
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 0 0.25rem;
   }
 
