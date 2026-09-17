@@ -7,6 +7,11 @@ jour de ce fichier.
 
 ## Non publié
 
+- La couleur de la barre d'état/chrome mobile (`theme-color`) suit
+  désormais le thème réellement affiché (système, ou l'override
+  Clair/Sombre), y compris en direct si le système change pendant que
+  l'app est ouverte — dernier point du plan natif resté en suspens
+  (`adf2d7c`)
 - Ajout d'un réglage "Thème" (☀️🌙 Système / ☀️ Clair / 🌙 Sombre) dans
   Paramètres pour forcer le thème plutôt que de suivre uniquement le
   système, sans flash du mauvais thème au chargement (`8da6a91`)
