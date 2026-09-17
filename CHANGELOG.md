@@ -7,6 +7,9 @@ jour de ce fichier.
 
 ## Non publié
 
+- Ajout d'un réglage "Thème" (☀️🌙 Système / ☀️ Clair / 🌙 Sombre) dans
+  Paramètres pour forcer le thème plutôt que de suivre uniquement le
+  système, sans flash du mauvais thème au chargement (`8da6a91`)
 - Ajout d'un thème sombre suivant automatiquement le réglage système
   (`prefers-color-scheme`), sans réglage manuel pour l'instant : la
   palette de couleurs était déjà centralisée en variables CSS, donc
