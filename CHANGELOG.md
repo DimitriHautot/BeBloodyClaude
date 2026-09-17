@@ -7,6 +7,9 @@ jour de ce fichier.
 
 ## Non publié
 
+- Léger retour haptique Android à l'ajout réussi d'un don (formulaire
+  complet et raccourci rapide "+"), ignoré silencieusement sur les
+  plateformes qui ne le supportent pas (iOS, desktop) (`e4fe7d5`)
 - Ajout d'écrans de lancement ("splash screens") iOS pour l'app installée
   ("Ajouter à l'écran d'accueil") : fond blanc + icône rouge centrée, comme
   ce qu'Android synthétise déjà tout seul (`9b4167e`)
