@@ -7,6 +7,13 @@ jour de ce fichier.
 
 ## Non publié
 
+- Correction de la suite de tests e2e, tombée à ~6/34 à cause d'un
+  sélecteur `.dialog` obsolète (jamais existant sur le composant
+  `BottomSheet.svelte` réellement utilisé) plus 3 échecs distincts sans
+  rapport avec un sélecteur — suite complète verte (34/34) (`9e1aaf4`)
+- Le bouton retour matériel Android (et le geste de retour de Chrome)
+  ferme désormais la sheet ouverte (menu ou modale) au lieu de quitter
+  l'app (`0f7eb2c`)
 - Extraction des règles de don, icônes PWA et journal des changements
   d'`AGENTS.md` vers des skills chargées à la demande (`donation-rules`,
   `pwa-icons`, `changelog-entry`) et ajout d'un hook de rappel post-fusion
