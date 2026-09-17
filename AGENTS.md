@@ -188,4 +188,8 @@ build` (pas par requête) dans `vite.config.ts`, injectées via `define`
 `npm run dev` ou `npm run build`, pour vérifier depuis les logs de
 déploiement/CI sans avoir à ouvrir l'app.
 
-@.claude/donation-rules/modular-rules.md
+## Règles de don par pays (`src/lib/rules/`)
+
+Charger la skill `donation-rules` pour ajouter/modifier un pays, faire
+évoluer une règle existante (Belgique/France), ou répondre à une question
+sur les délais/quotas de don implémentés.
