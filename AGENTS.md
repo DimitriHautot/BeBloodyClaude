@@ -138,3 +138,21 @@ déploiement/CI sans avoir à ouvrir l'app.
 Charger la skill `donation-rules` pour ajouter/modifier un pays, faire
 évoluer une règle existante (Belgique/France), ou répondre à une question
 sur les délais/quotas de don implémentés.
+
+## Skills (`.claude/skills/`)
+
+- `verification` (`.claude/skills/verification/skill.md`) — à appliquer à la
+  fin de toute demande de modification de code : lancer `npm run test`, puis
+  si le code de retour est 0, `e2e-tests/run.sh` ; relire les diffs ;
+  vérifier qu'aucun test n'a été affaibli juste pour le faire passer ;
+  rapporter la réussite ou l'échec avec les preuves à l'appui.
+- `donation-rules` (`.claude/skills/donation-rules/SKILL.md`) — voir
+  ci-dessus.
+- `pwa-icons` (`.claude/skills/pwa-icons/SKILL.md`) — voir « Icônes PWA »
+  plus haut.
+- `changelog-entry` (`.claude/skills/changelog-entry/SKILL.md`) — voir
+  « Journal des changements » plus haut.
+
+Il y a aussi un hook `PostToolUse` sous `.claude/hooks/` (voir
+`.claude/settings.json`) qui rappelle d'ajouter l'entrée `CHANGELOG.md`
+juste après la fusion d'une PR.
