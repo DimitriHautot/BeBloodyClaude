@@ -6,6 +6,7 @@ convention de mise à jour de ce fichier.
 
 ## Non publié
 
+- Documentation de la skill `verification` dans AGENTS.md (`ea48709`)
 - Ajout du hash de commit dans `buildInfo` (footer + console `dev`/`build`)
   et création de ce journal des changements (`e4b53b4`)
 - Ajout d'une modale "À propos" (description, contact, code source, lien
