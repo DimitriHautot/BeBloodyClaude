@@ -6,6 +6,17 @@
   // the lock only lifts once the last open sheet unmounts, instead of
   // relying on the order Svelte happens to run onMount/onDestroy in.
   let lockCount = 0;
+
+  // Same reasoning applies to the synthetic history entry used to make the
+  // Android hardware/gesture back button close a sheet instead of leaving
+  // the app: it's pushed once when the first sheet opens and popped once
+  // the last one closes, shared across a same-tick swap from one sheet to
+  // another (e.g. AppMenu closing itself while opening SettingsPanel).
+  let historyEntryPushed = false;
+  // Set right before dispatching `close` from a popstate event, so the
+  // resulting teardown knows the browser already consumed the history
+  // entry itself and must not call history.back() a second time.
+  let closingFromPopstate = false;
 </script>
 
 <script lang="ts">
@@ -27,6 +38,16 @@
     if (event.key === 'Escape') close();
   }
 
+  // Android (and Chrome's edge-swipe gesture) has no visible close affordance
+  // of its own — the OS expects its back control to dismiss the topmost
+  // sheet rather than navigate the PWA away/backward. We push a dummy
+  // history entry while a sheet is open so that control fires `popstate`
+  // instead, which we treat as a close request.
+  function handlePopState() {
+    closingFromPopstate = true;
+    close();
+  }
+
   // Prevent the page behind the sheet from scrolling/rubber-banding while
   // it's open. A `position: fixed` body (tried previously) creates a
   // second fixed-position context alongside .overlay's own — a known
@@ -37,13 +58,34 @@
     lockCount += 1;
     document.body.style.overflow = 'hidden';
     document.body.style.overscrollBehavior = 'none';
+
+    if (!historyEntryPushed) {
+      history.pushState({ bottomSheet: true }, '');
+      historyEntryPushed = true;
+    }
+    window.addEventListener('popstate', handlePopState);
   });
 
   onDestroy(() => {
     lockCount -= 1;
+    window.removeEventListener('popstate', handlePopState);
     if (lockCount === 0) {
       document.body.style.overflow = '';
       document.body.style.overscrollBehavior = '';
+
+      // Deferred a tick: a same-tick swap to another sheet (e.g. AppMenu ->
+      // SettingsPanel) re-mounts a new BottomSheet before this microtask
+      // runs, so `lockCount` is back above zero and the shared history
+      // entry stays untouched instead of being popped and re-pushed.
+      queueMicrotask(() => {
+        if (lockCount > 0 || !historyEntryPushed) return;
+        historyEntryPushed = false;
+        if (closingFromPopstate) {
+          closingFromPopstate = false;
+        } else {
+          history.back();
+        }
+      });
     }
   });
 </script>
