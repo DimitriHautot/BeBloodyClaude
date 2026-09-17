@@ -7,6 +7,10 @@ jour de ce fichier.
 
 ## Non publié
 
+- Correction d'un off-by-one dans le calcul du quota annuel glissant
+  (Belgique et France) : le quota faisait patienter le donneur un jour de
+  trop lorsqu'il était la contrainte déterminante (plutôt qu'un délai de
+  récupération entre deux dons) (`6bd3446`)
 - Léger retour haptique Android à l'ajout réussi d'un don (formulaire
   complet et raccourci rapide "+"), ignoré silencieusement sur les
   plateformes qui ne le supportent pas (iOS, desktop) (`e4fe7d5`)
