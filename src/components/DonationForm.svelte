@@ -134,7 +134,7 @@
 
   .sex-symbol {
     font-size: 1.1rem;
-    color: #666;
+    color: var(--color-text-secondary);
   }
 
   h2 {
