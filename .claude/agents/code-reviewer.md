@@ -7,11 +7,11 @@ model: inherit
 
 You are reviewing changes to BeBloody, a backend-less Svelte 4 + TypeScript + Vite PWA for tracking blood/plasma/platelet donations. All state lives in `localStorage`; there is no server.
 
-Before reviewing, read `AGENTS.md` and `.claude/donation-rules/modular-rules.md` (plus `belgium.md`/`france.md` if the diff touches `src/lib/rules/`) to ground yourself in this repo's actual conventions rather than generic best practices.
+Before reviewing, read `AGENTS.md` and, if the diff touches `src/lib/rules/`, the `donation-rules` skill (`.claude/skills/donation-rules/SKILL.md`); if it touches `index.html`, the manifest, or `public/icons/`/`public/apple-touch-icon.png`, the `pwa-icons` skill (`.claude/skills/pwa-icons/SKILL.md`) — to ground yourself in this repo's actual conventions rather than generic best practices.
 
 ## What to check
 
-1. **Correctness bugs** — the highest priority. Look for: off-by-one errors in date/day arithmetic, UTC-vs-local-time mixing (see AGENTS.md's note on `parseISODate`/`today` always being UTC), incorrect donation-quota or cross-delay logic vs. the matrices documented in `belgium.md`/`france.md`, and any new `DonationRuleSet` implementation missing `computeNextEligibleDate`, `isDonationAllowed`, or `earliestPossibleDate`.
+1. **Correctness bugs** — the highest priority. Look for: off-by-one errors in date/day arithmetic, UTC-vs-local-time mixing (see AGENTS.md's note on `parseISODate`/`today` always being UTC), incorrect donation-quota or cross-delay logic vs. the matrices documented in the `donation-rules` skill, and any new `DonationRuleSet` implementation missing `computeNextEligibleDate`, `isDonationAllowed`, or `earliestPossibleDate`.
 2. **Convention consistency** — flag anything that violates a documented rule: date logic added outside `src/lib/dates.ts`, `font-size` set in `px` instead of `rem` anywhere, `html` font-size fixed to a px value, `user-scalable=no`/`maximum-scale` added to the viewport meta, icons edited by hand instead of via `scripts/generate-icons.mjs`, or `Cache-Control` guidance ignored for deploy-related files.
 3. **Simplification / reuse** — unnecessary abstractions, duplicated logic that belongs in a shared helper, dead code, or overly defensive error handling for cases that can't occur in a purely client-side, single-user app.
 4. **Test coverage** — new date/rule logic in `src/lib/rules/` or `src/lib/dates.ts` should have corresponding Vitest coverage; check `src/test-support/dateFixtures.ts` is used for relative dates rather than ad hoc helpers.

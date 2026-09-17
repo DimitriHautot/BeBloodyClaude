@@ -39,32 +39,9 @@ partagée accumule des commits sans rapport entre eux au fil des sessions.
 Squash des commits avant de fusionner une PR. Suppression de la branche après fusion.
 
 **Seule exception** à « pas de commit direct sur `main` » : la mise à jour
-de `CHANGELOG.md` juste après un merge, voir « Journal des changements »
-ci-dessous.
-
-## Journal des changements (`CHANGELOG.md`)
-
-Chaque PR fusionnée dans `main` doit avoir une entrée dans `CHANGELOG.md`,
-sous forme `- <résumé> (`<hash court>`)`, groupée sous une section
-`## <version>` ou `## Non publié` en haut du fichier.
-
-Point important sur le moment où cette entrée est ajoutée : les PR de ce
-dépôt sont fusionnées par squash-merge (voir plus haut), donc le hash final
-du commit sur `main` n'existe qu'**après** la fusion — il est différent du
-hash du dernier commit de la branche de la PR. L'entrée du changelog ne
-peut donc pas être ajoutée dans la PR elle-même ; elle est ajoutée dans un
-commit séparé, poussé directement sur `main` juste après chaque merge, une
-fois le hash réel connu (`git log -1 --format=%h origin/main`).
-
-## Identifier un build précisément (`buildInfo`, `CHANGELOG.md`)
-
-En complément du numéro de version/build/date décrits plus bas
-(« Vérifier la version déployée »), `buildInfo.commitHash` (aussi injecté
-via `define` dans `vite.config.ts`, à partir de `git rev-parse --short
-HEAD` au moment du build) donne le hash court exact du commit source d'un
-build donné. Affiché dans le footer et au lancement de `npm run dev`/`npm
-run build`, il permet de retrouver l'entrée correspondante dans
-`CHANGELOG.md` pour savoir précisément ce qu'un build déployé contient.
+de `CHANGELOG.md` juste après un merge — charger la skill
+`changelog-entry` dès qu'une PR vient d'être fusionnée, avant de committer
+quoi que ce soit sur `main`.
 
 ## Architecture
 
@@ -132,44 +109,12 @@ Android/Chrome). Deux règles à respecter pour que ça reste vrai :
   contenir `user-scalable=no` ni `maximum-scale`, pour laisser le
   pinch-to-zoom disponible comme second levier d'accessibilité.
 
-## Icônes PWA : qui lit quoi
+## Icônes PWA
 
-Les navigateurs mobiles n'utilisent pas tous la même source pour l'icône
-d'écran d'accueil, d'où plusieurs déclarations différentes dans
-`index.html`/le manifest :
-- Safari iOS lit `<link rel="apple-touch-icon">`, et ignore le manifest pour
-  ça (voir commentaire dans `index.html`).
-- Chrome/Edge (Android et desktop) lisent les `icons` du manifest.
-- Firefox iOS : **confirmé fonctionnel** sur un appareil n'ayant jamais visité
-  le site (voir « Piste à retenir » plus bas pour pourquoi ça n'apparaissait
-  pas forcément sur un appareil déjà testé). Recette qui fonctionne :
-  `apple-touch-icon.png` servi à la racine du site (`public/apple-touch-icon.png`,
-  pas seulement sous `public/icons/...`) avec un `<link rel="apple-touch-icon"
-  sizes="180x180">` déclarant explicitement sa taille. `public/favicon.png`,
-  `public/apple-touch-icon.png` et `public/icons/` sont tous générés depuis
-  le même tracé SVG par `node scripts/generate-icons.mjs` — ne pas les
-  éditer à la main, modifier le script puis le relancer.
-
-  **Comment ça marche** (lu dans le code source de
-  `mozilla-mobile/firefox-ios`, fichiers `ShareManager.swift` et
-  `HomePageActivity.swift`) : Firefox iOS n'implémente pas lui-même la
-  génération de l'icône. Il délègue entièrement à la fonctionnalité système
-  « Add to Home Screen » introduite par iOS 16.4 pour les navigateurs
-  tiers, en passant à `UIActivityViewController` un objet `HomePageActivity`
-  — une sous-classe de `WKWebView` **jamais chargée** (pas d'appel à
-  `.load()`), qui se contente de retourner l'URL et le titre de l'onglet
-  réel via des overrides de `url`/`title`. C'est donc le système
-  (WebKit/iOS), pas Firefox, qui (re)fetche la page à cette URL et en
-  extrait l'icône selon ses règles habituelles — les mêmes que celles de
-  Safari (`apple-touch-icon`, avec `sizes`, prioritaire sur le manifest).
-
-  **Piste à retenir pour la prochaine fois** : iOS met en cache l'icône
-  « Add to Home Screen » par domaine à un niveau système, indépendamment de
-  Firefox et de nos déploiements — un appareil ayant déjà tenté l'opération
-  avant un correctif peut rester bloqué sur l'icône générée précédente. Pour
-  vérifier un correctif sur ce point, toujours tester sur un appareil/
-  simulateur n'ayant jamais fait « Ajouter à l'écran d'accueil » pour ce
-  domaine plutôt que de réutiliser un appareil déjà testé.
+Charger la skill `pwa-icons` avant de toucher `index.html`, le manifest,
+`public/icons/` ou `public/apple-touch-icon.png` — elle détaille qui lit
+quelle icône selon la plateforme (Safari iOS, Chrome/Edge, Firefox iOS) et
+les pièges de cache d'icône connus.
 
 ## Vérifier la version déployée
 
@@ -188,6 +133,12 @@ build` (pas par requête) dans `vite.config.ts`, injectées via `define`
 `npm run dev` ou `npm run build`, pour vérifier depuis les logs de
 déploiement/CI sans avoir à ouvrir l'app.
 
+## Règles de don par pays (`src/lib/rules/`)
+
+Charger la skill `donation-rules` pour ajouter/modifier un pays, faire
+évoluer une règle existante (Belgique/France), ou répondre à une question
+sur les délais/quotas de don implémentés.
+
 ## Skills (`.claude/skills/`)
 
 - `verification` (`.claude/skills/verification/skill.md`) — à appliquer à la
@@ -195,8 +146,13 @@ déploiement/CI sans avoir à ouvrir l'app.
   si le code de retour est 0, `e2e-tests/run.sh` ; relire les diffs ;
   vérifier qu'aucun test n'a été affaibli juste pour le faire passer ;
   rapporter la réussite ou l'échec avec les preuves à l'appui.
+- `donation-rules` (`.claude/skills/donation-rules/SKILL.md`) — voir
+  ci-dessus.
+- `pwa-icons` (`.claude/skills/pwa-icons/SKILL.md`) — voir « Icônes PWA »
+  plus haut.
+- `changelog-entry` (`.claude/skills/changelog-entry/SKILL.md`) — voir
+  « Journal des changements » plus haut.
 
-C'est actuellement la seule skill du dépôt sous `.claude/skills/` ; il n'y a
-pas non plus de hook sous `.claude/hooks/`.
-
-@.claude/donation-rules/modular-rules.md
+Il y a aussi un hook `PostToolUse` sous `.claude/hooks/` (voir
+`.claude/settings.json`) qui rappelle d'ajouter l'entrée `CHANGELOG.md`
+juste après la fusion d'une PR.

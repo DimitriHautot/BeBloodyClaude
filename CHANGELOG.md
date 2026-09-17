@@ -1,11 +1,16 @@
 # Changelog
 
 Historique des changements fusionnés dans `main`, du plus récent au plus
-ancien. Voir la section « Journal des changements » d'AGENTS.md pour la
-convention de mise à jour de ce fichier.
+ancien. Voir la skill `changelog-entry`
+(`.claude/skills/changelog-entry/SKILL.md`) pour la convention de mise à
+jour de ce fichier.
 
 ## Non publié
 
+- Extraction des règles de don, icônes PWA et journal des changements
+  d'`AGENTS.md` vers des skills chargées à la demande (`donation-rules`,
+  `pwa-icons`, `changelog-entry`) et ajout d'un hook de rappel post-fusion
+  (`b7a9bcc`)
 - Documentation de la skill `verification` dans AGENTS.md (`ea48709`)
 - Ajout du hash de commit dans `buildInfo` (footer + console `dev`/`build`)
   et création de ce journal des changements (`e4b53b4`)
