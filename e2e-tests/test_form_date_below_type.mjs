@@ -21,7 +21,7 @@ await page.waitForTimeout(400);
 await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
-await page.locator('.dialog label:has-text("Mode debug") input[type=checkbox]').check();
+await page.locator('.sheet label:has-text("Mode debug") input[type=checkbox]').check();
 await page.keyboard.press('Escape');
 await page.waitForTimeout(150);
 
@@ -36,7 +36,7 @@ assert.ok(
 await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
-await page.locator('.dialog label:has-text("Mode debug") input[type=checkbox]').uncheck();
+await page.locator('.sheet label:has-text("Mode debug") input[type=checkbox]').uncheck();
 await page.keyboard.press('Escape');
 await page.waitForTimeout(150);
 
@@ -44,8 +44,8 @@ const summary = page.locator('section', { hasText: 'Prochain don possible' });
 await summary.locator('li', { hasText: 'Plasma' }).locator('button.quick-add').click();
 await page.waitForTimeout(150);
 
-const fixedTypeBox = await page.locator('.dialog .fixed-type').boundingBox();
-const quickDateBox = await page.locator('.dialog input[type=date]').boundingBox();
+const fixedTypeBox = await page.locator('.sheet .fixed-type').boundingBox();
+const quickDateBox = await page.locator('.sheet input[type=date]').boundingBox();
 assert.ok(
   quickDateBox.y > fixedTypeBox.y + fixedTypeBox.height - 5,
   `expected the date field to be below the fixed type in the quick-add modal too`

@@ -26,33 +26,35 @@ const plasmaRow = summary.locator('li', { hasText: 'Plasma' });
 await plasmaRow.locator('button.quick-add').click();
 await page.waitForTimeout(150);
 
-assert.equal(await page.locator('.dialog').count(), 1, 'expected the quick-add modal to open');
+assert.equal(await page.locator('.sheet').count(), 1, 'expected the quick-add modal to open');
 assert.match(
-  await page.locator('.dialog h2').innerText(),
-  /Ajouter un don de Plasma/,
+  await page.locator('.sheet h2').innerText(),
+  // App.svelte deliberately lowercases the type name here (French sentence
+  // case: only the sentence's first letter is capitalized).
+  /Ajouter un don de plasma/,
   'expected the modal title to name the fixed type'
 );
 
 // The type must be shown but not be an editable radio group.
 assert.equal(
-  await page.locator('.dialog input[name="donation-type"]').count(),
+  await page.locator('.sheet input[name="donation-type"]').count(),
   0,
   'expected no type radio buttons in the quick-add form (type is fixed)'
 );
-assert.match(await page.locator('.dialog .fixed-type-value').innerText(), /Plasma/);
+assert.match(await page.locator('.sheet .fixed-type-value').innerText(), /Plasma/);
 
 // The date defaults to today but is editable — set it to yesterday.
-const dateInput = page.locator('.dialog input[type=date]');
+const dateInput = page.locator('.sheet input[type=date]');
 const todayISO = new Date().toISOString().slice(0, 10);
 assert.equal(await dateInput.inputValue(), todayISO, 'expected the date to default to today');
 
 const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 await dateInput.fill(yesterday);
-await page.click('.dialog button[type=submit]');
+await page.click('.sheet button[type=submit]');
 await page.waitForTimeout(200);
 
 // A successful add should close the modal automatically.
-assert.equal(await page.locator('.dialog').count(), 0, 'expected the modal to close after a successful add');
+assert.equal(await page.locator('.sheet').count(), 0, 'expected the modal to close after a successful add');
 
 const stored = JSON.parse(await page.evaluate(() => localStorage.getItem('donations')));
 assert.equal(stored.length, 1);

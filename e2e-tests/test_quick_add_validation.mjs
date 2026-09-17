@@ -39,17 +39,17 @@ const tenDaysAfterPreviousDonation = new Date(Date.now() - 90 * 24 * 60 * 60 * 1
   .toISOString()
   .slice(0, 10);
 await page.evaluate((value) => {
-  const form = document.querySelector('.dialog form');
-  const input = document.querySelector('.dialog input[type=date]');
+  const form = document.querySelector('.sheet form');
+  const input = document.querySelector('.sheet input[type=date]');
   form.noValidate = true;
   const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
   nativeSetter.call(input, value);
 }, tenDaysAfterPreviousDonation);
-await page.click('.dialog button[type=submit]');
+await page.click('.sheet button[type=submit]');
 await page.waitForTimeout(200);
 
-assert.equal(await page.locator('.dialog').count(), 1, 'expected the modal to stay open after a rejected donation');
-const errorText = await page.locator('.dialog .error').innerText();
+assert.equal(await page.locator('.sheet').count(), 1, 'expected the modal to stay open after a rejected donation');
+const errorText = await page.locator('.sheet .error').innerText();
 assert.match(errorText, /Sang total/, `expected a validation error mentioning the type, got: "${errorText}"`);
 
 const stored = JSON.parse(await page.evaluate(() => localStorage.getItem('donations')));

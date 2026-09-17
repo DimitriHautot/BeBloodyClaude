@@ -26,10 +26,10 @@ await summary.locator('li', { hasText: 'Sang total' }).locator('button.quick-add
 await page.waitForTimeout(150);
 
 const expectedMin = new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-const minAttr = await page.locator('.dialog input[type=date]').getAttribute('min');
+const minAttr = await page.locator('.sheet input[type=date]').getAttribute('min');
 assert.equal(minAttr, expectedMin, `expected the date input's min to be ${expectedMin}, got "${minAttr}"`);
 
-const maxAttr = await page.locator('.dialog input[type=date]').getAttribute('max');
+const maxAttr = await page.locator('.sheet input[type=date]').getAttribute('max');
 const today = new Date().toISOString().slice(0, 10);
 assert.equal(maxAttr, today, `expected the date input's max to still be today (${today}), got "${maxAttr}"`);
 

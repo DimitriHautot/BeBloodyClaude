@@ -20,18 +20,18 @@ await page.waitForTimeout(400);
 await page.click('button[aria-label="Menu"]');
 await page.waitForTimeout(150);
 
-const menuBox = await page.locator('.menu').boundingBox();
+const menuBox = await page.locator('.sheet').boundingBox();
 const mainBox = await page.locator('main').boundingBox();
-assert.ok(menuBox && mainBox, 'expected both the dropdown and main to be visible');
+assert.ok(menuBox && mainBox, 'expected both the menu sheet and main to be visible');
 
 assert.ok(
   menuBox.x >= mainBox.x - 1,
-  `expected the dropdown's left edge (${menuBox.x}) to stay within main's left edge (${mainBox.x})`
+  `expected the menu sheet's left edge (${menuBox.x}) to stay within main's left edge (${mainBox.x})`
 );
 assert.ok(
   menuBox.x + menuBox.width <= mainBox.x + mainBox.width + 1,
-  `expected the dropdown's right edge (${menuBox.x + menuBox.width}) to stay within main's right edge (${mainBox.x + mainBox.width})`
+  `expected the menu sheet's right edge (${menuBox.x + menuBox.width}) to stay within main's right edge (${mainBox.x + mainBox.width})`
 );
 
 await browser.close();
-console.log('OK: the dropdown menu stays within the same safe margin as the main window on a narrow viewport.');
+console.log('OK: the menu sheet stays within the same safe margin as the main window on a narrow viewport.');

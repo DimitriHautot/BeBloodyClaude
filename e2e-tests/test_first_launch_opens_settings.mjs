@@ -14,20 +14,20 @@ await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
 await page.waitForTimeout(400);
 
 assert.equal(
-  await page.locator('.dialog >> text=Pays (règles applicables)').count(),
+  await page.locator('.sheet >> text=Pays (règles applicables)').count(),
   1,
   'expected the settings modal to open automatically on first launch'
 );
 
 await page.keyboard.press('Escape');
 await page.waitForTimeout(150);
-assert.equal(await page.locator('.dialog').count(), 0, 'expected Escape to close the modal');
+assert.equal(await page.locator('.sheet').count(), 0, 'expected Escape to close the modal');
 
 // Reloading now that settings have been persisted must not reopen it.
 await page.reload();
 await page.waitForTimeout(400);
 assert.equal(
-  await page.locator('.dialog').count(),
+  await page.locator('.sheet').count(),
   0,
   'expected the settings modal to stay closed once settings have already been persisted'
 );

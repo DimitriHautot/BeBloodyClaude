@@ -24,9 +24,9 @@ await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 
-assert.equal(await page.locator('.dialog section hr').count(), 2, 'expected 2 horizontal separators in the settings panel');
+assert.equal(await page.locator('.sheet section hr').count(), 2, 'expected 2 horizontal separators in the settings panel');
 
-const fieldOrder = await page.locator('.dialog section > *').evaluateAll((nodes) =>
+const fieldOrder = await page.locator('.sheet section > *').evaluateAll((nodes) =>
   nodes.map((n) => (n.tagName === 'HR' ? 'HR' : n.textContent?.trim().slice(0, 30)))
 );
 

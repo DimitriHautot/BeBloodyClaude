@@ -27,10 +27,10 @@ await page.waitForTimeout(300);
 await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
-await page.locator('.dialog label:has-text("Mise en évidence") input[type=checkbox]').check();
+await page.locator('.sheet label:has-text("Mise en évidence") input[type=checkbox]').check();
 await page.waitForTimeout(100);
 
-const daysInput = page.locator('.dialog input[type=number]');
+const daysInput = page.locator('.sheet input[type=number]');
 assert.equal(
   await daysInput.inputValue(),
   '14',
