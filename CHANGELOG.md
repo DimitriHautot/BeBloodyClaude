@@ -7,6 +7,11 @@ jour de ce fichier.
 
 ## Non publié
 
+- Ajout d'un thème sombre suivant automatiquement le réglage système
+  (`prefers-color-scheme`), sans réglage manuel pour l'instant : la
+  palette de couleurs était déjà centralisée en variables CSS, donc
+  aucun composant n'a eu besoin d'être modifié individuellement
+  (`d8b8121`)
 - Correction d'un off-by-one dans le calcul du quota annuel glissant
   (Belgique et France) : le quota faisait patienter le donneur un jour de
   trop lorsqu'il était la contrainte déterminante (plutôt qu'un délai de
