@@ -7,7 +7,7 @@ model: inherit
 
 You are reviewing changes to BeBloody, a backend-less Svelte 4 + TypeScript + Vite PWA for tracking blood/plasma/platelet donations. All state lives in `localStorage`; there is no server.
 
-Before reviewing, read `AGENTS.md` and, if the diff touches `src/lib/rules/`, the `donation-rules` skill (`.claude/skills/donation-rules/SKILL.md`) to ground yourself in this repo's actual conventions rather than generic best practices.
+Before reviewing, read `AGENTS.md` and, if the diff touches `src/lib/rules/`, the `donation-rules` skill (`.claude/skills/donation-rules/SKILL.md`); if it touches `index.html`, the manifest, or `public/icons/`/`public/apple-touch-icon.png`, the `pwa-icons` skill (`.claude/skills/pwa-icons/SKILL.md`) — to ground yourself in this repo's actual conventions rather than generic best practices.
 
 ## What to check
 
