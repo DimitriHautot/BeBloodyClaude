@@ -120,6 +120,30 @@
     --shadow-lg: 0 -8px 32px rgba(20, 20, 30, 0.16);
   }
 
+  /* Dark palette, following the OS/browser setting only for now (no
+     in-app toggle yet) — same token names, so every component using
+     `var(--color-*)` picks it up with no change of its own. Surfaces are
+     kept a step lighter than the page background (rather than pure
+     black) so cards still read as distinct layers; shadows lean on a
+     higher alpha since a dark-on-dark shadow needs more contrast to
+     stay visible than a dark-on-light one does. */
+  @media (prefers-color-scheme: dark) {
+    :global(:root) {
+      --color-primary: #e2574a;
+      --color-primary-dark: #c0392b;
+      --color-success: #3fb37c;
+      --color-success-dark: #4cbd82;
+      --color-upcoming: #e8a13a;
+      --color-bg: #121214;
+      --color-surface: #1e1e22;
+      --color-border: #313136;
+      --color-text: #f2f1f3;
+      --color-text-secondary: #a3a2aa;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 -8px 32px rgba(0, 0, 0, 0.6);
+    }
+  }
+
   :global(body) {
     margin: 0;
     font-family:
