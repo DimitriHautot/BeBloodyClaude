@@ -9,8 +9,10 @@
 // the manifest's `background_color` + icon on its own.
 //
 // The look matches that Android-synthesized splash on purpose (rather than
-// inventing an iOS-only design): the manifest's background_color (white)
-// filling the screen, with the app icon centered on top.
+// inventing an iOS-only design): the manifest's background_color (white,
+// or its dark-mode equivalent below) filling the screen, with the app icon
+// centered on top — the icon mark itself never changes between themes,
+// same as Android's synthesized splash only swaps its background.
 //
 // Run with: node scripts/generate-splash.mjs
 import { chromium } from 'playwright';
@@ -29,7 +31,11 @@ await mkdir(outDir, { recursive: true });
 const manifest = JSON.parse(
   await readFile(path.join(__dirname, '..', 'public', 'manifest.webmanifest'), 'utf8')
 );
-const BACKGROUND = manifest.background_color;
+const LIGHT_BACKGROUND = manifest.background_color;
+// Matches --color-bg-night in src/App.svelte's dark palette — kept in sync
+// manually, like the other color values duplicated between that CSS and
+// plain JS/build-time code (see index.html's inline theme script).
+const DARK_BACKGROUND = '#121214';
 
 // Logical point size (`width`/`height`, portrait) and pixel ratio for each
 // distinct iOS screen currently in common use. `device-width`/`device-height`
@@ -49,12 +55,12 @@ const DEVICES = [
   { label: '430x932@3', width: 430, height: 932, ratio: 3 } // 14 Pro Max/15 Pro Max/16 Plus
 ];
 
-function splashSVG(pxWidth, pxHeight) {
+function splashSVG(pxWidth, pxHeight, background) {
   const iconSize = Math.round(Math.min(pxWidth, pxHeight) * 0.28);
   const x = Math.round((pxWidth - iconSize) / 2);
   const y = Math.round((pxHeight - iconSize) / 2);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${pxWidth}" height="${pxHeight}" viewBox="0 0 ${pxWidth} ${pxHeight}">
-  <rect width="${pxWidth}" height="${pxHeight}" fill="${BACKGROUND}" />
+  <rect width="${pxWidth}" height="${pxHeight}" fill="${background}" />
   <g transform="translate(${x} ${y})">
     ${iconSVG(iconSize, 0.62)}
   </g>
@@ -75,24 +81,30 @@ async function renderPNG(svg, width, height, filePath) {
 for (const { width, height, ratio } of DEVICES) {
   const portraitW = width * ratio;
   const portraitH = height * ratio;
-  await renderPNG(
-    splashSVG(portraitW, portraitH),
-    portraitW,
-    portraitH,
-    path.join(outDir, `apple-splash-${portraitW}-${portraitH}.png`)
-  );
-  console.log(`wrote apple-splash-${portraitW}-${portraitH}.png`);
-
-  // Landscape: same physical screen, dimensions swapped.
   const landscapeW = height * ratio;
   const landscapeH = width * ratio;
-  await renderPNG(
-    splashSVG(landscapeW, landscapeH),
-    landscapeW,
-    landscapeH,
-    path.join(outDir, `apple-splash-${landscapeW}-${landscapeH}.png`)
-  );
-  console.log(`wrote apple-splash-${landscapeW}-${landscapeH}.png`);
+
+  for (const [suffix, background] of [
+    ['', LIGHT_BACKGROUND],
+    ['-dark', DARK_BACKGROUND]
+  ]) {
+    await renderPNG(
+      splashSVG(portraitW, portraitH, background),
+      portraitW,
+      portraitH,
+      path.join(outDir, `apple-splash-${portraitW}-${portraitH}${suffix}.png`)
+    );
+    console.log(`wrote apple-splash-${portraitW}-${portraitH}${suffix}.png`);
+
+    // Landscape: same physical screen, dimensions swapped.
+    await renderPNG(
+      splashSVG(landscapeW, landscapeH, background),
+      landscapeW,
+      landscapeH,
+      path.join(outDir, `apple-splash-${landscapeW}-${landscapeH}${suffix}.png`)
+    );
+    console.log(`wrote apple-splash-${landscapeW}-${landscapeH}${suffix}.png`);
+  }
 }
 
 await browser.close();
