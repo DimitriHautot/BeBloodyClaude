@@ -29,6 +29,21 @@
   // free selection.
   $: allowedTypes = getAllowedTypes($donorSettings);
   $: soleAllowedType = allowedTypes.length === 1 ? allowedTypes[0] : null;
+
+  // Mirrors the donor's theme choice onto `<html data-theme>`, which the
+  // dark-palette CSS below targets explicitly. 'system' means no override:
+  // clearing the attribute lets the plain `prefers-color-scheme` media
+  // query decide, same as before this setting existed. A tiny inline
+  // script in index.html does the same thing synchronously before this
+  // component mounts, so a dark-mode donor doesn't see a light flash.
+  $: {
+    const theme = $donorSettings.theme;
+    if (theme === 'light' || theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', theme);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }
 </script>
 
 <main>
@@ -118,30 +133,65 @@
     --radius-lg: 1.375rem;
     --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.04), 0 1px 1px rgba(20, 20, 30, 0.03);
     --shadow-lg: 0 -8px 32px rgba(20, 20, 30, 0.16);
+
+    /* The dark palette's actual values, defined once here so both
+       activation rules below (system preference and the explicit
+       Settings > Thème choice) can share them via `var(...)` instead of
+       repeating the same hex codes twice. Surfaces are kept a step
+       lighter than the page background (rather than pure black) so
+       cards still read as distinct layers; shadows lean on a higher
+       alpha since a dark-on-dark shadow needs more contrast to stay
+       visible than a dark-on-light one does. */
+    --color-primary-night: #e2574a;
+    --color-primary-dark-night: #c0392b;
+    --color-success-night: #3fb37c;
+    --color-success-dark-night: #4cbd82;
+    --color-upcoming-night: #e8a13a;
+    --color-bg-night: #121214;
+    --color-surface-night: #1e1e22;
+    --color-border-night: #313136;
+    --color-text-night: #f2f1f3;
+    --color-text-secondary-night: #a3a2aa;
+    --shadow-sm-night: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.4);
+    --shadow-lg-night: 0 -8px 32px rgba(0, 0, 0, 0.6);
   }
 
-  /* Dark palette, following the OS/browser setting only for now (no
-     in-app toggle yet) — same token names, so every component using
-     `var(--color-*)` picks it up with no change of its own. Surfaces are
-     kept a step lighter than the page background (rather than pure
-     black) so cards still read as distinct layers; shadows lean on a
-     higher alpha since a dark-on-dark shadow needs more contrast to
-     stay visible than a dark-on-light one does. */
+  /* Activates the dark palette above, either because the OS/browser
+     prefers dark and the donor hasn't overridden it to "Clair", or
+     because they explicitly picked "Sombre" in Paramètres (which sets
+     `data-theme` on `<html>` — see the reactive statement in App.svelte's
+     `<script>`, and the anti-flash inline script in index.html that
+     mirrors it before this component even mounts). */
   @media (prefers-color-scheme: dark) {
-    :global(:root) {
-      --color-primary: #e2574a;
-      --color-primary-dark: #c0392b;
-      --color-success: #3fb37c;
-      --color-success-dark: #4cbd82;
-      --color-upcoming: #e8a13a;
-      --color-bg: #121214;
-      --color-surface: #1e1e22;
-      --color-border: #313136;
-      --color-text: #f2f1f3;
-      --color-text-secondary: #a3a2aa;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 -8px 32px rgba(0, 0, 0, 0.6);
+    :global(:root:not([data-theme='light'])) {
+      --color-primary: var(--color-primary-night);
+      --color-primary-dark: var(--color-primary-dark-night);
+      --color-success: var(--color-success-night);
+      --color-success-dark: var(--color-success-dark-night);
+      --color-upcoming: var(--color-upcoming-night);
+      --color-bg: var(--color-bg-night);
+      --color-surface: var(--color-surface-night);
+      --color-border: var(--color-border-night);
+      --color-text: var(--color-text-night);
+      --color-text-secondary: var(--color-text-secondary-night);
+      --shadow-sm: var(--shadow-sm-night);
+      --shadow-lg: var(--shadow-lg-night);
     }
+  }
+
+  :global(:root[data-theme='dark']) {
+    --color-primary: var(--color-primary-night);
+    --color-primary-dark: var(--color-primary-dark-night);
+    --color-success: var(--color-success-night);
+    --color-success-dark: var(--color-success-dark-night);
+    --color-upcoming: var(--color-upcoming-night);
+    --color-bg: var(--color-bg-night);
+    --color-surface: var(--color-surface-night);
+    --color-border: var(--color-border-night);
+    --color-text: var(--color-text-night);
+    --color-text-secondary: var(--color-text-secondary-night);
+    --shadow-sm: var(--shadow-sm-night);
+    --shadow-lg: var(--shadow-lg-night);
   }
 
   :global(body) {

@@ -2,6 +2,30 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!-- Applies a saved "Clair"/"Sombre" choice (Paramètres > Thème) to
+         <html> before the rest of the page loads, so a donor who
+         overrode their system's color scheme doesn't see a flash of the
+         other theme while the Svelte app boots (App.svelte does the same
+         thing reactively afterwards, to react to later changes). "donorSettings"
+         is the localStorage key `persisted()` uses in
+         src/lib/settings/storage.ts — kept in sync manually since this
+         script runs before any app code. Left as-is ("Système", or
+         nothing stored yet) needs no attribute: the plain
+         prefers-color-scheme media query in App.svelte already handles it. -->
+    <script>
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('donorSettings'));
+          if (stored && (stored.theme === 'light' || stored.theme === 'dark')) {
+            document.documentElement.setAttribute('data-theme', stored.theme);
+          }
+        } catch (e) {
+          // localStorage unavailable or the stored value isn't valid JSON —
+          // fall back to following the system preference, same as a donor
+          // who never set a theme.
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>BeBloody</title>
     <meta name="description" content="Suivi des dons de sang total, plasma et plaquettes, avec calcul de la prochaine date de don possible." />

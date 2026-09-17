@@ -19,6 +19,8 @@ export function getSexSymbol(sex: Sex): string {
   return SEX_SYMBOLS[sex];
 }
 
+export type ThemePreference = 'system' | 'light' | 'dark';
+
 export interface DonorSettings {
   countryCode: string;
   sex: Sex;
@@ -29,6 +31,8 @@ export interface DonorSettings {
   highlightUpcomingDays?: number;
   /** Which donation types this donor can give. All true by default. */
   allowedDonationTypes?: Record<DonationType, boolean>;
+  /** Light/dark appearance. `'system'` follows the OS/browser setting. */
+  theme?: ThemePreference;
 }
 
 export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
@@ -37,7 +41,8 @@ export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
   debugMode: false,
   highlightUpcoming: false,
   highlightUpcomingDays: 14,
-  allowedDonationTypes: { blood: true, plasma: true, platelets: true }
+  allowedDonationTypes: { blood: true, plasma: true, platelets: true },
+  theme: 'system'
 };
 
 // Captured before `persisted` below writes its initial value to localStorage,
