@@ -23,13 +23,13 @@ await page.reload();
 await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
-await page.locator('.dialog label:has-text("Mode debug") input[type=checkbox]').check();
+await page.locator('.sheet label:has-text("Mode debug") input[type=checkbox]').check();
 await page.waitForTimeout(100);
 
 // Default sex is male.
 assert.equal(await page.locator('main form .sex-symbol').textContent(), '♂', 'expected the male symbol by default');
 
-await page.locator('.dialog label:has-text("Sexe") select').selectOption('female');
+await page.locator('.sheet label:has-text("Sexe") select').selectOption('female');
 await page.keyboard.press('Escape');
 await page.waitForTimeout(150);
 

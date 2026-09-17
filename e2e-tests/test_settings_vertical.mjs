@@ -17,7 +17,7 @@ await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 
-const labels = page.locator('.dialog section > label');
+const labels = page.locator('.sheet section > label');
 const count = await labels.count();
 assert.equal(count, 3, `expected 3 settings labels, got ${count}`);
 

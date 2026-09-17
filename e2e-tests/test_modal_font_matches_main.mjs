@@ -23,7 +23,7 @@ await page.click('button[aria-label="Menu"]');
 await page.click('button:has-text("Paramètres")');
 await page.waitForTimeout(150);
 
-const dialogFont = await page.locator('.dialog').evaluate((el) => getComputedStyle(el).fontFamily);
+const dialogFont = await page.locator('.sheet').evaluate((el) => getComputedStyle(el).fontFamily);
 
 assert.equal(
   dialogFont,
