@@ -7,6 +7,11 @@ jour de ce fichier.
 
 ## Non publié
 
+- Ajout d'écrans de lancement iOS sombres (variante `-dark` par taille
+  d'écran, même icône, fond `--color-bg-night`) : ne peut suivre que
+  l'apparence système, jamais le réglage Système/Clair/Sombre de l'app,
+  car dessiné par iOS avant le chargement de la page — dernière feature du
+  plan thème sombre (`9043098`)
 - La couleur de la barre d'état/chrome mobile (`theme-color`) suit
   désormais le thème réellement affiché (système, ou l'override
   Clair/Sombre), y compris en direct si le système change pendant que
