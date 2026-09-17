@@ -5,6 +5,7 @@
   import { donorSettings, getAllowedTypes, getSexSymbol } from '../lib/settings/storage';
   import { toISODate, today } from '../lib/dates';
   import { getFlag } from '../lib/flags';
+  import { hapticTick } from '../lib/haptics';
 
   /** When set, the donation type is fixed to this value and not user-editable
    * (used by the "+" quick-add shortcut from NextDonationSummary). */
@@ -41,6 +42,7 @@
     const result = addDonation({ type: currentType, date: currentDate }, $donorSettings);
     error = result.allowed ? null : (result.reason ?? null);
     if (result.allowed) {
+      hapticTick();
       dispatch('added');
     }
   }
