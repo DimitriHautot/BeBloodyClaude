@@ -36,8 +36,15 @@ assert.ok(
   'expected at least one maskable icon, for a clean crop on Android home screens'
 );
 
+// The meta tag's content is JS-managed (see index.html/App.svelte) so it
+// can follow the system preference and an explicit Clair/Sombre override
+// that the manifest's single static value can't — they only need to match
+// here because this page loads with no stored theme preference and no
+// dark system emulation, i.e. the default resolves to the same light
+// color the manifest itself carries. See test_theme_setting.mjs for the
+// cases where they diverge.
 const themeColor = await page.locator('meta[name="theme-color"]').getAttribute('content');
-assert.equal(themeColor, manifest.theme_color, 'expected the <meta theme-color> to match the manifest');
+assert.equal(themeColor, manifest.theme_color, 'expected the <meta theme-color> to match the manifest under the default (light, no override) theme');
 
 const appleTouchIconHref = await page.locator('link[rel="apple-touch-icon"]').getAttribute('href');
 const appleIconResponse = await page.request.get(`${baseURL}${appleTouchIconHref}`);

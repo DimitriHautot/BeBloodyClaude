@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import AppMenu from './components/AppMenu.svelte';
   import Modal from './components/Modal.svelte';
   import DonationForm from './components/DonationForm.svelte';
@@ -43,6 +44,29 @@
     } else {
       document.documentElement.removeAttribute('data-theme');
     }
+  }
+
+  // <meta name="theme-color"> (the mobile browser chrome/status-bar
+  // color) can't itself react to `data-theme` — only to an OS-level
+  // `prefers-color-scheme` media query — so unlike the CSS palette above,
+  // it needs JS to reflect an explicit Clair/Sombre override. Values match
+  // --color-primary/--color-primary-night below and the inline script in
+  // index.html that applies the same logic before this component mounts.
+  const THEME_COLOR = { light: '#c0392b', dark: '#e2574a' };
+  let prefersDarkSystem = false;
+
+  onMount(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    prefersDarkSystem = media.matches;
+    const onChange = (event: MediaQueryListEvent) => (prefersDarkSystem = event.matches);
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  });
+
+  $: {
+    const theme = $donorSettings.theme;
+    const resolved = theme === 'light' || theme === 'dark' ? theme : prefersDarkSystem ? 'dark' : 'light';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLOR[resolved]);
   }
 </script>
 
