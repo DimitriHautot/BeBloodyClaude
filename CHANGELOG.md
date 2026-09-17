@@ -7,6 +7,9 @@ jour de ce fichier.
 
 ## Non publié
 
+- Ajout d'écrans de lancement ("splash screens") iOS pour l'app installée
+  ("Ajouter à l'écran d'accueil") : fond blanc + icône rouge centrée, comme
+  ce qu'Android synthétise déjà tout seul (`9b4167e`)
 - Correction de la suite de tests e2e, tombée à ~6/34 à cause d'un
   sélecteur `.dialog` obsolète (jamais existant sur le composant
   `BottomSheet.svelte` réellement utilisé) plus 3 échecs distincts sans
