@@ -43,5 +43,19 @@ const appleTouchIconHref = await page.locator('link[rel="apple-touch-icon"]').ge
 const appleIconResponse = await page.request.get(`${baseURL}${appleTouchIconHref}`);
 assert.equal(appleIconResponse.status(), 200, 'expected the apple-touch-icon to be served (iOS ignores the manifest for this)');
 
+// iOS also ignores the manifest for its launch screen (see pwa-icons skill):
+// every declared apple-touch-startup-image must actually be served.
+const splashLinks = page.locator('link[rel="apple-touch-startup-image"]');
+const splashCount = await splashLinks.count();
+assert.ok(splashCount > 0, 'expected at least one apple-touch-startup-image link');
+for (let i = 0; i < splashCount; i++) {
+  const href = await splashLinks.nth(i).getAttribute('href');
+  const media = await splashLinks.nth(i).getAttribute('media');
+  assert.ok(media, `expected a media query on splash link ${href}`);
+  const res = await page.request.get(`${baseURL}${href}`);
+  assert.equal(res.status(), 200, `expected splash image ${href} to be served`);
+  assert.equal(res.headers()['content-type'], 'image/png');
+}
+
 await browser.close();
 console.log('OK: the app links a valid, fully-served web manifest with standalone display and icons for Android/iOS home screens.');
