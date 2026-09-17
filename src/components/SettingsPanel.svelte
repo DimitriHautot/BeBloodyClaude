@@ -43,7 +43,7 @@
   <label>
     Thème
     <select bind:value={$donorSettings.theme}>
-      <option value="system">☀️🌙 Système</option>
+      <option value="system">☀️ Système 🌙</option>
       <option value="light">☀️ Clair</option>
       <option value="dark">🌙 Sombre</option>
     </select>
