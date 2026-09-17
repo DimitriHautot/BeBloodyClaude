@@ -2,28 +2,49 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!-- Default (light) theme-color, ahead of the script below so it can
+         find and update this tag. Its `content` is then JS-managed rather
+         than split into two static `media`-queried tags, because a plain
+         `prefers-color-scheme` media query can't see the donor's explicit
+         Clair/Sombre override (Paramètres > Thème) — only the actual OS
+         preference. manifest.webmanifest keeps its own single static
+         value (the format has no equivalent to `media`); it only matters
+         for the moment before this script/the app has run. -->
+    <meta name="theme-color" content="#c0392b" />
     <!-- Applies a saved "Clair"/"Sombre" choice (Paramètres > Thème) to
-         <html> before the rest of the page loads, so a donor who
-         overrode their system's color scheme doesn't see a flash of the
-         other theme while the Svelte app boots (App.svelte does the same
-         thing reactively afterwards, to react to later changes). "donorSettings"
-         is the localStorage key `persisted()` uses in
-         src/lib/settings/storage.ts — kept in sync manually since this
-         script runs before any app code. Left as-is ("Système", or
-         nothing stored yet) needs no attribute: the plain
-         prefers-color-scheme media query in App.svelte already handles it. -->
+         <html data-theme> and to the theme-color meta above, before the
+         rest of the page loads — so a donor who overrode their system's
+         color scheme (or whose system is simply in dark mode) doesn't see
+         a flash of the other theme/status-bar color while the Svelte app
+         boots. App.svelte's reactive statements do the same thing
+         afterwards, to react to later changes (a settings update, or a
+         live system preference change while following "Système").
+         "donorSettings" is the localStorage key `persisted()` uses in
+         src/lib/settings/storage.ts, and '#c0392b'/'#e2574a' are
+         --color-primary/--color-primary-night from App.svelte — all kept
+         in sync manually since this script runs before any app code. -->
     <script>
       (function () {
+        var LIGHT_THEME_COLOR = '#c0392b';
+        var DARK_THEME_COLOR = '#e2574a';
+        var override = null;
         try {
           var stored = JSON.parse(localStorage.getItem('donorSettings'));
           if (stored && (stored.theme === 'light' || stored.theme === 'dark')) {
-            document.documentElement.setAttribute('data-theme', stored.theme);
+            override = stored.theme;
           }
         } catch (e) {
           // localStorage unavailable or the stored value isn't valid JSON —
           // fall back to following the system preference, same as a donor
           // who never set a theme.
         }
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var resolved = override || (prefersDark ? 'dark' : 'light');
+        if (override) {
+          document.documentElement.setAttribute('data-theme', override);
+        }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', resolved === 'dark' ? DARK_THEME_COLOR : LIGHT_THEME_COLOR);
       })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -31,7 +52,6 @@
     <meta name="description" content="Suivi des dons de sang total, plasma et plaquettes, avec calcul de la prochaine date de don possible." />
 
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#c0392b" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="192x192" />
 
     <!-- iOS Safari ignores the web manifest for "add to home screen" behavior
