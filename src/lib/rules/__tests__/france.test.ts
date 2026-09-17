@@ -52,8 +52,8 @@ describe('franceRules.computeNextEligibleDate', () => {
       donation('6', 'blood', dateDaysAgo(65))
     ];
     const next = franceRules.computeNextEligibleDate('blood', history, maleSettings);
-    // 6th donation used up the yearly quota; next slot opens 365+1 days after the oldest donation still in the window.
-    expect(toISODate(next)).toBe(dateDaysFromNow(66));
+    // 6th donation used up the yearly quota; next slot opens 365 days after the oldest donation still in the window.
+    expect(toISODate(next)).toBe(dateDaysFromNow(65));
   });
 
   it('enforces the lower rolling 365-day quota for women (max 4 whole blood donations per year)', () => {
@@ -64,20 +64,20 @@ describe('franceRules.computeNextEligibleDate', () => {
       donation('4', 'blood', dateDaysAgo(65))
     ];
     const next = franceRules.computeNextEligibleDate('blood', history, femaleSettings);
-    expect(toISODate(next)).toBe(dateDaysFromNow(66));
+    expect(toISODate(next)).toBe(dateDaysFromNow(65));
   });
 
   it('enforces the rolling 365-day quota for plasma (max 24 donations per year)', () => {
     const history: Donation[] = Array.from({ length: 24 }, (_, i) => donation(`${i}`, 'plasma', dateDaysAgo(350 - i)));
     const next = franceRules.computeNextEligibleDate('plasma', history, maleSettings);
-    // Oldest donation in the window (350 days ago) must age out: 366 - 350 = 16 days from now.
-    expect(toISODate(next)).toBe(dateDaysFromNow(16));
+    // Oldest donation in the window (350 days ago) must age out: 365 - 350 = 15 days from now.
+    expect(toISODate(next)).toBe(dateDaysFromNow(15));
   });
 
   it('enforces the rolling 365-day quota for platelets (max 12 donations per year)', () => {
     const history: Donation[] = Array.from({ length: 12 }, (_, i) => donation(`${i}`, 'platelets', dateDaysAgo(300 - i)));
     const next = franceRules.computeNextEligibleDate('platelets', history, maleSettings);
-    expect(toISODate(next)).toBe(dateDaysFromNow(66));
+    expect(toISODate(next)).toBe(dateDaysFromNow(65));
   });
 
   it('the combined 24-donations/year cap can block a type even with zero donations of that type', () => {

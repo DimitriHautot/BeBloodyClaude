@@ -48,15 +48,15 @@ describe('belgiumRules.computeNextEligibleDate', () => {
       donation('4', 'blood', dateDaysAgo(65))
     ];
     const next = belgiumRules.computeNextEligibleDate('blood', history, settings);
-    // 4th donation used up the yearly quota; next slot opens 365+1 days after the oldest donation still in the window.
-    expect(toISODate(next)).toBe(dateDaysFromNow(66));
+    // 4th donation used up the yearly quota; next slot opens 365 days after the oldest donation still in the window.
+    expect(toISODate(next)).toBe(dateDaysFromNow(65));
   });
 
   it('enforces the rolling 365-day quota for plasma (max 19 donations per year)', () => {
     const history: Donation[] = Array.from({ length: 19 }, (_, i) => donation(`${i}`, 'plasma', dateDaysAgo(350 - i)));
     const next = belgiumRules.computeNextEligibleDate('plasma', history, settings);
-    // Oldest donation in the window (350 days ago) must age out: 366 - 350 = 16 days from now.
-    expect(toISODate(next)).toBe(dateDaysFromNow(16));
+    // Oldest donation in the window (350 days ago) must age out: 365 - 350 = 15 days from now.
+    expect(toISODate(next)).toBe(dateDaysFromNow(15));
   });
 
   it('the platelets quota (24/year) counts whole blood donations toward the same budget', () => {
@@ -67,7 +67,7 @@ describe('belgiumRules.computeNextEligibleDate', () => {
     ];
     const next = belgiumRules.computeNextEligibleDate('platelets', history, settings);
     // Oldest donation counted toward the shared quota is the oldest blood one (303 days ago).
-    expect(toISODate(next)).toBe(dateDaysFromNow(63));
+    expect(toISODate(next)).toBe(dateDaysFromNow(62));
   });
 
   it('the whole blood quota (4/year) is independent of platelet donations', () => {
@@ -78,7 +78,7 @@ describe('belgiumRules.computeNextEligibleDate', () => {
     // Blood's own quota (4/year) is already exhausted by the 4 blood donations alone,
     // regardless of the platelet donations also present in the history.
     const next = belgiumRules.computeNextEligibleDate('blood', history, settings);
-    expect(toISODate(next)).toBe(dateDaysFromNow(63));
+    expect(toISODate(next)).toBe(dateDaysFromNow(62));
   });
 });
 

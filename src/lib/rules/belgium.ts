@@ -77,7 +77,7 @@ function quotaConstraintDate(donationsForQuota: Donation[], maxPerRollingYear: n
     // Push past the oldest donation in the window so it falls outside the
     // rolling window, freeing up a quota slot.
     const oldestInWindow = inWindow[0];
-    result = addDays(oldestInWindow, 365 + 1);
+    result = addDays(oldestInWindow, 365);
   }
   return result;
 }
