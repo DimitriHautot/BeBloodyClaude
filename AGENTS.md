@@ -188,4 +188,15 @@ build` (pas par requête) dans `vite.config.ts`, injectées via `define`
 `npm run dev` ou `npm run build`, pour vérifier depuis les logs de
 déploiement/CI sans avoir à ouvrir l'app.
 
+## Skills (`.claude/skills/`)
+
+- `verification` (`.claude/skills/verification/skill.md`) — à appliquer à la
+  fin de toute demande de modification de code : lancer `npm run test`, puis
+  si le code de retour est 0, `e2e-tests/run.sh` ; relire les diffs ;
+  vérifier qu'aucun test n'a été affaibli juste pour le faire passer ;
+  rapporter la réussite ou l'échec avec les preuves à l'appui.
+
+C'est actuellement la seule skill du dépôt sous `.claude/skills/` ; il n'y a
+pas non plus de hook sous `.claude/hooks/`.
+
 @.claude/donation-rules/modular-rules.md
