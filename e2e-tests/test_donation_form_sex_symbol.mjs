@@ -26,8 +26,11 @@ await page.waitForTimeout(150);
 await page.locator('.sheet label:has-text("Mode debug") input[type=checkbox]').check();
 await page.waitForTimeout(100);
 
-// Default sex is male.
-assert.equal(await page.locator('main form .sex-symbol').textContent(), '♂', 'expected the male symbol by default');
+// Default sex is male. Trailing U+FE0E (text variation selector) is
+// intentional — see the comment on SEX_SYMBOLS in
+// src/lib/settings/storage.ts — so the plain '♂'/'♀' glyphs alone would
+// never match.
+assert.equal(await page.locator('main form .sex-symbol').textContent(), '♂︎', 'expected the male symbol by default');
 
 await page.locator('.sheet label:has-text("Sexe") select').selectOption('female');
 await page.keyboard.press('Escape');
@@ -35,7 +38,7 @@ await page.waitForTimeout(150);
 
 assert.equal(
   await page.locator('main form .sex-symbol').textContent(),
-  '♀',
+  '♀︎',
   'expected the female symbol after switching sex in settings'
 );
 

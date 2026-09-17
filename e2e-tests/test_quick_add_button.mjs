@@ -29,7 +29,9 @@ await page.waitForTimeout(150);
 assert.equal(await page.locator('.sheet').count(), 1, 'expected the quick-add modal to open');
 assert.match(
   await page.locator('.sheet h2').innerText(),
-  /Ajouter un don de Plasma/,
+  // App.svelte deliberately lowercases the type name here (French sentence
+  // case: only the sentence's first letter is capitalized).
+  /Ajouter un don de plasma/,
   'expected the modal title to name the fixed type'
 );
 
