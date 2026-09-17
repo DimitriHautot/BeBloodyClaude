@@ -11,6 +11,7 @@ jour de ce fichier.
   d'`AGENTS.md` vers des skills chargées à la demande (`donation-rules`,
   `pwa-icons`, `changelog-entry`) et ajout d'un hook de rappel post-fusion
   (`b7a9bcc`)
+- Documentation de la skill `verification` dans AGENTS.md (`ea48709`)
 - Ajout du hash de commit dans `buildInfo` (footer + console `dev`/`build`)
   et création de ce journal des changements (`e4b53b4`)
 - Ajout d'une modale "À propos" (description, contact, code source, lien
