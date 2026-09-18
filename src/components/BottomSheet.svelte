@@ -43,6 +43,21 @@
   // sheet rather than navigate the PWA away/backward. We push a dummy
   // history entry while a sheet is open so that control fires `popstate`
   // instead, which we treat as a close request.
+  //
+  // `navigator.standalone` is true only for a Safari iOS home-screen app —
+  // undefined everywhere else, including Firefox iOS (whose "Add to Home
+  // Screen" isn't a true standalone WKWebView) and Android. iOS has no
+  // hardware/gesture back control this replaces anyway, and pushing a
+  // history entry there was the actual regression behind #42's fix
+  // reappearing (reported 2026-09-18): tall sheets (Paramètres, Références,
+  // À propos) lost their header/close button again, Safari-only, Firefox
+  // iOS unaffected — matching Safari's own standalone-mode quirk where a
+  // `history.pushState` call perturbs the `100dvh` viewport-height
+  // computation #42 relied on to keep the header on screen. Skipping the
+  // history entry entirely on this one platform avoids the trigger without
+  // touching the Android behavior it exists for.
+  const isIOSStandalone = typeof navigator !== 'undefined' && (navigator as unknown as { standalone?: boolean }).standalone === true;
+
   function handlePopState() {
     closingFromPopstate = true;
     close();
@@ -59,19 +74,23 @@
     document.body.style.overflow = 'hidden';
     document.body.style.overscrollBehavior = 'none';
 
-    if (!historyEntryPushed) {
-      history.pushState({ bottomSheet: true }, '');
-      historyEntryPushed = true;
+    if (!isIOSStandalone) {
+      if (!historyEntryPushed) {
+        history.pushState({ bottomSheet: true }, '');
+        historyEntryPushed = true;
+      }
+      window.addEventListener('popstate', handlePopState);
     }
-    window.addEventListener('popstate', handlePopState);
   });
 
   onDestroy(() => {
     lockCount -= 1;
-    window.removeEventListener('popstate', handlePopState);
+    if (!isIOSStandalone) window.removeEventListener('popstate', handlePopState);
     if (lockCount === 0) {
       document.body.style.overflow = '';
       document.body.style.overscrollBehavior = '';
+
+      if (isIOSStandalone) return;
 
       // Deferred a tick: a same-tick swap to another sheet (e.g. AppMenu ->
       // SettingsPanel) re-mounts a new BottomSheet before this microtask
