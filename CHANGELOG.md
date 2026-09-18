@@ -22,6 +22,9 @@ jour de ce fichier.
 - Ajout du support multi-langues (étape 3/3) : traduction néerlandaise
   (🇳🇱 Nederlands dans le réglage Langue, "Système" peut désormais résoudre
   vers le néerlandais, dates au format `nl-NL`) (`bd64234`)
+- Ajout d'une quatrième langue : traduction allemande (🇩🇪 Deutsch dans le
+  réglage Langue, "Système" peut désormais résoudre vers l'allemand, dates
+  au format `de-DE`) (`595a1b7`)
 - Ajout d'écrans de lancement iOS sombres (variante `-dark` par taille
   d'écran, même icône, fond `--color-bg-night`) : ne peut suivre que
   l'apparence système, jamais le réglage Système/Clair/Sombre de l'app,
