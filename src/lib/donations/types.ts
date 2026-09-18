@@ -17,12 +17,6 @@ export interface Donation {
 
 export const DONATION_TYPES: DonationType[] = ['blood', 'plasma', 'platelets'];
 
-export const DONATION_TYPE_LABELS: Record<DonationType, string> = {
-  blood: 'Sang total',
-  plasma: 'Plasma',
-  platelets: 'Plaquettes'
-};
-
 /** Narrows `value` to `Donation`: a valid id, type, date and countryCode all present. */
 export function isValidDonation(value: unknown): value is Donation {
   if (typeof value !== 'object' || value === null) return false;

@@ -2,6 +2,7 @@
   import { ruleSetRegistry } from '../lib/rules/registry';
   import { getLanguageName } from '../lib/languages';
   import { getFlag } from '../lib/flags';
+  import { t } from '../lib/i18n';
 
   const countries = Object.values(ruleSetRegistry).map((ruleSet) => {
     const references = ruleSet.officialReferences();
@@ -13,10 +14,9 @@
 </script>
 
 <p class="intro">
-  Cette application a été développée par un particulier belge pour répondre à un besoin qu'il rencontrait
-  depuis plusieurs années.<br><br>
-  Elle n'est <b>en aucun cas</b> sponsorisée ou même revue par une quelconque instance officielle étatique.<br><br>
-  Cependant, elle a été développée en utilisant des règles officielles pour chaque pays, listées ci-dessous.<br>
+  {$t('references.intro1')}<br><br>
+  {$t('references.intro2a')} <b>{$t('references.intro2bold')}</b> {$t('references.intro2b')}<br><br>
+  {$t('references.intro3')}<br>
 </p>
 
 {#each countries as country (country.countryName)}

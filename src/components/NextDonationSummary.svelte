@@ -1,10 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte';
-  import { DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
+  import type { DonationType } from '../lib/donations/types';
   import { donations } from '../lib/donations/storage';
   import { donorSettings, getAllowedTypes } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
   import { today as todayDate, formatDateLabel, toISODate, daysBetween } from '../lib/dates';
+  import { t } from '../lib/i18n';
 
   interface QuickAddDetail {
     type: DonationType;
@@ -78,14 +79,14 @@
 </script>
 
 <section>
-  <h2>Prochain don possible</h2>
+  <h2>{$t('summary.title')}</h2>
   <ul>
     {#each nextDates as { type, date, status }}
       <li class:eligible={status === 'eligible'} class:upcoming={status === 'upcoming'}>
-        <span class="type">{DONATION_TYPE_LABELS[type]}</span>
+        <span class="type">{$t(`donationTypes.${type}`)}</span>
         <span class="date">
           {#if status === 'eligible'}
-            Dès maintenant
+            {$t('summary.now')}
           {:else}
             {formatDateLabel(date)}
           {/if}
@@ -95,7 +96,7 @@
             <button
               class="quick-add"
               on:click={() => handleQuickAdd(type)}
-              aria-label={`Ajouter un don de ${DONATION_TYPE_LABELS[type]}`}
+              aria-label={$t('common.addDonationOf', { type: $t(`donationTypes.${type}`) })}
             >
               +
             </button>

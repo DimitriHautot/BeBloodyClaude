@@ -1,11 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
+  import type { DonationType } from '../lib/donations/types';
   import { addDonation } from '../lib/donations/storage';
   import { donorSettings, getAllowedTypes, getSexSymbol } from '../lib/settings/storage';
   import { toISODate, today } from '../lib/dates';
   import { getFlag } from '../lib/flags';
   import { hapticTick } from '../lib/haptics';
+  import { t } from '../lib/i18n';
 
   /** When set, the donation type is fixed to this value and not user-editable
    * (used by the "+" quick-add shortcut from NextDonationSummary). */
@@ -55,28 +56,28 @@
   </span>
 
   {#if !fixedType}
-    <h2>Ajouter un don</h2>
+    <h2>{$t('form.addDonation')}</h2>
   {/if}
 
   {#if fixedType}
     <div class="fixed-type">
-      <span class="fixed-type-label">Type de don</span>
-      <span class="fixed-type-value">{DONATION_TYPE_LABELS[fixedType]}</span>
+      <span class="fixed-type-label">{$t('form.donationType')}</span>
+      <span class="fixed-type-value">{$t(`donationTypes.${fixedType}`)}</span>
     </div>
   {:else}
     <fieldset>
-      <legend>Type de don</legend>
-      {#each allowedTypes as t}
+      <legend>{$t('form.donationType')}</legend>
+      {#each allowedTypes as donationType}
         <label class="radio">
-          <input type="radio" name="donation-type" value={t} bind:group={type} />
-          {DONATION_TYPE_LABELS[t]}
+          <input type="radio" name="donation-type" value={donationType} bind:group={type} />
+          {$t(`donationTypes.${donationType}`)}
         </label>
       {/each}
     </fieldset>
   {/if}
 
   <label>
-    Date
+    {$t('form.date')}
     <input
       type="date"
       bind:value={date}
@@ -88,7 +89,7 @@
     />
   </label>
 
-  <button type="submit">Ajouter</button>
+  <button type="submit">{$t('form.submit')}</button>
 
   {#if error}
     <p class="error">{error}</p>

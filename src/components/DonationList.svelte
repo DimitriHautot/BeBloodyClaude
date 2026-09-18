@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { DONATION_TYPES, DONATION_TYPE_LABELS } from '../lib/donations/types';
+  import { DONATION_TYPES } from '../lib/donations/types';
   import { donations, removeDonation } from '../lib/donations/storage';
   import { formatDateLabel, parseISODate } from '../lib/dates';
   import { donorSettings } from '../lib/settings/storage';
   import { getFlag } from '../lib/flags';
+  import { t } from '../lib/i18n';
 
   $: sortedDonations = [...$donations].sort((a, b) => b.date.localeCompare(a.date));
   $: countsByType = DONATION_TYPES.map((type) => ({
@@ -13,15 +14,17 @@
 </script>
 
 <section>
-  <h2>Historique</h2>
+  <h2>{$t('list.title')}</h2>
 
   {#if sortedDonations.length === 0}
-    <p class="empty">Aucun don enregistré pour l'instant.</p>
+    <p class="empty">{$t('list.empty')}</p>
   {:else}
     <p class="counts">
-      <span class="counts-total">{$donations.length} don{$donations.length > 1 ? 's' : ''} au total</span>
+      <span class="counts-total">
+        {$t($donations.length > 1 ? 'list.totalMany' : 'list.totalOne', { count: $donations.length })}
+      </span>
       {#each countsByType as { type, count }}
-        <span class="counts-item">{DONATION_TYPE_LABELS[type]} : {count}</span>
+        <span class="counts-item">{$t(`donationTypes.${type}`)} : {count}</span>
       {/each}
     </p>
 
@@ -30,9 +33,9 @@
         <li>
           <span class="flag" aria-hidden="true">{getFlag(donation.countryCode)}</span>
           <span class="date">{formatDateLabel(parseISODate(donation.date))}</span>
-          <span class="type">{DONATION_TYPE_LABELS[donation.type]}</span>
+          <span class="type">{$t(`donationTypes.${donation.type}`)}</span>
           {#if $donorSettings.debugMode}
-            <button on:click={() => removeDonation(donation.id)} aria-label="Supprimer">✕</button>
+            <button on:click={() => removeDonation(donation.id)} aria-label={$t('list.delete')}>✕</button>
           {/if}
         </li>
       {/each}

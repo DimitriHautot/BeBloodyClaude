@@ -9,8 +9,9 @@
   import ReferencesPanel from './components/ReferencesPanel.svelte';
   import AboutPanel from './components/AboutPanel.svelte';
   import { donorSettings, getAllowedTypes, isFirstLaunch } from './lib/settings/storage';
-  import { DONATION_TYPE_LABELS, type DonationType } from './lib/donations/types';
+  import type { DonationType } from './lib/donations/types';
   import { buildInfo } from './lib/buildInfo';
+  import { t } from './lib/i18n';
 
   // First time the app is opened, show the settings modal right away so the
   // donor can set their country/sex before using the app.
@@ -98,19 +99,19 @@
 </main>
 
 {#if showSettings}
-  <Modal title="Paramètres" on:close={() => (showSettings = false)}>
+  <Modal title={$t('menu.settings')} on:close={() => (showSettings = false)}>
     <SettingsPanel />
   </Modal>
 {/if}
 
 {#if showReferences}
-  <Modal title="Références" on:close={() => (showReferences = false)}>
+  <Modal title={$t('menu.references')} on:close={() => (showReferences = false)}>
     <ReferencesPanel />
   </Modal>
 {/if}
 
 {#if showAbout}
-  <Modal title="À propos" on:close={() => (showAbout = false)}>
+  <Modal title={$t('menu.about')} on:close={() => (showAbout = false)}>
     <AboutPanel
       on:open-references={() => {
         showAbout = false;
@@ -122,7 +123,7 @@
 
 {#if quickAddType && quickAddMinDate}
   <Modal
-    title={`Ajouter un don de ${DONATION_TYPE_LABELS[quickAddType].toLowerCase()}`}
+    title={$t('common.addDonationOf', { type: $t(`donationTypes.${quickAddType}`).toLowerCase() })}
     on:close={closeQuickAdd}
   >
     <DonationForm fixedType={quickAddType} minDate={quickAddMinDate} on:added={closeQuickAdd} />
