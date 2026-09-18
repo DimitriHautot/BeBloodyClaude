@@ -197,4 +197,8 @@ describe('formatDateLabel', () => {
       });
     }
   );
+
+  it('formats in another locale when one is passed, e.g. "21 December 2026" in en-GB', () => {
+    expect(formatDateLabel(parseISODate('2026-12-21'), 'en-GB')).toBe('21 December 2026');
+  });
 });

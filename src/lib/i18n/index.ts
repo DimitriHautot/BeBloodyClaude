@@ -35,6 +35,17 @@ export const LOCALE_FLAGS: Record<Locale, string> = Object.fromEntries(
   (Object.keys(LOCALE_FLAG_COUNTRY) as Locale[]).map((loc) => [loc, getFlag(LOCALE_FLAG_COUNTRY[loc])])
 ) as Record<Locale, string>;
 
+/**
+ * BCP 47 tag used to format dates (`formatDateLabel` in `src/lib/dates.ts`)
+ * and any other `Intl`-based rendering for each locale, so date formatting
+ * follows the donor's chosen language too (e.g. "11 December 2026" in
+ * English rather than "11 décembre 2026").
+ */
+export const LOCALE_BCP47: Record<Locale, string> = {
+  fr: 'fr-BE',
+  en: 'en-GB'
+};
+
 /** Used both as the initial locale and as the fallback for a key missing from another locale's dictionary. */
 export const DEFAULT_LOCALE: Locale = 'fr';
 
@@ -84,6 +95,9 @@ export function translate(key: string, locale: Locale, vars?: Record<string, str
 
 /** Reactive current locale, derived from the donor's persisted language preference. */
 export const locale: Readable<Locale> = derived(donorSettings, ($settings) => resolveLocale($settings.language));
+
+/** Reactive BCP 47 tag for the current locale — pass to `formatDateLabel`/`Intl` calls. */
+export const dateLocale: Readable<string> = derived(locale, ($locale) => LOCALE_BCP47[$locale]);
 
 /** Reactive translate function for Svelte templates: `$t('key')` / `$t('key', { count: 2 })`. */
 export const t: Readable<(key: string, vars?: Record<string, string | number>) => string> = derived(

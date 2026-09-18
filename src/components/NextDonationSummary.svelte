@@ -5,7 +5,7 @@
   import { donorSettings, getAllowedTypes } from '../lib/settings/storage';
   import { getRuleSet } from '../lib/rules/registry';
   import { today as todayDate, formatDateLabel, toISODate, daysBetween } from '../lib/dates';
-  import { t } from '../lib/i18n';
+  import { dateLocale, t } from '../lib/i18n';
 
   interface QuickAddDetail {
     type: DonationType;
@@ -88,7 +88,7 @@
           {#if status === 'eligible'}
             {$t('summary.now')}
           {:else}
-            {formatDateLabel(date)}
+            {formatDateLabel(date, $dateLocale)}
           {/if}
         </span>
         <span class="quick-add-slot">
