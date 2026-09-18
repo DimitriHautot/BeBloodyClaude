@@ -19,6 +19,9 @@ jour de ce fichier.
   des dates à la langue choisie (store `dateLocale`), les dates restaient
   sinon en français même en anglais. Le néerlandais suivra dans sa propre
   PR (`07e0574`)
+- Ajout du support multi-langues (étape 3/3) : traduction néerlandaise
+  (🇳🇱 Nederlands dans le réglage Langue, "Système" peut désormais résoudre
+  vers le néerlandais, dates au format `nl-NL`) (`bd64234`)
 - Ajout d'écrans de lancement iOS sombres (variante `-dark` par taille
   d'écran, même icône, fond `--color-bg-night`) : ne peut suivre que
   l'apparence système, jamais le réglage Système/Clair/Sombre de l'app,
