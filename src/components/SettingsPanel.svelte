@@ -2,7 +2,8 @@
   import { donorSettings, getAllowedTypes, getAllowedTypesRecord, getSexSymbol } from '../lib/settings/storage';
   import { ruleSetRegistry } from '../lib/rules/registry';
   import { getFlag } from '../lib/flags';
-  import { DONATION_TYPES, DONATION_TYPE_LABELS, type DonationType } from '../lib/donations/types';
+  import { DONATION_TYPES, type DonationType } from '../lib/donations/types';
+  import { AVAILABLE_LOCALES, LOCALE_FLAGS, LOCALE_LABELS, t } from '../lib/i18n';
 
   const countries = Object.values(ruleSetRegistry);
 
@@ -24,7 +25,7 @@
 
 <section>
   <label>
-    Pays (règles applicables)
+    {$t('settings.country')}
     <select bind:value={$donorSettings.countryCode}>
       {#each countries as country}
         <option value={country.countryCode}>{getFlag(country.countryCode)} {country.countryName}</option>
@@ -33,26 +34,36 @@
   </label>
 
   <label>
-    Sexe
+    {$t('settings.sex')}
     <select bind:value={$donorSettings.sex}>
-      <option value="male">{getSexSymbol('male')} Homme</option>
-      <option value="female">{getSexSymbol('female')} Femme</option>
+      <option value="male">{getSexSymbol('male')} {$t('settings.male')}</option>
+      <option value="female">{getSexSymbol('female')} {$t('settings.female')}</option>
     </select>
   </label>
 
   <label>
-    Thème
+    {$t('settings.language')}
+    <select bind:value={$donorSettings.language}>
+      <option value="system">{$t('settings.languageSystem')}</option>
+      {#each AVAILABLE_LOCALES as availableLocale}
+        <option value={availableLocale}>{LOCALE_FLAGS[availableLocale]} {LOCALE_LABELS[availableLocale]}</option>
+      {/each}
+    </select>
+  </label>
+
+  <label>
+    {$t('settings.theme')}
     <select bind:value={$donorSettings.theme}>
-      <option value="system">☀️ Système 🌙</option>
-      <option value="light">☀️ Clair</option>
-      <option value="dark">🌙 Sombre</option>
+      <option value="system">{$t('settings.themeSystem')}</option>
+      <option value="light">{$t('settings.themeLight')}</option>
+      <option value="dark">{$t('settings.themeDark')}</option>
     </select>
   </label>
 
   <hr />
 
   <div class="allowed-types">
-    <span class="allowed-types-legend">Types de dons possibles</span>
+    <span class="allowed-types-legend">{$t('settings.allowedTypes')}</span>
     {#each DONATION_TYPES as type}
       {@const checked = $donorSettings.allowedDonationTypes?.[type] ?? true}
       <label class="checkbox">
@@ -62,7 +73,7 @@
           disabled={checked && allowedCount <= 1}
           on:change={(event) => toggleAllowedType(type, event.currentTarget.checked)}
         />
-        {DONATION_TYPE_LABELS[type]}
+        {$t(`donationTypes.${type}`)}
       </label>
     {/each}
   </div>
@@ -70,12 +81,12 @@
   <div class="highlight-upcoming">
     <label class="checkbox">
       <input type="checkbox" bind:checked={$donorSettings.highlightUpcoming} />
-      Mise en évidence des dons bientôt possibles
+      {$t('settings.highlightUpcoming')}
     </label>
 
     {#if $donorSettings.highlightUpcoming}
       <label>
-        Nombre de jours avant le don possible
+        {$t('settings.highlightUpcomingDays')}
         <input type="number" min="1" step="1" bind:value={$donorSettings.highlightUpcomingDays} />
       </label>
     {/if}
@@ -85,7 +96,7 @@
 
   <label class="checkbox">
     <input type="checkbox" bind:checked={$donorSettings.debugMode} />
-    Mode debug
+    {$t('settings.debugMode')}
   </label>
 </section>
 

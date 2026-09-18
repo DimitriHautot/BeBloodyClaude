@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { buildInfo } from '../lib/buildInfo';
+  import { t } from '../lib/i18n';
 
   const CONTACT_EMAIL = 'bebloody@hautot.be';
   const SOURCE_URL = 'https://github.com/DimitriHautot/BeBloodyClaude';
@@ -9,37 +10,29 @@
 </script>
 
 <p class="intro">
-  BeBloody est une application qui calcule, pour le sang total, le plasma et
-  les plaquettes, la prochaine date à laquelle un don est possible — sans
-  backend, sans compte, ni traçage : toutes les données restent stockées
-  localement sur cet appareil.<br>
+  {$t('about.intro1')}<br>
   <br>
-  Cette application est une initiative personnelle, développée par
-  <a href="https://dimitri.hautot.be" target="_blank" rel="noopener noreferrer">Dimitri Hautot</a> dans
-  son temps libre, bien aidé par <a href="https://claude.ai/code/" target="_blank" rel="noopener noreferrer">Claude Code</a>.<br>
+  {$t('about.introBy')}
+  <a href="https://dimitri.hautot.be" target="_blank" rel="noopener noreferrer">Dimitri Hautot</a>
+  {$t('about.introBy2')} <a href="https://claude.ai/code/" target="_blank" rel="noopener noreferrer">Claude Code</a>.<br>
   <br>
-  Aucune validation par un organisme officiel n'est effectuée lors du processus de développement.<br>
-  Toutefois, les calculs sont modélisés en utilisant des règles publiées sur Internet
-  (<button class="link inline" on:click={() => dispatch('open-references')}>voir les références officielles</button>).<br>
-  Malgré cela, il est possible que les résultats obtenus ne soient pas toujours identiques à ceux obtenus
-  via un organisme officiel. Ces derniers peuvent être plus précis en raison de leur expertise et de
-  leur accès à des données plus détaillées.<br>
+  {$t('about.intro2')}<br>
+  {$t('about.intro3a')}
+  (<button class="link inline" on:click={() => dispatch('open-references')}>{$t('about.intro3link')}</button>).<br>
+  {$t('about.intro3b')}<br>
   <br>
-  L'application est fournie "telle quelle" sans garantie de quelque nature que ce soit.
-  Dimitri Hautot ne sera en aucun cas responsable des dommages directs ou indirects, y compris les
-  dommages spéciaux, consécutifs, accessoires ou punitifs, résultant de l'utilisation de l'application.<br>
+  {$t('about.intro4')}<br>
   <br>
-  <b>L'installation et l'utilisation de l'application impliquent l'adhésion totale à cette clause de
-  non-responsabilité.</b>
+  <b>{$t('about.disclaimerBold')}</b>
 </p>
 
 <dl>
   <div class="row">
-    <dt>Contact</dt>
+    <dt>{$t('about.contact')}</dt>
     <dd><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></dd>
   </div>
   <div class="row">
-    <dt>Code source</dt>
+    <dt>{$t('about.sourceCode')}</dt>
     <dd>
       <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer">{SOURCE_URL}</a>
     </dd>

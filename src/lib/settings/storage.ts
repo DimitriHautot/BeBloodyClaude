@@ -1,5 +1,6 @@
 import { persisted } from '../storage';
 import { DONATION_TYPES, type DonationType } from '../donations/types';
+import type { LanguagePreference } from '../i18n';
 
 export type Sex = 'male' | 'female';
 
@@ -33,6 +34,8 @@ export interface DonorSettings {
   allowedDonationTypes?: Record<DonationType, boolean>;
   /** Light/dark appearance. `'system'` follows the OS/browser setting. */
   theme?: ThemePreference;
+  /** Interface language. `'system'` follows the OS/browser language (see `resolveLocale`). */
+  language?: LanguagePreference;
 }
 
 export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
@@ -42,7 +45,8 @@ export const DEFAULT_DONOR_SETTINGS: DonorSettings = {
   highlightUpcoming: false,
   highlightUpcomingDays: 14,
   allowedDonationTypes: { blood: true, plasma: true, platelets: true },
-  theme: 'system'
+  theme: 'system',
+  language: 'system'
 };
 
 // Captured before `persisted` below writes its initial value to localStorage,

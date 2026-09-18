@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import BottomSheet from './BottomSheet.svelte';
+  import { t } from '../lib/i18n';
 
   const dispatch = createEventDispatcher<{
     'open-settings': void;
@@ -34,18 +35,18 @@
   }
 </script>
 
-<button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label="Menu">
+<button class="menu-button" on:click={toggle} aria-haspopup="true" aria-expanded={open} aria-label={$t('menu.ariaLabel')}>
   <span class="bar" />
   <span class="bar" />
   <span class="bar" />
 </button>
 
 {#if open}
-  <BottomSheet ariaLabel="Menu" on:close={close} let:close>
-    <button class="item" on:click={openSettings}>Paramètres</button>
-    <button class="item" on:click={openReferences}>Références</button>
-    <button class="item" on:click={openAbout}>À propos</button>
-    <button class="item cancel" on:click={close}>Annuler</button>
+  <BottomSheet ariaLabel={$t('menu.ariaLabel')} on:close={close} let:close>
+    <button class="item" on:click={openSettings}>{$t('menu.settings')}</button>
+    <button class="item" on:click={openReferences}>{$t('menu.references')}</button>
+    <button class="item" on:click={openAbout}>{$t('menu.about')}</button>
+    <button class="item cancel" on:click={close}>{$t('menu.cancel')}</button>
   </BottomSheet>
 {/if}
 

@@ -1,8 +1,8 @@
 import type { Donation, DonationType } from './types';
-import { DONATION_TYPE_LABELS } from './types';
 import type { DonorSettings } from '../settings/storage';
 import { getRuleSet } from '../rules/registry';
 import { parseISODate, today } from '../dates';
+import { resolveLocale, translate } from '../i18n';
 
 export interface DonationValidation {
   allowed: boolean;
@@ -22,8 +22,10 @@ export function validateNewDonation(
   existingDonations: Donation[],
   donorSettings: DonorSettings
 ): DonationValidation {
+  const locale = resolveLocale(donorSettings.language);
+
   if (parseISODate(date).getTime() > today().getTime()) {
-    return { allowed: false, reason: 'La date d\'un don ne peut pas être dans le futur.' };
+    return { allowed: false, reason: translate('form.dateInFutureError', locale) };
   }
 
   const ruleSet = getRuleSet(donorSettings.countryCode);
@@ -35,6 +37,9 @@ export function validateNewDonation(
 
   return {
     allowed: false,
-    reason: `Cette date ne respecte pas les règles de don pour ${DONATION_TYPE_LABELS[type]} (${ruleSet.countryName}).`
+    reason: translate('form.ruleViolationError', locale, {
+      type: translate(`donationTypes.${type}`, locale),
+      country: ruleSet.countryName
+    })
   };
 }

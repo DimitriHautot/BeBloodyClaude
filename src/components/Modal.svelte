@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import BottomSheet from './BottomSheet.svelte';
+  import { t } from '../lib/i18n';
 
   export let title: string;
 
@@ -14,7 +15,7 @@
 <BottomSheet ariaLabelledby="modal-title" on:close={close} let:close>
   <div class="header">
     <h2 id="modal-title">{title}</h2>
-    <button class="close" on:click={close} aria-label="Fermer">✕</button>
+    <button class="close" on:click={close} aria-label={$t('modal.close')}>✕</button>
   </div>
   <div class="content">
     <slot />

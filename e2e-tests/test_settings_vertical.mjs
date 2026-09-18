@@ -19,7 +19,7 @@ await page.waitForTimeout(150);
 
 const labels = page.locator('.sheet section > label');
 const count = await labels.count();
-assert.equal(count, 4, `expected 4 settings labels, got ${count}`);
+assert.equal(count, 5, `expected 5 settings labels, got ${count}`);
 
 const boxes = [];
 for (let i = 0; i < count; i++) {
@@ -34,4 +34,4 @@ for (let i = 1; i < boxes.length; i++) {
 }
 
 await browser.close();
-console.log('OK: the 4 settings are stacked vertically.');
+console.log('OK: the 5 settings are stacked vertically.');
