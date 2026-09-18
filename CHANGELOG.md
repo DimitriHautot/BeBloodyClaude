@@ -13,6 +13,12 @@ jour de ce fichier.
   Paramètres ; tous les textes de l'interface passent désormais par ce
   dictionnaire. L'anglais et le néerlandais suivront chacun dans leur
   propre PR (`5dbcc6e`)
+- Ajout du support multi-langues (étape 2/3) : traduction anglaise
+  (🇬🇧 English dans le réglage Langue, "Système" peut désormais résoudre
+  vers l'anglais) ; inclut aussi le correctif faisant suivre le formatage
+  des dates à la langue choisie (store `dateLocale`), les dates restaient
+  sinon en français même en anglais. Le néerlandais suivra dans sa propre
+  PR (`07e0574`)
 - Ajout d'écrans de lancement iOS sombres (variante `-dark` par taille
   d'écran, même icône, fond `--color-bg-night`) : ne peut suivre que
   l'apparence système, jamais le réglage Système/Clair/Sombre de l'app,
