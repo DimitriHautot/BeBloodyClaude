@@ -7,6 +7,13 @@ jour de ce fichier.
 
 ## Non publié
 
+- Correction du titre/croix d'une carte (Références, Paramètres, À propos)
+  poussé sous la barre de statut système et devenu invisible/inaccessible
+  en PWA installée sur Safari iOS, une régression de la PR #42 : la
+  hauteur max de la carte ne tenait compte que d'une marge fixe en haut,
+  jamais de `env(safe-area-inset-top)` (non nul seulement en mode
+  standalone, à cause du `black-translucent` de la barre de statut)
+  (`73839f1`)
 - Ajout du support multi-langues (étape 1/3) : infrastructure i18n maison
   (dictionnaire de textes, pas de librairie externe) et réglage "Langue"
   (Système / 🇫🇷 Français, drapeau par langue via `getFlag()`) dans
