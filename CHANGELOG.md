@@ -7,6 +7,12 @@ jour de ce fichier.
 
 ## Non publié
 
+- Ajout du support multi-langues (étape 1/3) : infrastructure i18n maison
+  (dictionnaire de textes, pas de librairie externe) et réglage "Langue"
+  (Système / 🇫🇷 Français, drapeau par langue via `getFlag()`) dans
+  Paramètres ; tous les textes de l'interface passent désormais par ce
+  dictionnaire. L'anglais et le néerlandais suivront chacun dans leur
+  propre PR (`5dbcc6e`)
 - Ajout d'écrans de lancement iOS sombres (variante `-dark` par taille
   d'écran, même icône, fond `--color-bg-night`) : ne peut suivre que
   l'apparence système, jamais le réglage Système/Clair/Sombre de l'app,
