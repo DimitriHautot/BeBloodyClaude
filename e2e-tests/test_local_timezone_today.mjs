@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
-const context = await browser.newContext({ timezoneId: 'Europe/Brussels' });
+const context = await browser.newContext({ timezoneId: 'Europe/Brussels', locale: 'fr-FR' });
 const page = await context.newPage();
 page.on('pageerror', (err) => {
   throw new Error(`Page error: ${err.message}`);

@@ -2,12 +2,13 @@ import { derived, type Readable } from 'svelte/store';
 import { donorSettings } from '../settings/storage';
 import { getFlag } from '../flags';
 import { fr, type MessageKey } from './fr';
+import { en } from './en';
 
 /** Locales with a full translation. Add a key here (and its dictionary file,
  * covering every `MessageKey`) to introduce a new language — everything
  * else (the Langue selector, the `system` fallback logic) picks it up
  * automatically. */
-export const translations = { fr } satisfies Record<string, Record<MessageKey, string>>;
+export const translations = { fr, en } satisfies Record<string, Record<MessageKey, string>>;
 
 export type Locale = keyof typeof translations;
 
@@ -15,7 +16,8 @@ export const AVAILABLE_LOCALES = Object.keys(translations) as Locale[];
 
 /** Display name of each locale, in that locale's own language — used for the Langue selector's options. */
 export const LOCALE_LABELS: Record<Locale, string> = {
-  fr: 'Français'
+  fr: 'Français',
+  en: 'English'
 };
 
 /**
@@ -24,7 +26,8 @@ export const LOCALE_LABELS: Record<Locale, string> = {
  * GB, the Union Jack, not a language-code lookalike).
  */
 const LOCALE_FLAG_COUNTRY: Record<Locale, string> = {
-  fr: 'FR'
+  fr: 'FR',
+  en: 'GB'
 };
 
 /** Flag emoji shown next to each locale in the Langue selector, derived from `LOCALE_FLAG_COUNTRY` via the same `getFlag` used for the country selector. */

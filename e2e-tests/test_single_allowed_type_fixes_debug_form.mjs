@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
-const page = await browser.newPage();
+const page = await browser.newPage({ locale: 'fr-FR' });
 page.on('pageerror', (err) => {
   throw new Error(`Page error: ${err.message}`);
 });

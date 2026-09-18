@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
-const page = await browser.newPage({ viewport: { width: 375, height: 700 } });
+const page = await browser.newPage({ viewport: { width: 375, height: 700 }, locale: 'fr-FR' });
 page.on('pageerror', (err) => {
   throw new Error(`Page error: ${err.message}`);
 });

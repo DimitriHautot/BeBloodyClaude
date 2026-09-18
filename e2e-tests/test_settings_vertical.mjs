@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
-const page = await browser.newPage();
+const page = await browser.newPage({ locale: 'fr-FR' });
 await page.goto(`http://127.0.0.1:${process.env.PORT ?? 5176}/`);
 // Simulate a returning user (settings already chosen) so the first-launch
 // settings modal does not pop up and intercept clicks meant for this test.
