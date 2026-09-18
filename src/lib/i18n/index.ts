@@ -3,12 +3,13 @@ import { donorSettings } from '../settings/storage';
 import { getFlag } from '../flags';
 import { fr, type MessageKey } from './fr';
 import { en } from './en';
+import { nl } from './nl';
 
 /** Locales with a full translation. Add a key here (and its dictionary file,
  * covering every `MessageKey`) to introduce a new language — everything
  * else (the Langue selector, the `system` fallback logic) picks it up
  * automatically. */
-export const translations = { fr, en } satisfies Record<string, Record<MessageKey, string>>;
+export const translations = { fr, en, nl } satisfies Record<string, Record<MessageKey, string>>;
 
 export type Locale = keyof typeof translations;
 
@@ -17,7 +18,8 @@ export const AVAILABLE_LOCALES = Object.keys(translations) as Locale[];
 /** Display name of each locale, in that locale's own language — used for the Langue selector's options. */
 export const LOCALE_LABELS: Record<Locale, string> = {
   fr: 'Français',
-  en: 'English'
+  en: 'English',
+  nl: 'Nederlands'
 };
 
 /**
@@ -27,7 +29,8 @@ export const LOCALE_LABELS: Record<Locale, string> = {
  */
 const LOCALE_FLAG_COUNTRY: Record<Locale, string> = {
   fr: 'FR',
-  en: 'GB'
+  en: 'GB',
+  nl: 'NL'
 };
 
 /** Flag emoji shown next to each locale in the Langue selector, derived from `LOCALE_FLAG_COUNTRY` via the same `getFlag` used for the country selector. */
@@ -43,7 +46,8 @@ export const LOCALE_FLAGS: Record<Locale, string> = Object.fromEntries(
  */
 export const LOCALE_BCP47: Record<Locale, string> = {
   fr: 'fr-BE',
-  en: 'en-GB'
+  en: 'en-GB',
+  nl: 'nl-NL'
 };
 
 /** Used both as the initial locale and as the fallback for a key missing from another locale's dictionary. */
