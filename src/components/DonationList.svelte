@@ -4,7 +4,7 @@
   import { formatDateLabel, parseISODate } from '../lib/dates';
   import { donorSettings } from '../lib/settings/storage';
   import { getFlag } from '../lib/flags';
-  import { t } from '../lib/i18n';
+  import { dateLocale, t } from '../lib/i18n';
 
   $: sortedDonations = [...$donations].sort((a, b) => b.date.localeCompare(a.date));
   $: countsByType = DONATION_TYPES.map((type) => ({
@@ -32,7 +32,7 @@
       {#each sortedDonations as donation (donation.id)}
         <li>
           <span class="flag" aria-hidden="true">{getFlag(donation.countryCode)}</span>
-          <span class="date">{formatDateLabel(parseISODate(donation.date))}</span>
+          <span class="date">{formatDateLabel(parseISODate(donation.date), $dateLocale)}</span>
           <span class="type">{$t(`donationTypes.${donation.type}`)}</span>
           {#if $donorSettings.debugMode}
             <button on:click={() => removeDonation(donation.id)} aria-label={$t('list.delete')}>✕</button>

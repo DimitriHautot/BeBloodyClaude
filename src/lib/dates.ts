@@ -39,11 +39,16 @@ export function today(): Date {
   return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 }
 
-/** Formats a date for display, e.g. "21 août 2026". */
-export function formatDateLabel(date: Date): string {
+/**
+ * Formats a date for display in `locale` (a BCP 47 tag, e.g. "en-GB"),
+ * e.g. "21 août 2026" in the default 'fr-BE'. Callers displaying a date to
+ * the donor should pass the app's current locale (`LOCALE_BCP47[$locale]`
+ * from `src/lib/i18n/`) rather than relying on this default.
+ */
+export function formatDateLabel(date: Date, locale = 'fr-BE'): string {
   // timeZone: 'UTC' is required — without it, toLocaleDateString renders in
   // the machine's local timezone, which can shift the displayed calendar
   // day by one for a UTC-midnight Date (e.g. showing "20 août" instead of
   // "21 août" on a machine west of UTC).
-  return date.toLocaleDateString('fr-BE', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+  return date.toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 }

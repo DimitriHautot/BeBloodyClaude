@@ -33,7 +33,7 @@ async function themeColor(page) {
 // Default: no stored theme (a returning user from before this setting
 // existed) is backfilled to "Système" and simply follows the system.
 {
-  const page = await browser.newPage({ colorScheme: 'light' });
+  const page = await browser.newPage({ colorScheme: 'light', locale: 'fr-FR' });
   page.on('pageerror', (err) => {
     throw new Error(`Page error: ${err.message}`);
   });
@@ -64,7 +64,7 @@ async function themeColor(page) {
 // whole point of the inline script in index.html is to apply it before
 // the app itself has had a chance to run).
 {
-  const page = await browser.newPage({ colorScheme: 'light' });
+  const page = await browser.newPage({ colorScheme: 'light', locale: 'fr-FR' });
   page.on('pageerror', (err) => {
     throw new Error(`Page error: ${err.message}`);
   });
@@ -111,7 +111,7 @@ async function themeColor(page) {
 // An explicit "Clair" choice overrides a dark system preference, and
 // "Système" goes back to following it.
 {
-  const page = await browser.newPage({ colorScheme: 'dark' });
+  const page = await browser.newPage({ colorScheme: 'dark', locale: 'fr-FR' });
   page.on('pageerror', (err) => {
     throw new Error(`Page error: ${err.message}`);
   });

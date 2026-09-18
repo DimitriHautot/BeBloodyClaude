@@ -2,12 +2,13 @@ import { derived, type Readable } from 'svelte/store';
 import { donorSettings } from '../settings/storage';
 import { getFlag } from '../flags';
 import { fr, type MessageKey } from './fr';
+import { en } from './en';
 
 /** Locales with a full translation. Add a key here (and its dictionary file,
  * covering every `MessageKey`) to introduce a new language — everything
  * else (the Langue selector, the `system` fallback logic) picks it up
  * automatically. */
-export const translations = { fr } satisfies Record<string, Record<MessageKey, string>>;
+export const translations = { fr, en } satisfies Record<string, Record<MessageKey, string>>;
 
 export type Locale = keyof typeof translations;
 
@@ -15,7 +16,8 @@ export const AVAILABLE_LOCALES = Object.keys(translations) as Locale[];
 
 /** Display name of each locale, in that locale's own language — used for the Langue selector's options. */
 export const LOCALE_LABELS: Record<Locale, string> = {
-  fr: 'Français'
+  fr: 'Français',
+  en: 'English'
 };
 
 /**
@@ -24,13 +26,25 @@ export const LOCALE_LABELS: Record<Locale, string> = {
  * GB, the Union Jack, not a language-code lookalike).
  */
 const LOCALE_FLAG_COUNTRY: Record<Locale, string> = {
-  fr: 'FR'
+  fr: 'FR',
+  en: 'GB'
 };
 
 /** Flag emoji shown next to each locale in the Langue selector, derived from `LOCALE_FLAG_COUNTRY` via the same `getFlag` used for the country selector. */
 export const LOCALE_FLAGS: Record<Locale, string> = Object.fromEntries(
   (Object.keys(LOCALE_FLAG_COUNTRY) as Locale[]).map((loc) => [loc, getFlag(LOCALE_FLAG_COUNTRY[loc])])
 ) as Record<Locale, string>;
+
+/**
+ * BCP 47 tag used to format dates (`formatDateLabel` in `src/lib/dates.ts`)
+ * and any other `Intl`-based rendering for each locale, so date formatting
+ * follows the donor's chosen language too (e.g. "11 December 2026" in
+ * English rather than "11 décembre 2026").
+ */
+export const LOCALE_BCP47: Record<Locale, string> = {
+  fr: 'fr-BE',
+  en: 'en-GB'
+};
 
 /** Used both as the initial locale and as the fallback for a key missing from another locale's dictionary. */
 export const DEFAULT_LOCALE: Locale = 'fr';
@@ -81,6 +95,9 @@ export function translate(key: string, locale: Locale, vars?: Record<string, str
 
 /** Reactive current locale, derived from the donor's persisted language preference. */
 export const locale: Readable<Locale> = derived(donorSettings, ($settings) => resolveLocale($settings.language));
+
+/** Reactive BCP 47 tag for the current locale — pass to `formatDateLabel`/`Intl` calls. */
+export const dateLocale: Readable<string> = derived(locale, ($locale) => LOCALE_BCP47[$locale]);
 
 /** Reactive translate function for Svelte templates: `$t('key')` / `$t('key', { count: 2 })`. */
 export const t: Readable<(key: string, vars?: Record<string, string | number>) => string> = derived(
