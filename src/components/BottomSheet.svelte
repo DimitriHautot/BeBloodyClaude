@@ -129,8 +129,19 @@
   .sheet {
     width: 100%;
     max-width: 640px;
-    max-height: calc(100vh - 3rem);
-    max-height: calc(100dvh - 3rem);
+    /* The 3rem margin alone left room for the status bar on the devices
+     * #42 was tested on, but not device-independently: `black-translucent`
+     * (index.html) only renders the page full-bleed under the status bar
+     * in true standalone/home-screen mode, which is also the only context
+     * where `env(safe-area-inset-top)` is non-zero — a plain Safari tab
+     * has no status-bar overlay to begin with, so this term is 0 there and
+     * changes nothing. Without it, a sheet tall enough to use most of its
+     * max-height (reported 2026-09-18: Références, Paramètres after
+     * revealing a field) can push its header right under the status bar,
+     * where it's both hard to see and outside the tappable content area.
+     * Bottom already accounts for its own inset via the padding below. */
+    max-height: calc(100vh - 3rem - env(safe-area-inset-top));
+    max-height: calc(100dvh - 3rem - env(safe-area-inset-top));
     background: var(--color-surface);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: var(--shadow-lg);
