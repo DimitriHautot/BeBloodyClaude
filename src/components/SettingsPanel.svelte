@@ -3,7 +3,7 @@
   import { ruleSetRegistry } from '../lib/rules/registry';
   import { getFlag } from '../lib/flags';
   import { DONATION_TYPES, type DonationType } from '../lib/donations/types';
-  import { AVAILABLE_LOCALES, LOCALE_LABELS, t } from '../lib/i18n';
+  import { AVAILABLE_LOCALES, LOCALE_FLAGS, LOCALE_LABELS, t } from '../lib/i18n';
 
   const countries = Object.values(ruleSetRegistry);
 
@@ -46,7 +46,7 @@
     <select bind:value={$donorSettings.language}>
       <option value="system">{$t('settings.languageSystem')}</option>
       {#each AVAILABLE_LOCALES as availableLocale}
-        <option value={availableLocale}>{LOCALE_LABELS[availableLocale]}</option>
+        <option value={availableLocale}>{LOCALE_FLAGS[availableLocale]} {LOCALE_LABELS[availableLocale]}</option>
       {/each}
     </select>
   </label>

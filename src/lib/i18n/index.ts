@@ -1,5 +1,6 @@
 import { derived, type Readable } from 'svelte/store';
 import { donorSettings } from '../settings/storage';
+import { getFlag } from '../flags';
 import { fr, type MessageKey } from './fr';
 
 /** Locales with a full translation. Add a key here (and its dictionary file,
@@ -16,6 +17,20 @@ export const AVAILABLE_LOCALES = Object.keys(translations) as Locale[];
 export const LOCALE_LABELS: Record<Locale, string> = {
   fr: 'Français'
 };
+
+/**
+ * ISO 3166-1 alpha-2 of the country whose flag represents each locale in the
+ * Langue selector — not always the locale's own "home" country (English ->
+ * GB, the Union Jack, not a language-code lookalike).
+ */
+const LOCALE_FLAG_COUNTRY: Record<Locale, string> = {
+  fr: 'FR'
+};
+
+/** Flag emoji shown next to each locale in the Langue selector, derived from `LOCALE_FLAG_COUNTRY` via the same `getFlag` used for the country selector. */
+export const LOCALE_FLAGS: Record<Locale, string> = Object.fromEntries(
+  (Object.keys(LOCALE_FLAG_COUNTRY) as Locale[]).map((loc) => [loc, getFlag(LOCALE_FLAG_COUNTRY[loc])])
+) as Record<Locale, string>;
 
 /** Used both as the initial locale and as the fallback for a key missing from another locale's dictionary. */
 export const DEFAULT_LOCALE: Locale = 'fr';
