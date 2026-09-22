@@ -88,8 +88,10 @@ Croix-Rouge préconise un délai de 3 mois. Dans les deux cas, vous pouvez
 donner maximum 4 fois en 365 jours. », confirmé par Dimitri le 22/09/2026 ;
 base légale probable : arrêté royal du 4 avril 1996 relatif au
 prélèvement, à la préparation, à la conservation et à la délivrance du
-sang et des dérivés du sang d'origine humaine — texte exact non consulté,
-`ejustice.just.fgov.be` étant lui aussi bloqué par le proxy réseau).
+sang et des dérivés du sang d'origine humaine, tel que modifié depuis
+(notamment par un arrêté royal du 17 octobre 2006, voir plus bas) —
+texte exact non consulté, les sites officiels étant bloqués par le proxy
+réseau de cet environnement).
 
 **Deux matrices sang→sang, pas une seule** : cette différence légal/recommandé
 n'est utilisée que pour sang→sang (aucune autre case n'a de distinction
@@ -101,16 +103,19 @@ connue) et implique deux usages différents du délai :
   de « 2 mois » alignée sur le minimum légal français déjà utilisé dans
   `france.ts`, et sur le plancher de 8 semaines entre deux dons de sang total
   fixé par la directive européenne 2004/33/CE (que les États membres
-  peuvent allonger mais pas raccourcir). Attention : l'arrêté royal belge
-  du 4 avril 1996 est *antérieur* à cette directive de 2004, il ne peut donc
+  peuvent allonger mais pas raccourcir). L'arrêté royal belge du 4 avril
+  1996 lui-même est *antérieur* à cette directive de 2004 et ne peut donc
   pas en être la transposition (erreur corrigée le 22/09/2026 après
-  relecture de Dimitri) — leur convergence sur 8 semaines est soit une
-  coïncidence, soit héritée d'un texte européen antérieur (ex. la
-  recommandation du Conseil de l'Europe ou une directive plus ancienne),
-  soit le résultat d'un arrêté belge ultérieur non identifié ici ; lien
-  exact entre les deux textes **non établi, à vérifier**.
-  **La valeur de 56j elle-même reste à confirmer si une source précise en
-  jours est trouvée**)
+  relecture de Dimitri) — mais il a été modifié à plusieurs reprises,
+  notamment par un arrêté royal du 17/10/2006
+  ([etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038](https://etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038.html)),
+  dont le calendrier correspond nettement mieux à une transposition de la
+  directive de 2004 — c'est probablement cette version modifiée (et non le
+  texte original de 1996) qui fixe le délai actuel. Texte exact non
+  consulté : `ejustice.just.fgov.be`, `etaamb.openjustice.be` et
+  `refli.be` sont tous bloqués par le proxy réseau de cet environnement.
+  **La valeur de 56j reste à confirmer si une source précise en jours est
+  trouvée**)
   — utilisée par `isDonationAllowed` et `earliestPossibleDate` pour valider
   la saisie d'un don réellement effectué dans le passé. Sans cette
   distinction, un don historique légalement valide mais espacé de moins de
