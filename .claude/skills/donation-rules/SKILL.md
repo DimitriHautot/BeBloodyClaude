@@ -99,7 +99,11 @@ connue) et implique deux usages différents du délai :
   don au donneur (guidance prospective, orientée santé).
 - `VALIDATION_DELAY_DAYS` (56 jours sang→sang, soit 8 semaines — interprétation
   de « 2 mois » alignée sur le minimum légal français déjà utilisé dans
-  `france.ts`, **à confirmer si une source précise en jours est trouvée**)
+  `france.ts`, et sur le plancher fixé par la directive européenne
+  2004/33/CE (délai minimal de 8 semaines entre deux dons de sang total,
+  que les États membres peuvent allonger mais pas raccourcir), dont
+  l'arrêté royal belge du 4 avril 1996 est probablement la transposition ;
+  **à confirmer si une source précise en jours est trouvée**)
   — utilisée par `isDonationAllowed` et `earliestPossibleDate` pour valider
   la saisie d'un don réellement effectué dans le passé. Sans cette
   distinction, un don historique légalement valide mais espacé de moins de
