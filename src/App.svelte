@@ -158,6 +158,13 @@
     --radius-lg: 1.375rem;
     --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.04), 0 1px 1px rgba(20, 20, 30, 0.03);
     --shadow-lg: 0 -8px 32px rgba(20, 20, 30, 0.16);
+    /* Tells the browser which palette native controls (date/time picker
+       popup, calendar icon, etc.) should render in — without this, iOS
+       keeps rendering them with light-mode UA colors even once our own
+       CSS variables have switched to the dark palette below, which is
+       what caused the date input's native picker to show black-on-black
+       text. Kept in sync with the --color-* overrides right below. */
+    color-scheme: light;
 
     /* The dark palette's actual values, defined once here so both
        activation rules below (system preference and the explicit
@@ -201,6 +208,7 @@
       --color-text-secondary: var(--color-text-secondary-night);
       --shadow-sm: var(--shadow-sm-night);
       --shadow-lg: var(--shadow-lg-night);
+      color-scheme: dark;
     }
   }
 
@@ -217,6 +225,7 @@
     --color-text-secondary: var(--color-text-secondary-night);
     --shadow-sm: var(--shadow-sm-night);
     --shadow-lg: var(--shadow-lg-night);
+    color-scheme: dark;
   }
 
   :global(body) {
