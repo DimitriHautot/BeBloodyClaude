@@ -86,10 +86,10 @@ minimum légal de 2 mois également mentionné sur la page (« la loi autorise
 le don après un délai de minimum 2 mois entre 2 dons. Cependant, la
 Croix-Rouge préconise un délai de 3 mois. Dans les deux cas, vous pouvez
 donner maximum 4 fois en 365 jours. », confirmé par Dimitri le 22/09/2026 ;
-base légale probable : arrêté royal du 4 avril 1996 relatif au
-prélèvement, à la préparation, à la conservation et à la délivrance du
-sang et des dérivés du sang d'origine humaine, tel que modifié depuis
-(notamment par un arrêté royal du 17 octobre 2006, voir plus bas) —
+base légale : arrêté royal du 17 octobre 2006 modifiant l'arrêté royal du
+4 avril 1996 relatif au prélèvement, à la préparation, à la conservation
+et à la délivrance du sang et des dérivés du sang d'origine humaine
+([refli.be/fr/lex/2006023038](https://refli.be/fr/lex/2006023038)) —
 texte exact non consulté, les sites officiels étant bloqués par le proxy
 réseau de cet environnement).
 
@@ -103,18 +103,10 @@ connue) et implique deux usages différents du délai :
   de « 2 mois » alignée sur le minimum légal français déjà utilisé dans
   `france.ts`, et sur le plancher de 8 semaines entre deux dons de sang total
   fixé par la directive européenne 2004/33/CE (que les États membres
-  peuvent allonger mais pas raccourcir). L'arrêté royal belge du 4 avril
-  1996 lui-même est *antérieur* à cette directive de 2004 et ne peut donc
-  pas en être la transposition (erreur corrigée le 22/09/2026 après
-  relecture de Dimitri) — mais il a été modifié à plusieurs reprises,
-  notamment par un arrêté royal du 17/10/2006 (lien fourni par Dimitri :
-  [refli.be/fr/lex/2006023038](https://refli.be/fr/lex/2006023038) ; voir
-  aussi [etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038](https://etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038.html)),
-  dont le calendrier correspond nettement mieux à une transposition de la
-  directive de 2004 — c'est probablement cette version modifiée (et non le
-  texte original de 1996) qui fixe le délai actuel. Texte exact non
-  consulté : `ejustice.just.fgov.be`, `etaamb.openjustice.be` et
-  `refli.be` sont tous bloqués par le proxy réseau de cet environnement.
+  peuvent allonger mais pas raccourcir). Base légale :
+  [refli.be/fr/lex/2006023038](https://refli.be/fr/lex/2006023038) (arrêté
+  royal du 17 octobre 2006, voir plus haut) — texte exact non consulté,
+  `refli.be` étant bloqué par le proxy réseau de cet environnement.
   **La valeur de 56j reste à confirmer si une source précise en jours est
   trouvée**)
   — utilisée par `isDonationAllowed` et `earliestPossibleDate` pour valider
