@@ -92,27 +92,41 @@ describe('belgiumRules.earliestPossibleDate', () => {
   it('returns a date in the past once the minimum interval has already elapsed, unlike computeNextEligibleDate', () => {
     const history = [donation('1', 'blood', dateDaysAgo(100))];
     const earliest = belgiumRules.earliestPossibleDate('blood', history, settings);
-    // 100 days ago + 84-day interval = 16 days ago, still in the past.
-    expect(toISODate(earliest)).toBe(dateDaysAgo(16));
+    // 100 days ago + 56-day legal minimum = 44 days ago, still in the past.
+    expect(toISODate(earliest)).toBe(dateDaysAgo(44));
 
     // computeNextEligibleDate floors the very same computation to today.
     const next = belgiumRules.computeNextEligibleDate('blood', history, settings);
     expect(toISODate(next)).toBe(dateDaysFromNow(0));
   });
 
-  it('matches computeNextEligibleDate when the earliest date is still in the future', () => {
-    const history = [donation('1', 'blood', dateDaysAgo(10))];
+  it('matches computeNextEligibleDate when the earliest date is still in the future (plasma: same delay for both)', () => {
+    const history = [donation('1', 'plasma', dateDaysAgo(5))];
+    const earliest = belgiumRules.earliestPossibleDate('plasma', history, settings);
+    const next = belgiumRules.computeNextEligibleDate('plasma', history, settings);
+    expect(toISODate(earliest)).toBe(toISODate(next));
+    expect(toISODate(earliest)).toBe(dateDaysFromNow(9));
+  });
+
+  it('for whole blood, is earlier than computeNextEligibleDate — legal minimum (56j) vs Red Cross recommendation (84j)', () => {
+    const history = [donation('1', 'blood', dateDaysAgo(60))];
     const earliest = belgiumRules.earliestPossibleDate('blood', history, settings);
     const next = belgiumRules.computeNextEligibleDate('blood', history, settings);
-    expect(toISODate(earliest)).toBe(toISODate(next));
-    expect(toISODate(earliest)).toBe(dateDaysFromNow(74));
+    // 60 days ago + 56-day legal minimum has already elapsed: earliest is in the past.
+    expect(toISODate(earliest)).toBe(dateDaysAgo(4));
+    // 60 days ago + 84-day recommendation hasn't elapsed yet: next is still in the future.
+    expect(toISODate(next)).toBe(dateDaysFromNow(24));
   });
 });
 
 describe('belgiumRules.isDonationAllowed — cross-type delay matrix', () => {
-  // [fromType, toType, delayDays] — see donneurdesang.be/fr/qui-peut-donner/delai-entre-deux-dons
+  // [fromType, toType, delayDays] — see donneurdesang.be/fr/qui-peut-donner/delai-entre-deux-dons.
+  // blood → blood uses the 56-day (8-week) legal minimum here, not the
+  // 84-day (12-week) Red Cross recommendation used by computeNextEligibleDate:
+  // isDonationAllowed validates a donation that actually happened, so it must
+  // accept a real donation legally spaced but short of the recommendation.
   const matrix: [DonationType, DonationType, number][] = [
-    ['blood', 'blood', 84],
+    ['blood', 'blood', 56],
     ['blood', 'plasma', 14],
     ['blood', 'platelets', 28],
     ['plasma', 'blood', 14],
@@ -157,6 +171,14 @@ describe('belgiumRules.isDonationAllowed', () => {
   it('rejects two whole blood donations recorded on the same day', () => {
     const history = [donation('1', 'blood', dateDaysAgo(0))];
     expect(belgiumRules.isDonationAllowed('blood', dateDaysAgo(0), history, settings)).toBe(false);
+  });
+
+  it('accepts a real whole blood donation legally spaced (56j+) but short of the 84j recommendation', () => {
+    // Regression test for a real donor's history: two whole blood donations
+    // 65 days apart are legally valid (56-day minimum) even though the Red
+    // Cross's own 84-day (12-week) recommendation hasn't fully elapsed.
+    const history = [donation('1', 'blood', dateDaysAgo(65))];
+    expect(belgiumRules.isDonationAllowed('blood', dateDaysAgo(0), history, settings)).toBe(true);
   });
 
   it('ignores donations recorded after the candidate date (back-dated entries)', () => {
