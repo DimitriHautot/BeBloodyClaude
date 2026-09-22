@@ -7,6 +7,13 @@ jour de ce fichier.
 
 ## Non publié
 
+- Belgique : la saisie d'un don de sang total passé (historique, ou borne
+  minimale du sélecteur de date) n'exige plus que le minimum légal de 2
+  mois (56 jours) entre deux dons, et non plus la recommandation stricte
+  de 3 mois (84 jours) de la Croix-Rouge — un don réel légalement valide
+  mais espacé de moins de 12 semaines était refusé à la saisie. La date
+  « prochain don possible » suggérée au donneur continue, elle, d'utiliser
+  la recommandation de 3 mois (`030e0b8`)
 - Correction du champ Date du formulaire d'ajout de don, illisible (texte
   proche du noir sur fond sombre) en thème sombre : `input[type='date']` ne
   définissait pas de couleur de texte, contrairement aux autres champs
