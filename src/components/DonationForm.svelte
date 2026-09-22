@@ -195,6 +195,7 @@
   input[type='date'] {
     padding: 0.65rem 0.75rem;
     font-size: 1rem;
+    color: var(--color-text);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     background: var(--color-bg);
