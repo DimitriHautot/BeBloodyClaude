@@ -107,8 +107,9 @@ connue) et implique deux usages différents du délai :
   1996 lui-même est *antérieur* à cette directive de 2004 et ne peut donc
   pas en être la transposition (erreur corrigée le 22/09/2026 après
   relecture de Dimitri) — mais il a été modifié à plusieurs reprises,
-  notamment par un arrêté royal du 17/10/2006
-  ([etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038](https://etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038.html)),
+  notamment par un arrêté royal du 17/10/2006 (lien fourni par Dimitri :
+  [refli.be/fr/lex/2006023038](https://refli.be/fr/lex/2006023038) ; voir
+  aussi [etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038](https://etaamb.openjustice.be/fr/arrete-royal-du-17-octobre-2006_n2006023038.html)),
   dont le calendrier correspond nettement mieux à une transposition de la
   directive de 2004 — c'est probablement cette version modifiée (et non le
   texte original de 1996) qui fixe le délai actuel. Texte exact non
