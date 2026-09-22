@@ -50,8 +50,45 @@ function buildInfoLogger(): Plugin {
   };
 }
 
+/**
+ * Serves/emits `/version.json`, carrying the same build identity as
+ * `buildInfo.ts` (embedded in the JS bundle via `define` below). The app
+ * (`src/lib/version/updateCheck.ts`) polls this file with a `no-store`
+ * fetch and compares `buildNumber` against the one baked into the bundle
+ * it's currently running, to detect that a newer build was deployed while
+ * the PWA was open — see "PWA installée (standalone) et cache" in
+ * AGENTS.md, which this file is also covered by (must not be served with a
+ * long `Cache-Control`, or the update check would just keep re-reading a
+ * stale cached copy).
+ *
+ * Served dynamically in dev (`configureServer`) rather than as a static
+ * `public/version.json`, since a checked-in file couldn't carry a
+ * different `buildNumber` per build/dev-server start. Emitted as a build
+ * output asset (`generateBundle`) for `npm run build`, alongside the
+ * hashed `assets/*` files but — unlike them — at a stable, unhashed path,
+ * since the app needs to know where to fetch it from ahead of time.
+ */
+function versionJsonPlugin(): Plugin {
+  const versionInfo = { version: pkg.version, commitHash, buildNumber, buildTime };
+  const body = JSON.stringify(versionInfo);
+  return {
+    name: 'version-json',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url !== '/version.json') return next();
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.end(body);
+      });
+    },
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: 'version.json', source: body });
+    }
+  };
+}
+
 export default defineConfig({
-  plugins: [svelte({ preprocess: vitePreprocess() }), buildInfoLogger()],
+  plugins: [svelte({ preprocess: vitePreprocess() }), buildInfoLogger(), versionJsonPlugin()],
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __BUILD_TIME__: JSON.stringify(buildTime),

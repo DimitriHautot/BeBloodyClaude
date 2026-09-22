@@ -51,6 +51,7 @@ src/
     donations/    # Donation, DonationType + persistance localStorage de l'historique
     rules/         # règles de calcul de la prochaine date éligible, par pays
     settings/      # préférences du donneur (pays, sexe, mode debug) + persistance
+    version/       # détection d'une nouvelle version déployée (voir "PWA installée... et cache")
     storage.ts      # helper générique `persisted<T>` (store Svelte <-> localStorage)
     dates.ts        # toutes les fonctions utilitaires de manipulation de dates (voir plus bas)
   components/       # AppMenu, Modal, DonationForm, DonationList, NextDonationSummary, SettingsPanel
@@ -89,11 +90,25 @@ standalone tant qu'elle n'est pas explicitement invalidée.
 **Recommandation** : côté hébergement du build statique (`dist/`),
 vérifier que les en-têtes `Cache-Control` sont adaptés à ce mode d'usage —
 typiquement pas de cache long (`no-cache` ou une durée courte) sur
-`index.html` et sur `manifest.webmanifest`, puisque ce sont eux qui
-référencent les assets hashés (`assets/index-*.js/css`, qui eux peuvent
-être mis en cache long terme sans risque grâce au hash dans leur nom).
-Sans ça, un utilisateur ayant déjà installé l'app peut rester bloqué sur
-une ancienne version après un déploiement.
+`index.html`, sur `manifest.webmanifest` et sur `version.json`, puisque ce
+sont eux qui référencent (ou décrivent) le build courant, contrairement
+aux assets hashés (`assets/index-*.js/css`, qui eux peuvent être mis en
+cache long terme sans risque grâce au hash dans leur nom). Sans ça, un
+utilisateur ayant déjà installé l'app peut rester bloqué sur une ancienne
+version après un déploiement.
+
+**Détection automatique d'une nouvelle version** : en complément (pas en
+remplacement) de ces en-têtes, l'app interroge périodiquement
+`/version.json` (généré au build par `versionJsonPlugin` dans
+`vite.config.ts`, même identité de build que le footer — voir "Vérifier la
+version déployée" plus bas) et compare son `buildNumber` à celui du build
+en cours d'exécution (`src/lib/version/updateCheck.ts`,
+`startUpdateChecks`/`checkForUpdate`, appelé depuis `App.svelte`). En cas
+de différence, une bannière (`UpdateBanner.svelte`) propose un rechargement
+manuel — jamais automatique, pour ne pas interrompre une saisie en cours
+dans `DonationForm`. Pas de service worker : plus simple à faire fiable
+qu'une stratégie de cache/`skipWaiting`, et l'app n'a pas besoin de
+fonctionner hors-ligne.
 
 ## Taille de police : suivre les réglages du téléphone
 

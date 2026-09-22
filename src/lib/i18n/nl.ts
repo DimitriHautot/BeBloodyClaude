@@ -73,5 +73,8 @@ export const nl: Record<MessageKey, string> = {
   'settings.allowedTypes': 'Mogelijke donatietypes',
   'settings.highlightUpcoming': 'Binnenkort mogelijke donaties markeren',
   'settings.highlightUpcomingDays': 'Aantal dagen voor de donatie mogelijk is',
-  'settings.debugMode': 'Debugmodus'
+  'settings.debugMode': 'Debugmodus',
+
+  'update.available': 'Nieuwe versie beschikbaar',
+  'update.reload': 'Herladen'
 };

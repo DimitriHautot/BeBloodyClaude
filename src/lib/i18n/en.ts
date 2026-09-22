@@ -71,5 +71,8 @@ export const en: Record<MessageKey, string> = {
   'settings.allowedTypes': 'Possible donation types',
   'settings.highlightUpcoming': 'Highlight donations coming up soon',
   'settings.highlightUpcomingDays': 'Number of days before the donation is possible',
-  'settings.debugMode': 'Debug mode'
+  'settings.debugMode': 'Debug mode',
+
+  'update.available': 'New version available',
+  'update.reload': 'Reload'
 };
