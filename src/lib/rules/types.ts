@@ -20,6 +20,15 @@ export interface DonationRuleSet {
   countryCode: string;
   /** Human-readable name for display in the settings UI. */
   countryName: string;
+  /**
+   * The date to SUGGEST to the donor as their next possible donation —
+   * shown directly in the UI (`NextDonationSummary`). If this country's
+   * source distinguishes a stricter health recommendation from a shorter
+   * legal minimum (e.g. Belgium's Red Cross advising 3 months while the
+   * law only requires 2 — see `belgium.ts`), use the RECOMMENDATION here,
+   * never the bare legal minimum: this method exists to guide the donor
+   * toward a safe interval, not merely a legally-compliant one.
+   */
   computeNextEligibleDate(
     type: DonationType,
     allDonations: Donation[],
@@ -32,6 +41,15 @@ export interface DonationRuleSet {
    * set the lower bound (`min`) on a date picker for recording a donation,
    * alongside the upper bound (today, since a donation can't be in the
    * future).
+   *
+   * This validates a donation that actually happened (or is being
+   * backdated), not a future suggestion — so if this country distinguishes
+   * a legal minimum from a stricter recommendation (see
+   * `computeNextEligibleDate` above), use the LEGAL minimum here: a real,
+   * legally valid past donation must never be rejected just because it
+   * falls short of the (separately surfaced) recommendation. Never display
+   * this narrower date to the donor as a suggestion — it exists only to
+   * avoid rejecting real history, not to encourage shorter intervals.
    */
   earliestPossibleDate(
     type: DonationType,
@@ -44,6 +62,9 @@ export interface DonationRuleSet {
    * `allDonations`. Unlike `computeNextEligibleDate`, this is not floored
    * today — it is used to validate a donation being recorded for any
    * date, past or present.
+   *
+   * Same rule as `earliestPossibleDate` above: use the legal minimum, not
+   * the recommendation, when this country's rules distinguish the two.
    */
   isDonationAllowed(
     type: DonationType,
