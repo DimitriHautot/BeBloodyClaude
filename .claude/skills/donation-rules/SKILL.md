@@ -125,6 +125,37 @@ connue) et implique deux usages différents du délai :
   fenêtre glissante doit rester < 24. Le quota sang (4/an) reste, lui,
   indépendant et n'est pas affecté par les dons de plaquettes.
 
+**Texte exact de la page (transmis par Dimitri le 22/09/2026, le domaine
+étant bloqué par le proxy réseau de cet environnement)** :
+> Intervalle entre 2 dons
+>
+> Pour un don de sang total, la loi autorise le don après un délai de
+> minimum 2 mois entre 2 dons. Cependant, la Croix-Rouge préconise un
+> délai de 3 mois. Dans les deux cas, vous pouvez donner maximum 4 fois en
+> 365 jours.
+>
+> Pour ce qui est du don de plasma, celui-ci peut s'effectuer tous les 15
+> jours et vous pouvez donner maximum 15 litres de plasma par an (maximum
+> 19 dons par an).
+>
+> En ce qui concerne les plaquettes, la Croix-Rouge applique un délai
+> d'attente d'un mois entre 2 dons. Un délai de 2 semaines reste une
+> exception. Le nombre maximum de dons de plaquettes (incluant les
+> éventuels dons de sang) est de 24 par an (365 jours).
+
+**Anomalie non résolue, à garder en tête** : le 22/09/2026, Dimitri a
+signalé un export officiel de la Croix-Rouge listant 5 dons de sang total
+en 351 jours (26/07/2021, 02/11/2021, 01/02/2022, 09/05/2022, 12/07/2022)
+— ce qui dépasse le quota de 4/365 jours glissants tel qu'implémenté ici
+(mais reste sous 4 par année civile : 2 en 2021, 3 en 2022). Le texte
+officiel ci-dessus dit explicitement « 365 jours » (pas « par année
+civile »), donc la fenêtre glissante reste l'implémentation retenue pour
+l'instant ; Dimitri compte poser la question à la Croix-Rouge lors de son
+prochain don (le texte mentionne aussi une « exception » à 2 semaines
+pour les plaquettes, sans en préciser les conditions — peut-être un
+mécanisme similaire existe pour ce quota). Ne pas changer ce comportement
+sans nouvelle instruction de Dimitri.
+
 Implémentation : `QUOTA[type].countedTypes` liste les types de dons qui
 comptent dans le quota d'un type donné (`['blood']` pour le sang, `['plasma']`
 pour le plasma, `['platelets', 'blood']` pour les plaquettes).
