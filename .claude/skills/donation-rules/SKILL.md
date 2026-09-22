@@ -52,6 +52,14 @@ le délai est déjà écoulé, elle peut renvoyer une date passée (ex. « il y 
 aux seules dates passées valides. Toute nouvelle implémentation de pays
 doit aussi fournir cette méthode.
 
+Ceci dit, `earliestPossibleDate` et `isDonationAllowed` n'utilisent pas
+forcément **le même délai** que `computeNextEligibleDate` : les deux
+premières valident un don qui a (ou aurait) réellement eu lieu, donc
+doivent utiliser le minimum *légal* quand il diffère d'une recommandation
+plus stricte utilisée pour la guidance prospective — voir le cas
+sang→sang de la Belgique ci-dessous (`VALIDATION_DELAY_DAYS` vs
+`CROSS_DELAY_DAYS` dans `belgium.ts`).
+
 ## Règles belges implémentées (`belgium.ts`)
 
 Basées sur la page officielle de la Croix-Rouge de Belgique
@@ -72,9 +80,31 @@ semaines) :
 
 Le délai dépend donc à la fois du type du don précédent **et** du type du
 don suivant — ce n'est pas un simple "délai propre au type + blocage
-conservateur du reste". Le délai sang→sang (84 jours = 12 semaines) est la
-recommandation *stricte* de la Croix-Rouge, plus longue que le minimum
-légal de 2 mois également mentionné sur la page.
+conservateur du reste". Le délai sang→sang (84 jours = 12 semaines = 3 mois)
+est la recommandation *stricte* de la Croix-Rouge, plus longue que le
+minimum légal de 2 mois également mentionné sur la page (« la loi autorise
+le don après un délai de minimum 2 mois entre 2 dons. Cependant, la
+Croix-Rouge préconise un délai de 3 mois. Dans les deux cas, vous pouvez
+donner maximum 4 fois en 365 jours. », confirmé par Dimitri le 22/09/2026 ;
+base légale probable : arrêté royal du 4 avril 1996 relatif au
+prélèvement, à la préparation, à la conservation et à la délivrance du
+sang et des dérivés du sang d'origine humaine — texte exact non consulté,
+`ejustice.just.fgov.be` étant lui aussi bloqué par le proxy réseau).
+
+**Deux matrices sang→sang, pas une seule** : cette différence légal/recommandé
+n'est utilisée que pour sang→sang (aucune autre case n'a de distinction
+connue) et implique deux usages différents du délai :
+- `CROSS_DELAY_DAYS` (84 jours sang→sang) — la recommandation Croix-Rouge,
+  utilisée par `computeNextEligibleDate` pour suggérer la prochaine date de
+  don au donneur (guidance prospective, orientée santé).
+- `VALIDATION_DELAY_DAYS` (56 jours sang→sang, soit 8 semaines — interprétation
+  de « 2 mois » alignée sur le minimum légal français déjà utilisé dans
+  `france.ts`, **à confirmer si une source précise en jours est trouvée**)
+  — utilisée par `isDonationAllowed` et `earliestPossibleDate` pour valider
+  la saisie d'un don réellement effectué dans le passé. Sans cette
+  distinction, un don historique légalement valide mais espacé de moins de
+  12 semaines d'un précédent don de sang total était refusé à la saisie —
+  bug rapporté par Dimitri le 22/09/2026 (fil « Règles de don en Belgique »).
 
 **Quotas annuels glissants (365 jours)** :
 - Sang total : max 4 dons/an.
