@@ -7,6 +7,12 @@ jour de ce fichier.
 
 ## Non publié
 
+- Correction du champ Date du formulaire d'ajout de don, illisible (texte
+  proche du noir sur fond sombre) en thème sombre : `input[type='date']` ne
+  définissait pas de couleur de texte, contrairement aux autres champs
+  (`select`, `input[type='number']`). Ajout aussi de `color-scheme` sur
+  `:root` selon le thème actif pour que les contrôles natifs du navigateur
+  suivent la bonne palette (`2ff1c15`)
 - Correction du titre/croix d'une carte (Références, Paramètres, À propos)
   poussé sous la barre de statut système et devenu invisible/inaccessible
   en PWA installée sur Safari iOS, une régression de la PR #42 : la
