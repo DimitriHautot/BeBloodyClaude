@@ -7,6 +7,13 @@ jour de ce fichier.
 
 ## Non publié
 
+- Détection automatique d'une nouvelle version déployée pendant que l'app
+  est ouverte en PWA installée : un fichier `version.json` généré au build
+  est interrogé périodiquement et au retour au premier plan, et une
+  bannière propose un rechargement manuel si le build a changé — jusqu'ici
+  une PWA déjà installée pouvait rester bloquée sur une version en cache
+  sans que le donneur ne le sache, faute de bouton de rechargement visible
+  en mode standalone (`40259d0`)
 - Belgique : la saisie d'un don de sang total passé (historique, ou borne
   minimale du sélecteur de date) n'exige plus que le minimum légal de 2
   mois (56 jours) entre deux dons, et non plus la recommandation stricte
