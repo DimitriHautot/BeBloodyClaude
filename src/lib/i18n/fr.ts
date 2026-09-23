@@ -71,7 +71,10 @@ export const fr = {
   'settings.allowedTypes': 'Types de dons possibles',
   'settings.highlightUpcoming': 'Mise en évidence des dons bientôt possibles',
   'settings.highlightUpcomingDays': 'Nombre de jours avant le don possible',
-  'settings.debugMode': 'Mode debug'
+  'settings.debugMode': 'Mode debug',
+
+  'update.available': 'Nouvelle version disponible',
+  'update.reload': 'Recharger'
 } satisfies Record<string, string>;
 
 export type MessageKey = keyof typeof fr;

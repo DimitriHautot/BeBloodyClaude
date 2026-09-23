@@ -8,9 +8,11 @@
   import SettingsPanel from './components/SettingsPanel.svelte';
   import ReferencesPanel from './components/ReferencesPanel.svelte';
   import AboutPanel from './components/AboutPanel.svelte';
+  import UpdateBanner from './components/UpdateBanner.svelte';
   import { donorSettings, getAllowedTypes, isFirstLaunch } from './lib/settings/storage';
   import type { DonationType } from './lib/donations/types';
   import { buildInfo } from './lib/buildInfo';
+  import { updateAvailable, startUpdateChecks } from './lib/version/updateCheck';
   import { t } from './lib/i18n';
 
   // First time the app is opened, show the settings modal right away so the
@@ -64,12 +66,21 @@
     return () => media.removeEventListener('change', onChange);
   });
 
+  // Detects a newer build deployed while the PWA is open (see "PWA
+  // installée (standalone) et cache" in AGENTS.md) and offers a manual
+  // reload via UpdateBanner below — src/lib/version/updateCheck.ts.
+  onMount(() => startUpdateChecks());
+
   $: {
     const theme = $donorSettings.theme;
     const resolved = theme === 'light' || theme === 'dark' ? theme : prefersDarkSystem ? 'dark' : 'light';
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLOR[resolved]);
   }
 </script>
+
+{#if $updateAvailable}
+  <UpdateBanner />
+{/if}
 
 <main>
   <div class="top-bar">

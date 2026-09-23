@@ -73,5 +73,8 @@ export const de: Record<MessageKey, string> = {
   'settings.allowedTypes': 'Mögliche Spendentypen',
   'settings.highlightUpcoming': 'Bald mögliche Spenden hervorheben',
   'settings.highlightUpcomingDays': 'Anzahl Tage vor der möglichen Spende',
-  'settings.debugMode': 'Debug-Modus'
+  'settings.debugMode': 'Debug-Modus',
+
+  'update.available': 'Neue Version verfügbar',
+  'update.reload': 'Neu laden'
 };
